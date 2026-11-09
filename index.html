@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3D Human Leg Anatomy Atlas | Atlas Giải Phẫu Chi Dưới Y Khoa</title>
+  <title>3D Human Anatomy Atlas | Atlas Giải Phẫu Y Khoa Toàn Diện (Chi Dưới & Chi Trên)</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -140,7 +140,7 @@
       <i data-lucide="dna" class="w-10 h-10 text-sky-400 absolute animate-pulse"></i>
     </div>
     <h3 class="mt-5 text-xl font-bold tracking-wide bg-gradient-to-r from-white via-sky-200 to-sky-400 bg-clip-text text-transparent">
-      Human Leg Anatomy 3D Atlas
+      Human Anatomy 3D Atlas
     </h3>
     <p id="loader-status" class="text-xs text-sky-300/80 mt-1.5 font-mono">Đang khởi tạo cấu trúc xương, cơ vân, dây chằng & mạch máu...</p>
   </div>
@@ -155,17 +155,35 @@
       <div>
         <div class="flex items-center gap-2">
           <h1 class="text-base md:text-lg font-bold tracking-tight bg-gradient-to-r from-white via-sky-100 to-sky-400 bg-clip-text text-transparent">
-            HUMAN LEG ANATOMY 3D
+            HUMAN ANATOMY 3D
           </h1>
-          <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/30">
+          <span id="region-badge-pill" class="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/30">
             Medical Atlas
           </span>
         </div>
-        <p class="text-xs text-slate-400">Giáo trình Giải phẫu Chi dưới & Bàn chân Y khoa</p>
+        <p id="region-sub-label" class="text-xs text-slate-400">Giáo trình Giải Phẫu Chi Dưới & Chi Trên Y Khoa</p>
       </div>
     </div>
 
-    <!-- Center Study Mode Switcher -->
+    <!-- Center 1: Bộ Chọn Phân Vùng Giải Phẫu (Body Region Switcher) -->
+    <div class="pointer-events-auto flex items-center bg-slate-900/90 p-1 rounded-xl border border-sky-500/40 shadow-2xl backdrop-blur-md">
+      <button id="region-btn-leg" onclick="switchBodyRegion('leg')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-sky-600 text-white shadow-md">
+        <span>🦿 Chi Dưới (Leg & Foot)</span>
+      </button>
+      <button id="region-btn-arm" onclick="switchBodyRegion('arm')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition flex items-center gap-1.5">
+        <span>🦾 Chi Trên (Arm & Hand)</span>
+      </button>
+      <button onclick="alert('Module Giải phẫu Thân Mình & Lồng Ngực đang được xây dựng hoàn thiện!')" class="hidden sm:flex px-2 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-400 transition items-center gap-1">
+        <span>🫀 Thân Mình</span>
+        <span class="text-[8px] bg-slate-800 text-slate-400 px-1 py-0.5 rounded">Sắp có</span>
+      </button>
+      <button onclick="alert('Module Giải phẫu Đầu Mặt Cổ & Thần Kinh đang được xây dựng hoàn thiện!')" class="hidden md:flex px-2 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-400 transition items-center gap-1">
+        <span>🧠 Đầu Mặt Cổ</span>
+        <span class="text-[8px] bg-slate-800 text-slate-400 px-1 py-0.5 rounded">Sắp có</span>
+      </button>
+    </div>
+
+    <!-- Center 2: Chế độ học tập (Study Mode Switcher) -->
     <div class="pointer-events-auto flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-700/60 shadow-xl">
       <button id="mode-explore" onclick="switchMode('explore')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-sky-600 shadow-md transition flex items-center gap-1.5">
         <i data-lucide="compass" class="w-3.5 h-3.5"></i>
@@ -206,50 +224,45 @@
         <span class="hidden sm:inline">Ghim 3D</span>
       </button>
 
-      <!-- Reset Camera -->
-      <button id="btn-reset-view" onclick="resetCameraView()" title="Đặt lại góc nhìn" class="glass-panel text-slate-200 hover:text-sky-300 p-2 rounded-lg text-xs transition">
+      <!-- Reset View -->
+      <button onclick="resetCameraView()" title="Góc nhìn ban đầu" class="glass-panel text-slate-300 hover:text-white px-2.5 py-2 rounded-lg text-xs font-medium transition flex items-center gap-1">
         <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-      </button>
-
-      <!-- Auto Rotate -->
-      <button id="btn-toggle-rotate" title="Bật/Tắt tự động xoay" class="glass-panel text-slate-200 hover:text-sky-300 p-2 rounded-lg text-xs transition">
-        <i data-lucide="orbit" class="w-4 h-4"></i>
-      </button>
-
-      <!-- Fullscreen -->
-      <button id="btn-fullscreen" title="Toàn màn hình" class="glass-panel text-slate-200 hover:text-sky-300 p-2 rounded-lg text-xs transition">
-        <i data-lucide="maximize" class="w-4 h-4"></i>
       </button>
     </div>
   </header>
 
-  <!-- Floating Hover Tooltip -->
-  <div id="hover-tooltip" class="fixed pointer-events-none z-30 opacity-0 transition-opacity duration-150 transform -translate-x-1/2 -translate-y-12 px-3 py-1.5 rounded-lg glass-panel text-xs text-sky-200 font-semibold border border-sky-400/40 shadow-xl flex items-center gap-1.5">
-    <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
-    <span id="tooltip-text">Bộ phận</span>
-  </div>
-
-  <!-- Medical Quiz Card Overlay -->
-  <div id="quiz-panel" class="fixed top-20 left-1/2 -translate-x-1/2 z-30 w-full max-w-lg glass-panel rounded-2xl p-4 transition-all duration-300 shadow-2xl border border-sky-400/40 hidden">
-    <div class="flex items-center justify-between pb-2 border-b border-slate-700/60 mb-3">
-      <div class="flex items-center gap-2">
-        <span class="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-400/30 text-[11px] font-bold uppercase">
-          Thực hành Giải phẫu
-        </span>
-        <span id="quiz-counter" class="text-xs text-slate-400">Câu 1/10</span>
-      </div>
-      <div class="flex items-center gap-3">
-        <div class="text-xs font-semibold text-emerald-400 flex items-center gap-1">
-          <i data-lucide="award" class="w-4 h-4"></i>
-          <span id="quiz-score">Điểm: 0</span>
+  <!-- Quiz Overlay Panel (Chế độ thi trắc nghiệm Y khoa) -->
+  <div id="quiz-panel" class="fixed top-20 left-1/2 -translate-x-1/2 z-40 w-[32rem] max-w-[92vw] glass-panel rounded-2xl p-4 shadow-2xl border border-sky-400/40 hidden">
+    <div class="flex items-center justify-between pb-2 border-b border-slate-700/60">
+      <div class="flex items-center space-x-2">
+        <div class="p-1.5 rounded-lg bg-sky-500/20 text-sky-300">
+          <i data-lucide="award" class="w-5 h-5"></i>
         </div>
-        <button onclick="closeQuizMode()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+        <div>
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <span>KIỂM TRA GIẢI PHẪU Y KHOA</span>
+            <span id="quiz-region-badge" class="text-[9px] px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 font-mono">Chi Dưới</span>
+          </h3>
+          <span id="quiz-counter" class="text-[10px] text-sky-400 font-mono">Câu 1/10</span>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <span id="quiz-score" class="text-xs font-mono font-bold text-amber-300 bg-amber-500/10 px-2 py-1 rounded-lg border border-amber-400/30">
+          Điểm: 0
+        </span>
+        <button onclick="closeQuizMode()" class="p-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
       </div>
     </div>
-    <h3 id="quiz-question" class="text-sm md:text-base font-bold text-white leading-snug">
-      Đang nạp câu hỏi...
-    </h3>
-    <p id="quiz-instruction" class="text-xs text-sky-300/90 mt-1 flex items-center gap-1">
+
+    <!-- Question Content -->
+    <div class="mt-3">
+      <p id="quiz-question" class="text-xs sm:text-sm font-semibold text-sky-100 leading-relaxed"></p>
+    </div>
+
+    <!-- User Instruction -->
+    <p id="quiz-instruction" class="text-[11px] text-slate-400 mt-2 flex items-center gap-1">
       <i data-lucide="mouse-pointer" class="w-3.5 h-3.5"></i>
       Hãy nhấp trực tiếp vào bộ phận đó trên mô hình 3D!
     </p>
@@ -285,11 +298,8 @@
       </div>
       <p class="text-[10px] text-slate-300 mb-2">Kéo thanh trượt để cắt ngang qua bất kỳ cao độ nào:</p>
       <input type="range" id="clip-height-slider" min="-2.2" max="2.6" step="0.05" value="2.6" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-400" oninput="setClipPlaneHeight(this.value)">
-      <div class="grid grid-cols-4 gap-1 text-[9px] font-semibold text-center mt-2">
-        <button onclick="setQuickSlice(1.3)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Đùi giữa</button>
-        <button onclick="setQuickSlice(0.18)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Khớp gối</button>
-        <button onclick="setQuickSlice(-0.7)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cẳng chân</button>
-        <button onclick="setQuickSlice(-1.95)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cổ chân</button>
+      <div id="quick-slices-container" class="grid grid-cols-4 gap-1 text-[9px] font-semibold text-center mt-2">
+        <!-- Populated dynamically -->
       </div>
     </div>
 
@@ -303,13 +313,11 @@
         <span id="dissection-level-label" class="text-[11px] font-mono px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-400/30">Lớp 0: Đầy đủ</span>
       </div>
       <input type="range" id="dissection-slider" min="0" max="6" step="1" value="0" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-400" oninput="setDissectionDepth(this.value)">
-      <div class="flex justify-between text-[9px] text-slate-400 mt-1">
-        <span>Da</span>
-        <span>Cân</span>
+      <div class="flex justify-between text-[9px] text-slate-400 font-mono mt-1 px-1">
+        <span>Toàn bộ</span>
         <span>Cơ nông</span>
         <span>Cơ sâu</span>
-        <span>Mạch/TK</span>
-        <span>Dây chằng</span>
+        <span>Mạch-TK</span>
         <span>Xương</span>
       </div>
     </div>
@@ -324,8 +332,8 @@
         <button onclick="setCameraAngle('posterior')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Sau</button>
         <button onclick="setCameraAngle('medial')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Trong</button>
         <button onclick="setCameraAngle('lateral')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Ngoài</button>
-        <button onclick="setCameraAngle('knee')" class="bg-teal-900/40 hover:bg-teal-600/40 text-teal-300 py-1.5 px-2 rounded-lg transition border border-teal-500/40 font-bold">Khớp gối</button>
-        <button onclick="setCameraAngle('foot')" class="bg-indigo-900/40 hover:bg-indigo-600/40 text-indigo-300 py-1.5 px-2 rounded-lg transition border border-indigo-500/40 font-bold">Bàn chân</button>
+        <button id="camera-btn-joint" onclick="setCameraAngle('joint')" class="bg-teal-900/40 hover:bg-teal-600/40 text-teal-300 py-1.5 px-2 rounded-lg transition border border-teal-500/40 font-bold">Khớp gối</button>
+        <button id="camera-btn-distal" onclick="setCameraAngle('distal')" class="bg-indigo-900/40 hover:bg-indigo-600/40 text-indigo-300 py-1.5 px-2 rounded-lg transition border border-indigo-500/40 font-bold">Bàn chân</button>
       </div>
     </div>
 
@@ -340,7 +348,7 @@
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
           <input type="checkbox" id="layer-skeletal" checked class="w-4 h-4 accent-sky-400 rounded cursor-pointer" onchange="toggleLayer('skeletal', this.checked)">
-          <span class="text-xs font-semibold text-slate-200">1. Hệ Xương (Pelvis, Đùi, Chày, Mác, Bàn chân)</span>
+          <span class="text-xs font-semibold text-slate-200">1. Hệ Xương (Skeletal System)</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-slate-200 shadow-[0_0_8px_rgba(241,245,249,0.5)]"></span>
       </div>
@@ -349,7 +357,7 @@
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
           <input type="checkbox" id="layer-ligaments" checked class="w-4 h-4 accent-teal-400 rounded cursor-pointer" onchange="toggleLayer('ligaments', this.checked)">
-          <span class="text-xs font-semibold text-teal-300">2. Dây chằng, Sụn chêm & Cân gan chân</span>
+          <span class="text-xs font-semibold text-teal-300">2. Dây chằng, Sụn khớp & Cân mạc</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.5)]"></span>
       </div>
@@ -357,8 +365,8 @@
       <!-- 3. Muscular -->
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
-          <input type="checkbox" id="layer-muscular" checked class="w-4 h-4 accent-rose-500 rounded cursor-pointer" onchange="toggleLayer('muscular', this.checked)">
-          <span class="text-xs font-semibold text-slate-200">3. Hệ Cơ (Cơ đùi, Cẳng chân & Cơ bàn chân)</span>
+          <input type="checkbox" id="layer-muscular" checked class="w-4 h-4 accent-rose-400 rounded cursor-pointer" onchange="toggleLayer('muscular', this.checked)">
+          <span class="text-xs font-semibold text-rose-300">3. Hệ Thống Cơ (Superficial & Deep)</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]"></span>
       </div>
@@ -366,8 +374,8 @@
       <!-- 4. Cardiovascular -->
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
-          <input type="checkbox" id="layer-cardiovascular" checked class="w-4 h-4 accent-red-600 rounded cursor-pointer" onchange="toggleLayer('cardiovascular', this.checked)">
-          <span class="text-xs font-semibold text-slate-200">4. Hệ Mạch Máu (ĐM đùi, khoeo, mu chân...)</span>
+          <input type="checkbox" id="layer-cardiovascular" checked class="w-4 h-4 accent-red-400 rounded cursor-pointer" onchange="toggleLayer('cardiovascular', this.checked)">
+          <span class="text-xs font-semibold text-red-300">4. Mạch Máu (Động mạch & Tĩnh mạch)</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></span>
       </div>
@@ -375,31 +383,31 @@
       <!-- 5. Nervous -->
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
-          <input type="checkbox" id="layer-nervous" checked class="w-4 h-4 accent-yellow-400 rounded cursor-pointer" onchange="toggleLayer('nervous', this.checked)">
-          <span class="text-xs font-semibold text-slate-200">5. Hệ Thần Kinh (TK tọa, TK mác chung...)</span>
+          <input type="checkbox" id="layer-nervous" checked class="w-4 h-4 accent-amber-400 rounded cursor-pointer" onchange="toggleLayer('nervous', this.checked)">
+          <span class="text-xs font-semibold text-amber-300">5. Hệ Thần Kinh Ngoại Biên</span>
         </label>
-        <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.5)]"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]"></span>
       </div>
 
       <!-- 6. Lymphatic -->
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
-          <input type="checkbox" id="layer-lymphatic" checked class="w-4 h-4 accent-emerald-500 rounded cursor-pointer" onchange="toggleLayer('lymphatic', this.checked)">
-          <span class="text-xs font-semibold text-slate-200">6. Hệ Bạch Huyết (Chuỗi hạch bẹn chữ T)</span>
+          <input type="checkbox" id="layer-lymphatic" checked class="w-4 h-4 accent-emerald-400 rounded cursor-pointer" onchange="toggleLayer('lymphatic', this.checked)">
+          <span class="text-xs font-semibold text-emerald-300">6. Hệ Bạch Huyết (Lymph Nodes)</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]"></span>
       </div>
 
       <!-- 7. Integumentary -->
-      <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition">
+      <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex flex-col space-y-1.5">
         <div class="flex items-center justify-between">
           <label class="flex items-center space-x-2.5 cursor-pointer">
-            <input type="checkbox" id="layer-integumentary" checked class="w-4 h-4 accent-amber-500 rounded cursor-pointer" onchange="toggleLayer('integumentary', this.checked)">
-            <span class="text-xs font-semibold text-slate-200">7. Hệ Da (Integumentary)</span>
+            <input type="checkbox" id="layer-integumentary" checked class="w-4 h-4 accent-indigo-400 rounded cursor-pointer" onchange="toggleLayer('integumentary', this.checked)">
+            <span class="text-xs font-semibold text-indigo-300">7. Lớp Da & Mô Dưới Da (X-Ray)</span>
           </label>
-          <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-indigo-400 shadow-[0_0_8px_rgba(129,140,248,0.5)]"></span>
         </div>
-        <div class="mt-2 pt-1.5 border-t border-slate-800 flex items-center space-x-2">
+        <div class="flex items-center space-x-2 pl-6 pt-1">
           <span class="text-[9px] text-slate-400">Độ trong suốt X-Ray:</span>
           <input type="range" id="skin-opacity" min="0.05" max="0.75" step="0.05" value="0.22" class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-sky-400" oninput="setSkinOpacity(this.value)">
         </div>
@@ -412,13 +420,7 @@
         <i data-lucide="zap" class="w-3 h-3 text-amber-400"></i> Lọc nhóm vận động (Kinesiology)
       </label>
       <select id="functional-group-select" onchange="filterFunctionalGroup(this.value)" class="w-full bg-slate-900/90 border border-slate-700 rounded-lg py-1.5 px-2.5 text-xs text-sky-200 focus:outline-none focus:border-sky-400">
-        <option value="all">-- Hiển thị tất cả nhóm cơ --</option>
-        <option value="knee_extensor">Nhóm duỗi gối (Cơ tứ đầu đùi)</option>
-        <option value="knee_flexor">Nhóm gập gối (Nhóm Hamstrings)</option>
-        <option value="hip_flexor">Nhóm gấp khớp háng (Cơ may, thẳng đùi...)</option>
-        <option value="adductor">Nhóm cơ khép đùi (Adductors & Gracilis)</option>
-        <option value="plantarflexor">Nhóm gập lòng / Nhón gót (Bắp chuối, Achilles, Cơ bàn chân)</option>
-        <option value="dorsiflexor">Nhóm gập mu bàn chân (Cơ chày trước & duỗi ngón)</option>
+        <!-- Populated dynamically -->
       </select>
     </div>
 
@@ -427,13 +429,8 @@
       <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block flex items-center gap-1">
         <i data-lucide="play-circle" class="w-3 h-3 text-emerald-400"></i> Mô phỏng chuyển động khớp
       </label>
-      <div class="grid grid-cols-2 gap-1.5 text-[11px] font-medium">
-        <button onclick="playKinesiologyMotion('knee_flex')" class="bg-slate-900/80 hover:bg-emerald-600/30 text-slate-300 hover:text-emerald-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60 flex items-center justify-center gap-1">
-          <i data-lucide="corner-down-right" class="w-3 h-3"></i> Gập / Duỗi gối
-        </button>
-        <button onclick="playKinesiologyMotion('plantarflex')" class="bg-slate-900/80 hover:bg-emerald-600/30 text-slate-300 hover:text-emerald-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60 flex items-center justify-center gap-1">
-          <i data-lucide="arrow-up" class="w-3 h-3"></i> Nhón gót chân
-        </button>
+      <div id="kinesiology-buttons-container" class="grid grid-cols-2 gap-1.5 text-[11px] font-medium">
+        <!-- Populated dynamically -->
       </div>
     </div>
   </aside>
@@ -442,103 +439,99 @@
   <div id="info-card" class="fixed left-4 bottom-4 z-30 w-96 max-w-[calc(100vw-2rem)] glass-panel rounded-2xl p-5 translate-y-8 opacity-0 pointer-events-none transition-all duration-300 shadow-2xl">
     <div class="flex items-start justify-between">
       <div>
-        <div class="flex items-center gap-2 mb-1">
-          <span id="info-badge" class="inline-block text-[10px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/30">
-            Hệ Xương
-          </span>
-          <span id="info-region" class="text-[10px] text-slate-400 font-medium"></span>
-        </div>
-        <h3 id="info-name-vi" class="text-base md:text-lg font-bold text-white tracking-wide">Xương bánh chè</h3>
-        <p id="info-name-latin" class="text-xs text-amber-300 italic font-mono">Patella</p>
-        <p id="info-name-en" class="text-[11px] text-sky-300/80 font-medium">Kneecap</p>
+        <span id="info-badge" class="inline-block text-[10px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full border mb-1"></span>
+        <h2 id="info-name-vi" class="text-base font-bold text-white tracking-tight"></h2>
+        <p id="info-name-latin" class="text-xs font-serif italic text-sky-300 mt-0.5"></p>
+        <p id="info-name-en" class="text-[11px] text-slate-400"></p>
       </div>
-      <button onclick="closeInfoCard()" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">
+      <button onclick="closeInfoCard()" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition">
         <i data-lucide="x" class="w-4 h-4"></i>
       </button>
     </div>
 
-    <!-- Medical Tabs -->
-    <div class="mt-3.5 flex border-b border-slate-700/80 text-[11px] font-semibold gap-2 overflow-x-auto pb-1">
-      <button id="tab-btn-origin" onclick="switchMedicalTab('origin')" class="text-sky-400 border-b-2 border-sky-400 pb-1 px-1">Nguyên ủy & Bám tận</button>
-      <button id="tab-btn-action" onclick="switchMedicalTab('action')" class="text-slate-400 hover:text-slate-200 pb-1 px-1">Động tác</button>
-      <button id="tab-btn-clinical" onclick="switchMedicalTab('clinical')" class="text-slate-400 hover:text-slate-200 pb-1 px-1">Lâm sàng</button>
+    <!-- Tabs Navigation -->
+    <div class="flex border-b border-slate-700/80 mt-3.5 mb-2.5 text-xs font-semibold space-x-3">
+      <button id="tab-btn-origin" onclick="switchMedicalTab('origin')" class="text-sky-400 border-b-2 border-sky-400 pb-1 px-1 font-bold">
+        Nguyên ủy & Bám tận
+      </button>
+      <button id="tab-btn-action" onclick="switchMedicalTab('action')" class="text-slate-400 hover:text-slate-200 pb-1 px-1">
+        Động tác & TK
+      </button>
+      <button id="tab-btn-clinical" onclick="switchMedicalTab('clinical')" class="text-slate-400 hover:text-slate-200 pb-1 px-1 flex items-center gap-1">
+        <i data-lucide="stethoscope" class="w-3 h-3 text-rose-400"></i> Lâm sàng
+      </button>
     </div>
 
-    <!-- Tab Content -->
-    <div class="mt-3 text-xs leading-relaxed max-h-56 overflow-y-auto pr-1 space-y-2">
-      <div id="tab-content-origin" class="space-y-2">
-        <div>
-          <h4 class="font-semibold text-slate-300 flex items-center gap-1.5 text-[10px] uppercase tracking-wider">
-            <i data-lucide="anchor" class="w-3.5 h-3.5 text-amber-400"></i> Nguyên ủy (Origin)
-          </h4>
-          <p id="info-origin" class="text-slate-400 mt-0.5"></p>
-        </div>
-        <div>
-          <h4 class="font-semibold text-slate-300 flex items-center gap-1.5 text-[10px] uppercase tracking-wider">
-            <i data-lucide="flag" class="w-3.5 h-3.5 text-emerald-400"></i> Bám tận (Insertion)
-          </h4>
-          <p id="info-insertion" class="text-slate-400 mt-0.5"></p>
-        </div>
-        <div>
-          <h4 class="font-semibold text-slate-300 flex items-center gap-1.5 text-[10px] uppercase tracking-wider">
-            <i data-lucide="git-branch" class="w-3.5 h-3.5 text-yellow-400"></i> Thần kinh chi phối (Innervation)
-          </h4>
-          <p id="info-innervation" class="text-slate-400 mt-0.5"></p>
-        </div>
+    <!-- Tab 1: Vị trí & Nguyên ủy - Bám tận -->
+    <div id="tab-content-origin" class="space-y-2 text-xs leading-relaxed max-h-48 overflow-y-auto pr-1">
+      <div>
+        <span class="text-slate-400 font-semibold block text-[10px] uppercase tracking-wider">Vị trí giải phẫu:</span>
+        <p id="info-location" class="text-slate-200 text-[11px]"></p>
       </div>
-
-      <div id="tab-content-action" class="space-y-2 hidden">
-        <div>
-          <h4 class="font-semibold text-slate-300 flex items-center gap-1.5 text-[10px] uppercase tracking-wider">
-            <i data-lucide="move" class="w-3.5 h-3.5 text-sky-400"></i> Động tác & Chức năng cơ học
-          </h4>
-          <p id="info-action" class="text-slate-400 mt-0.5"></p>
-        </div>
-        <div>
-          <h4 class="font-semibold text-slate-300 flex items-center gap-1.5 text-[10px] uppercase tracking-wider">
-            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-indigo-400"></i> Vị trí giải phẫu
-          </h4>
-          <p id="info-location" class="text-slate-400 mt-0.5"></p>
-        </div>
+      <div>
+        <span class="text-emerald-400 font-semibold block text-[10px] uppercase tracking-wider">Nguyên ủy (Origin):</span>
+        <p id="info-origin" class="text-slate-200 text-[11px]"></p>
       </div>
-
-      <div id="tab-content-clinical" class="space-y-2 hidden">
-        <div class="p-2.5 rounded-xl bg-rose-950/20 border border-rose-500/30">
-          <h4 class="font-bold text-rose-300 flex items-center gap-1.5 text-[11px] uppercase tracking-wider mb-1">
-            <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-rose-400"></i> Ý nghĩa Lâm sàng & Chấn thương
-          </h4>
-          <p id="info-clinical" class="text-slate-300 text-xs leading-relaxed"></p>
-        </div>
+      <div>
+        <span class="text-amber-400 font-semibold block text-[10px] uppercase tracking-wider">Bám tận (Insertion):</span>
+        <p id="info-insertion" class="text-slate-200 text-[11px]"></p>
       </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between gap-2">
-      <button id="btn-isolate" onclick="isolateSelectedPart()" class="flex-1 py-1.5 px-3 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 text-xs font-semibold rounded-lg border border-sky-500/30 transition flex items-center justify-center gap-1.5">
-        <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-        <span>Cô lập cấu trúc</span>
+    <!-- Tab 2: Chức năng & Thần kinh -->
+    <div id="tab-content-action" class="space-y-2 text-xs leading-relaxed max-h-48 overflow-y-auto pr-1 hidden">
+      <div>
+        <span class="text-sky-400 font-semibold block text-[10px] uppercase tracking-wider">Thần kinh chi phối:</span>
+        <p id="info-innervation" class="text-slate-200 text-[11px]"></p>
+      </div>
+      <div>
+        <span class="text-indigo-400 font-semibold block text-[10px] uppercase tracking-wider">Động tác chính (Action):</span>
+        <p id="info-action" class="text-slate-200 text-[11px]"></p>
+      </div>
+    </div>
+
+    <!-- Tab 3: Ý nghĩa lâm sàng & Bệnh học -->
+    <div id="tab-content-clinical" class="space-y-2 text-xs leading-relaxed max-h-48 overflow-y-auto pr-1 hidden">
+      <div class="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-200">
+        <span class="text-rose-400 font-bold block text-[10px] uppercase tracking-wider mb-1 flex items-center gap-1">
+          <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Điểm chốt lâm sàng Y khoa:
+        </span>
+        <p id="info-clinical" class="text-[11px] leading-relaxed"></p>
+      </div>
+    </div>
+
+    <!-- Action Toolbar inside Card -->
+    <div class="mt-4 pt-3 border-t border-slate-700/80 flex items-center justify-between text-xs">
+      <button onclick="pronouncePartName()" class="text-sky-400 hover:text-sky-300 font-medium flex items-center gap-1.5 transition">
+        <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
+        <span>Phát âm Latin</span>
       </button>
-      <button onclick="closeInfoCard()" class="py-1.5 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-lg border border-slate-700 transition">
-        Đóng
-      </button>
+      <div class="flex items-center space-x-1.5">
+        <button id="btn-isolate-part" onclick="isolateSelectedPart()" class="bg-sky-600/30 hover:bg-sky-600/50 text-sky-200 border border-sky-500/40 px-2.5 py-1 rounded-lg font-medium transition flex items-center gap-1">
+          <i data-lucide="eye" class="w-3 h-3"></i>
+          <span>Cô lập</span>
+        </button>
+        <button onclick="resetCameraView()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded-lg transition">
+          <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Instruction Hint Overlay -->
-  <div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-10 pointer-events-none hidden md:flex items-center space-x-3 text-[11px] text-slate-400 glass-panel px-4 py-1.5 rounded-full border border-slate-700/60">
-    <span class="flex items-center gap-1"><i data-lucide="mouse-pointer" class="w-3 h-3 text-sky-400"></i> Chuột trái: Xoay 360°</span>
-    <span>•</span>
-    <span class="flex items-center gap-1"><i data-lucide="move" class="w-3 h-3 text-sky-400"></i> Chuột phải: Di chuyển</span>
-    <span>•</span>
-    <span class="flex items-center gap-1"><i data-lucide="zoom-in" class="w-3 h-3 text-sky-400"></i> Lăn chuột: Thu phóng</span>
-    <span>•</span>
-    <span class="flex items-center gap-1 text-sky-300 font-medium">Bấm vào bất kỳ chi tiết nào để tra cứu danh pháp & lâm sàng</span>
+  <!-- Interactive Hover Tooltip -->
+  <div id="hover-tooltip" class="fixed pointer-events-none z-30 px-2.5 py-1 rounded-md bg-slate-900/90 text-white text-[11px] font-medium border border-sky-400/40 opacity-0 transition-opacity duration-150 backdrop-blur-sm shadow-xl flex items-center gap-1.5">
+    <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+    <span id="tooltip-text"></span>
   </div>
 
-  <!-- ==================== JAVASCRIPT APPLICATION CODE ==================== -->
+  <!-- =========================================================================
+   * JAVASCRIPT LOGIC
+   * ========================================================================= -->
   <script>
-
-    const ANATOMY_DATABASE = {
+    /* =========================================================================
+     * CƠ SỞ DỮ LIỆU GIẢI PHẪU Y KHOA (CHI DƯỚI & CHI TRÊN)
+     * ========================================================================= */
+const ANATOMY_DATABASE = {
       // ==================== HỆ XƯƠNG (SKELETAL SYSTEM) ====================
       pelvis: {
         id: "pelvis",
@@ -1322,82 +1315,730 @@
         clinical: "Sưng đau hạch bẹn là phản ứng thường gặp khi có nhiễm trùng ở bàn chân hoặc cẳng chân. Là trạm di căn hạch quan trọng của các khối u ác tính chi dưới và tầng sinh môn.",
         cameraOffset: { x: 0, y: 2.1, z: 1.8 },
         pinPos: { x: -0.15, y: 2.15, z: 0.22 }
+      },
+
+      // =======================================================================
+      // CHI TRÊN: HỆ XƯƠNG (UPPER LIMB SKELETAL SYSTEM)
+      // =======================================================================
+      clavicle: {
+        id: "clavicle",
+        region: "arm",
+        nameVi: "Xương đòn (Đầu ức, Đầu cùng vai, Thân xương)",
+        nameLatin: "Clavicula",
+        nameEn: "Clavicle (Collarbone)",
+        layer: "skeletal",
+        subCategory: "skeletal_shoulder",
+        badge: "Đai Vai",
+        badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
+        location: "Xương đai ngực hình chữ S nằm ngang phía trước trên lồng ngực, nối cán xương ức với mỏm cùng vai.",
+        origin: "Cơ ngực lớn (bó đòn), cơ delta (bó trước), cơ ức đòn chũm.",
+        insertion: "Cơ dưới đòn, cơ thang.",
+        innervation: "Thần kinh dưới đòn (C5-C6).",
+        action: "Cột chống giữ khớp vai cách xa thân mình, truyền xung lực từ chi trên sang bộ xương trục.",
+        clinical: "Là xương dễ gãy nhất trên cơ thể con người (thường gãy ở vị trí nối 1/3 giữa và 1/3 ngoài do là điểm chuyển tiếp giữa hai đường cong lồi - lõm). Đầu trong bị kéo lên bởi cơ ức đòn chũm, đầu ngoài bị kéo xuống bởi trọng lượng cánh tay.",
+        cameraOffset: { x: 0.1, y: 1.8, z: 1.6 },
+        pinPos: { x: -0.3, y: 1.88, z: 0.22 }
+      },
+      scapula: {
+        id: "scapula",
+        region: "arm",
+        nameVi: "Xương vai (Gai vai, Mỏm cùng vai, Mỏm quạ, Ổ chảo)",
+        nameLatin: "Scapula",
+        nameEn: "Scapula (Shoulder Blade)",
+        layer: "skeletal",
+        subCategory: "skeletal_shoulder",
+        badge: "Đai Vai",
+        badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
+        location: "Xương dẹt hình tam giác nằm ở mặt sau trên lồng ngực từ xương sườn II đến VII.",
+        origin: "Cơ trên gai, cơ dưới gai, cơ tròn bé, cơ tròn lớn, đầu dài cơ tam đầu, đầu ngắn cơ nhị đầu và cơ quạ cánh tay (từ mỏm quạ).",
+        insertion: "Cơ thang, cơ nâng vai, cơ trám lớn, cơ trám bé, cơ răng trước (bám dọc bờ trong).",
+        innervation: "Thần kinh trên vai, ngực dài, lưng ngực.",
+        action: "Cơ sở vận động cho đai vai; ổ chảo khớp với chỏm xương cánh tay tạo thành khớp ổ chảo - cánh tay linh hoạt nhất cơ thể.",
+        clinical: "Tổn thương thần kinh ngực dài (liệt cơ răng trước) gây dấu hiệu 'Xương bả vai cánh én' (Winged Scapula) - bờ trong xương vai nhô cao tách rời thành ngực khi chống tay vào tường.",
+        cameraOffset: { x: -0.8, y: 1.6, z: -1.6 },
+        pinPos: { x: -0.45, y: 1.7, z: -0.15 }
+      },
+      humerus: {
+        id: "humerus",
+        region: "arm",
+        nameVi: "Xương cánh tay (Chỏm, Cổ phẫu thuật, Củ lớn/bé, Rãnh quay, Lồi cầu)",
+        nameLatin: "Humerus",
+        nameEn: "Humerus (Upper Arm Bone)",
+        layer: "skeletal",
+        subCategory: "skeletal_arm",
+        badge: "Cánh Tay",
+        badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
+        location: "Xương dài duy nhất của cánh tay, tiếp khớp ổ chảo ở trên và xương quay, xương trụ ở dưới.",
+        origin: "Cơ cánh tay (Brachialis), các cơ sấp/gấp cẳng tay (từ mỏm trên lồi cầu trong) và các cơ ngửa/duỗi (từ mỏm trên lồi cầu ngoài).",
+        insertion: "Cơ trên gai, dưới gai, tròn bé (bám củ lớn); cơ dưới vai (bám củ bé); cơ delta (lồi củ delta); cơ lưng rộng, ngực lớn, tròn lớn (rãnh gian củ).",
+        innervation: "Cảm giác màng xương qua TK nách, quay, cơ bì.",
+        action: "Đòn bẩy chính cho mọi cử động nâng, vung, ném và xoay chi trên.",
+        clinical: "1. Gãy cổ phẫu thuật: thường gặp ở người cao tuổi ngã chống tay, nguy cơ đứt bó mạch thần kinh nách.\n2. Gãy 1/3 giữa thân xương cánh tay: nguy cơ cao liệt thần kinh quay trong rãnh xoắn (gây dấu hiệu bàn tay rủ cổ cò).\n3. Mỏm trên lồi cầu trong là nơi thần kinh trụ đi qua (rãnh TK trụ - 'funny bone', khi va chạm có cảm giác tê buốt giật điện).",
+        cameraOffset: { x: -0.2, y: 1.2, z: 1.8 },
+        pinPos: { x: -0.32, y: 1.35, z: 0.08 }
+      },
+      radius: {
+        id: "radius",
+        region: "arm",
+        nameVi: "Xương quay (Chỏm, Cổ, Lồi củ quay, Mỏm trâm quay)",
+        nameLatin: "Radius",
+        nameEn: "Radius (Lateral Forearm Bone)",
+        layer: "skeletal",
+        subCategory: "skeletal_forearm",
+        badge: "Cẳng Tay",
+        badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
+        location: "Xương cẳng tay nằm ở phía ngoài (phía ngón tay cái), tiếp khớp với lồi cầu xương cánh tay và xương thuyền/nguyệt ở cổ tay.",
+        origin: "Cơ gấp các ngón nông, cơ gấp ngón cái dài, cơ dạng dài và duỗi ngắn ngón cái.",
+        insertion: "Gân cơ nhị đầu cánh tay (bám vào củ quay), cơ cánh tay - quay (bám vào đáy mỏm trâm quay), cơ sấp tròn (ở giữa thân xương quay).",
+        innervation: "Nhánh gian cốt sau của TK quay và gian cốt trước của TK giữa.",
+        action: "Xoay quanh xương trụ thực hiện động tác sấp và ngửa cẳng tay (Supination & Pronation).",
+        clinical: "1. Trật chỏm quay ở trẻ nhỏ ('Nursemaid's elbow' / Khuỷu tay người trông trẻ): chỏm quay trượt ra khỏi dây chằng vòng khi bị người lớn giật mạnh tay.\n2. Gãy Pouteau-Colles: gãy 2-3 cm đầu dưới xương quay khi ngã chống tay duỗi, tạo biến dạng hình dĩa nĩa (dinner fork deformity). Mỏm trâm quay bình thường thấp hơn mỏm trâm trụ 1cm.",
+        cameraOffset: { x: -0.4, y: 0.7, z: 1.4 },
+        pinPos: { x: -0.45, y: 0.65, z: 0.06 }
+      },
+      ulna: {
+        id: "ulna",
+        region: "arm",
+        nameVi: "Xương trụ (Mỏm khuỷu, Mỏm vẹt, Khuyết ròng rọc, Mỏm trâm trụ)",
+        nameLatin: "Ulna",
+        nameEn: "Ulna (Medial Forearm Bone)",
+        layer: "skeletal",
+        subCategory: "skeletal_forearm",
+        badge: "Cẳng Tay",
+        badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
+        location: "Xương cẳng tay nằm ở phía trong (phía ngón út), đóng vai trò trục cố định cho cẳng tay.",
+        origin: "Cơ gấp các ngón sâu, cơ gấp ngón cái dài, cơ sấp vuông.",
+        insertion: "Cơ tam đầu cánh tay (bám vào mỏm khuỷu olecranon), cơ cánh tay (bám vào mỏm vẹt coronoid process).",
+        innervation: "Nhánh gian cốt sau (TK quay) và gian cốt trước (TK giữa).",
+        action: "Tạo khớp bản lề vững chắc với ròng rọc xương cánh tay, thực hiện động tác gập và duỗi cẳng tay.",
+        clinical: "Gãy Monteggia: gãy 1/3 trên thân xương trụ kèm theo trật chỏm xương quay ra trước. Mỏm khuỷu nằm ngay sát dưới da, dễ gãy do va đập trực tiếp.",
+        cameraOffset: { x: -0.15, y: 0.7, z: 1.4 },
+        pinPos: { x: -0.22, y: 0.62, z: -0.04 }
+      },
+      interosseous_membrane_arm: {
+        id: "interosseous_membrane_arm",
+        region: "arm",
+        nameVi: "Màng gian cốt cẳng tay",
+        nameLatin: "Membrana Interossea Antebrachii",
+        nameEn: "Interosseous Membrane of Forearm",
+        layer: "ligaments",
+        subCategory: "ligament_forearm",
+        badge: "Khớp & Dây Chằng",
+        badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-400/30",
+        location: "Tấm màng liên kết sợi chắc chắn kéo dài giữa bờ gian cốt của xương quay và xương trụ.",
+        origin: "Bờ gian cốt xương quay.",
+        insertion: "Bờ gian cốt xương trụ, các thớ sợi chạy xiên chéo xuống dưới và vào trong.",
+        innervation: "Nhánh màng xương TK gian cốt trước và sau.",
+        action: "Truyền lực nén ép từ xương quay (nhận lực từ bàn tay) sang xương trụ (truyền lên xương cánh tay); chia cẳng tay thành khoang cơ trước và sau.",
+        clinical: "Các chấn thương gãy hai xương cẳng tay thường xé rách màng gian cốt, đòi hỏi phục hồi giải phẫu hoàn hảo để bảo tồn động tác sấp ngửa cẳng tay.",
+        cameraOffset: { x: -0.3, y: 0.65, z: 1.2 },
+        pinPos: { x: -0.32, y: 0.62, z: 0.02 }
+      },
+      carpal_bones: {
+        id: "carpal_bones",
+        region: "arm",
+        nameVi: "8 Xương Cổ Tay (Thuyền, Nguyệt, Tháp, Đậu, Thang, Thê, Cả, Móc)",
+        nameLatin: "Ossa Carpi (Scaphoideum, Lunatum, Triquetrum, Pisiforme, Trapezium, Trapezoideum, Capitatum, Hamatum)",
+        nameEn: "Carpal Bones (8 Wrist Bones)",
+        layer: "skeletal",
+        subCategory: "skeletal_wrist",
+        badge: "Cổ Tay",
+        badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
+        location: "Xếp thành hai hàng: Hàng gần (Thuyền-Nguyệt-Tháp-Đậu) và Hàng xa (Thang-Thê-Cả-Móc), tạo nên vòm cung cổ tay.",
+        origin: "Các dây chằng cổ tay, cơ mô cái và mô út.",
+        insertion: "Mạc giữ gân gấp bắc qua vòm xương cổ tay tạo ống cổ tay (Carpal tunnel).",
+        innervation: "Cảm giác bao khớp qua TK giữa, TK quay và TK trụ.",
+        action: "Tạo độ linh hoạt đa chiều cho khớp cổ tay (gập, duỗi, nghiêng quay, nghiêng trụ, xoay tròn).",
+        clinical: "1. Câu thần chú giải phẫu kinh điển: 'Thuyền Nguyệt Tháp Đậu, Thang Thê Cả Móc' (Some Lovers Try Positions That They Cannot Handle).\n2. Xương THUYỀN là xương hay gãy nhất (>70% gãy xương cổ tay), đau nhói ở hõm lào giải phẫu, mạch nuôi đi ngược dòng từ xa về gần nên dễ bị hoại tử vô mạch chỏm gần.\n3. Xương NGUYỆT là xương hay bị TRẬT nhất, trật ra trước chèn ép cấp cứu thần kinh giữa trong ống cổ tay.",
+        cameraOffset: { x: -0.38, y: 0.15, z: 0.8 },
+        pinPos: { x: -0.4, y: 0.18, z: 0.04 }
+      },
+      metacarpals_arm: {
+        id: "metacarpals_arm",
+        region: "arm",
+        nameVi: "5 Xương đốt bàn tay (Metacarpals I - V)",
+        nameLatin: "Ossa Metacarpi (I - V)",
+        nameEn: "Metacarpal Bones (Hand Bones)",
+        layer: "skeletal",
+        subCategory: "skeletal_hand",
+        badge: "Bàn Tay",
+        badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
+        location: "Năm xương dài nhỏ nối giữa khối xương cổ tay và các ngón tay. Đốt bàn I tự do và cử động linh hoạt nhất.",
+        origin: "Các cơ gian cốt mu tay và gan tay, cơ khép ngón cái.",
+        insertion: "Cơ duỗi và gấp cổ tay bám vào đáy đốt bàn II, III, V.",
+        innervation: "Nhánh sâu TK trụ và nhánh gian cốt trước TK giữa.",
+        action: "Khung chịu lực bàn tay, định hình vòm lòng bàn tay giúp cầm nắm đồ vật chắc chắn.",
+        clinical: "1. Gãy chỏm xương đốt bàn V gọi là 'Gãy xương của võ sĩ quyền anh' (Boxer's fracture) do đấm vật cứng.\n2. Gãy Bennett: gãy nội khớp ở nền xương đốt bàn ngón I kèm trật khớp thang-đốt bàn do cơ dạng dài ngón cái co kéo.",
+        cameraOffset: { x: -0.4, y: 0.0, z: 0.7 },
+        pinPos: { x: -0.42, y: 0.02, z: 0.03 }
+      },
+      phalanges_arm: {
+        id: "phalanges_arm",
+        region: "arm",
+        nameVi: "14 Xương đốt ngón tay (Đốt gần, Đốt giữa, Đốt xa)",
+        nameLatin: "Phalanges Digitorum Manus",
+        nameEn: "Phalanges of the Hand (Finger Bones)",
+        layer: "skeletal",
+        subCategory: "skeletal_hand",
+        badge: "Ngón Tay",
+        badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
+        location: "Ngón cái có 2 đốt (gần, xa); ngón II đến ngón V mỗi ngón có 3 đốt (gần, giữa, xa).",
+        origin: "Dây chằng bên khớp liên ngón, bao hoạt dịch gân gấp.",
+        insertion: "Gân cơ gấp nông (đốt giữa), gân cơ gấp sâu (đốt xa), dải gân duỗi (đốt giữa & xa).",
+        innervation: "Các nhánh thần kinh ngón tay riêng của TK giữa và TK trụ.",
+        action: "Cầm, nắm, viết, véo, gõ phím, thao tác tinh vi tỉ mỉ đỉnh cao của con người.",
+        clinical: "1. Ngón tay bóng chày (Mallet finger): đứt gân duỗi bám vào nền đốt xa do bóng đập thẳng vào đầu ngón tay làm gập đốt xa đột ngột.\n2. Ngón tay lò xo (Trigger finger): viêm dày bao gân gấp làm kẹt gân khi qua ròng rọc A1 ở khớp đốt bàn ngón.",
+        cameraOffset: { x: -0.4, y: -0.15, z: 0.65 },
+        pinPos: { x: -0.44, y: -0.15, z: 0.02 }
+      },
+
+      // =======================================================================
+      // CHI TRÊN: KHỚP & DÂY CHẰNG (JOINTS & LIGAMENTS)
+      // =======================================================================
+      glenohumeral_joint: {
+        id: "glenohumeral_joint",
+        region: "arm",
+        nameVi: "Khớp vai & Sụn viền ổ chảo (Glenoid Labrum)",
+        nameLatin: "Articulatio Humeri & Labrum Glenoidale",
+        nameEn: "Glenohumeral Joint & Glenoid Labrum",
+        layer: "ligaments",
+        subCategory: "ligament_shoulder",
+        badge: "Khớp Vai",
+        badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-400/30",
+        location: "Khớp chỏm cầu giữa chỏm xương cánh tay và ổ chảo xương vai. Bao khớp rộng rãi lỏng lẻo kèm vòng sụn viền sợi.",
+        origin: "Viền quanh chu vi ổ chảo xương vai.",
+        insertion: "Cổ giải phẫu xương cánh tay; tiếp xúc mặt sụn chỏm cánh tay.",
+        innervation: "Thần kinh trên vai, thần kinh nách, thần kinh dưới vai.",
+        action: "Khớp cử động rộng và linh hoạt nhất cơ thể (gập, duỗi, dạng, khép, xoay trong, xoay ngoài, quay tròn 360°).",
+        clinical: "1. Khớp vai là khớp hay bị trật nhất cơ thể (>50% các ca trật khớp), thường trật ra trước - xuống dưới do khoang bao khớp phía dưới không có cơ chóp xoay che chở.\n2. Tổn thương rách sụn viền ổ chảo trên từ trước ra sau gọi là tổn thương SLAP (Superior Labrum Anterior to Posterior), hay gặp ở vận động viên ném bóng.",
+        cameraOffset: { x: -0.15, y: 1.75, z: 1.2 },
+        pinPos: { x: -0.18, y: 1.76, z: 0.08 }
+      },
+      coracoacromial_arch: {
+        id: "coracoacromial_arch",
+        region: "arm",
+        nameVi: "Vòm quạ - cùng vai & Dây chằng quạ - đòn",
+        nameLatin: "Ligamentum Coracoacromiale & Ligamentum Coracoclaviculare",
+        nameEn: "Coracoacromial Arch & Coracoclavicular Ligaments",
+        layer: "ligaments",
+        subCategory: "ligament_shoulder",
+        badge: "Khớp Vai",
+        badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-400/30",
+        location: "Vòm sợi - xương vững chắc phía trên khớp vai tạo bởi mỏm quạ, mỏm cùng vai và dây chằng quạ - cùng vai.",
+        origin: "Mỏm quạ xương vai.",
+        insertion: "Mỏm cùng vai và mặt dưới xương đòn (Dây chằng nón và thang).",
+        innervation: "Thần kinh trên vai và nách.",
+        action: "Ngăn chỏm xương cánh tay trật lên trên; bảo vệ gân cơ trên gai và túi hoạt dịch dưới cùng vai.",
+        clinical: "Hội chứng chèn ép dưới mỏm cùng vai (Subacromial Impingement Syndrome): khi dạng cánh tay, gân cơ trên gai và túi hoạt dịch bị cọ xát nghiền ép vào vòm quạ - cùng vai gây đau buốt dữ dội khi dạng vai góc 60°-120° (cung đau cánh tay - Painful Arc).",
+        cameraOffset: { x: -0.35, y: 1.85, z: 1.1 },
+        pinPos: { x: -0.28, y: 1.86, z: 0.12 }
+      },
+      elbow_ligaments: {
+        id: "elbow_ligaments",
+        region: "arm",
+        nameVi: "Dây chằng vòng quay & Dây chằng bên khuỷu (UCL & RCL)",
+        nameLatin: "Ligamentum Anulare Radii, Lig. Collaterale Ulnare & Radiale",
+        nameEn: "Annular Ligament & Collateral Ligaments of Elbow",
+        layer: "ligaments",
+        subCategory: "ligament_elbow",
+        badge: "Khớp Khuỷu",
+        badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-400/30",
+        location: "Hệ thống dây chằng bao quanh khớp khuỷu: Dây chằng vòng ôm lấy chỏm xương quay; Dây chằng bên trụ ở mặt trong và dây chằng bên quay ở mặt ngoài.",
+        origin: "Mỏm trên lồi cầu trong/ngoài và khuyết quay xương trụ.",
+        insertion: "Bờ trước và sau của khuyết quay xương trụ ôm vòng cổ quay; mỏm vẹt và mỏm khuỷu.",
+        innervation: "Thần kinh quay, giữa, cơ bì và trụ.",
+        action: "Dây chằng vòng giữ chỏm xương quay vững chắc trong khuyết quay khi xoay sấp ngửa; Dây chằng bên chống lại lực vẹo ngoài (valgus) và vẹo trong (varus).",
+        clinical: "1. Đứt dây chằng bên trụ (UCL): rất phổ biến ở các cầu thủ ném bóng bầu dục và bóng chày do lực bẻ vẹo ngoài cực mạnh lặp đi lặp lại. Phẫu thuật tái tạo UCL nổi tiếng mang tên 'Tommy John Surgery'.\n2. Trật bán phần chỏm quay luồn dưới dây chằng vòng (Nursemaid's elbow) ở trẻ < 5 tuổi.",
+        cameraOffset: { x: -0.3, y: 1.0, z: 1.0 },
+        pinPos: { x: -0.32, y: 1.02, z: 0.05 }
+      },
+      carpal_tunnel_retinaculum: {
+        id: "carpal_tunnel_retinaculum",
+        region: "arm",
+        nameVi: "Mạc giữ gân gấp (Dây chằng vòng cổ tay) & Ống Cổ Tay",
+        nameLatin: "Retinaculum Flexorum Manus (Ligamentum Carpi Transversum)",
+        nameEn: "Flexor Retinaculum & Carpal Tunnel",
+        layer: "ligaments",
+        subCategory: "ligament_wrist",
+        badge: "Ống Cổ Tay",
+        badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-400/30",
+        location: "Dải xơ dày đặc bắc ngang từ củ xương thuyền và xương thang (ở ngoài) sang xương đậu và mỏm móc xương móc (ở trong).",
+        origin: "Củ xương thuyền & củ xương thang.",
+        insertion: "Xương đậu & móc xương móc.",
+        innervation: "Nhánh bì gan tay TK giữa.",
+        action: "Biến rãnh cổ tay sâu thành Ống Cổ Tay (Carpal Tunnel) kín đáo, giữ cho các gân gấp không bị bật ra phía trước khi gập cổ tay.",
+        clinical: "HỘI CHỨNG ỐNG CỔ TAY (Carpal Tunnel Syndrome): Ống cổ tay chứa 10 cấu trúc (9 gân gấp: 4 gân gấp nông, 4 gân gấp sâu, 1 gân gấp ngón cái dài và 1 DÂY THẦN KINH GIỮA). Khi bao hoạt dịch gân gấp bị sưng viêm phù nề, dây thần kinh giữa bị chèn ép gây tê rát dị cảm 3 ngón rưỡi ngoài, đau tăng về đêm, teo mô cái (bàn tay khỉ). Dấu hiệu Tinel và nghiệm pháp Phalen dương tính.",
+        cameraOffset: { x: -0.38, y: 0.22, z: 0.7 },
+        pinPos: { x: -0.36, y: 0.23, z: 0.08 }
+      },
+      palmar_aponeurosis: {
+        id: "palmar_aponeurosis",
+        region: "arm",
+        nameVi: "Cân gan tay (Palmar Aponeurosis)",
+        nameLatin: "Aponeurosis Palmaris",
+        nameEn: "Palmar Aponeurosis",
+        layer: "ligaments",
+        subCategory: "ligament_wrist",
+        badge: "Bàn Tay",
+        badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-400/30",
+        location: "Tấm cân sợi dẹt hình tam giác dày chắc nằm ngay dưới da ở giữa lòng bàn tay.",
+        origin: "Gân cơ gan tay dài (Palmaris longus) và mạc giữ gân gấp.",
+        insertion: "Tách thành 4 dải chạy đến nền các đốt ngón tay II đến V.",
+        innervation: "Nhánh bì gan tay TK giữa và TK trụ.",
+        action: "Bảo vệ các bó mạch, thần kinh và gân gấp sâu ở lòng bàn tay; tăng lực ma sát bám dính khi cầm nắm vật nặng.",
+        clinical: "Co rút Dupuytren (Dupuytren's contracture): sự xơ hóa co rút tiến triển của cân gan tay, kéo gập vĩnh viễn các ngón IV và V vào lòng bàn tay không duỗi thẳng ra được.",
+        cameraOffset: { x: -0.4, y: 0.05, z: 0.7 },
+        pinPos: { x: -0.38, y: 0.05, z: 0.06 }
+      },
+
+      // =======================================================================
+      // CHI TRÊN: HỆ CƠ NÔNG & SÂU (MUSCULAR SYSTEM)
+      // =======================================================================
+      deltoid: {
+        id: "deltoid",
+        region: "arm",
+        nameVi: "Cơ Delta (Phần trước, giữa và sau)",
+        nameLatin: "Musculus Deltoideus",
+        nameEn: "Deltoid Muscle",
+        layer: "muscular",
+        subCategory: "muscle_shoulder",
+        badge: "Cơ Vai (Nông)",
+        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
+        location: "Cơ lớn hình tam giác úp trùm toàn bộ mặt ngoài và trên của khớp vai.",
+        origin: "1/3 ngoài xương đòn (bó trước), mỏm cùng vai (bó giữa), gai vai (bó sau).",
+        insertion: "Lồi củ delta ở mặt ngoài thân xương cánh tay.",
+        innervation: "Thần kinh nách (Nervus Axillaris, C5-C6).",
+        action: "Bó giữa: dạng cánh tay mạnh mẽ từ 15° đến 90° (dưới 15° do cơ trên gai đảm nhiệm). Bó trước: gập và xoay trong cánh tay. Bó sau: duỗi và xoay ngoài cánh tay.",
+        clinical: "Vị trí kinh điển tiêm bắp sâu (tiêm vaccine ngừa uốn ván, cúm, COVID-19). Tổn thương thần kinh nách (do trật khớp vai ra trước hoặc gãy cổ phẫu thuật xương cánh tay) làm teo cơ delta, mất góc tròn của vai ('vai vuông') và mất khả năng dạng cánh tay.",
+        cameraOffset: { x: -0.6, y: 1.5, z: 1.4 },
+        pinPos: { x: -0.48, y: 1.58, z: 0.12 }
+      },
+      rotator_cuff_sits: {
+        id: "rotator_cuff_sits",
+        region: "arm",
+        nameVi: "Nhóm cơ Chóp Xoay SITS (Cơ trên gai, Dưới gai, Tròn bé, Dưới vai)",
+        nameLatin: "Musculi Rotatoris (Supraspinatus, Infraspinatus, Teres Minor, Subscapularis)",
+        nameEn: "Rotator Cuff Muscles (SITS)",
+        layer: "muscular",
+        isDeep: true,
+        subCategory: "muscle_shoulder",
+        badge: "Chóp Xoay (Sâu)",
+        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
+        location: "Bốn cơ sâu xuất phát từ các hố xương vai quấn quanh chỏm xương cánh tay giống như cổ áo (Cuff).",
+        origin: "Hố trên gai, hố dưới gai, bờ ngoài xương vai, hố dưới vai.",
+        insertion: "Gân cơ trên gai, dưới gai, tròn bé bám vào 3 diện của củ lớn; gân cơ dưới vai bám vào củ bé xương cánh tay.",
+        innervation: "TK trên vai (Trên gai, Dưới gai), TK nách (Tròn bé), TK dưới vai (Dưới vai).",
+        action: "Kẹp chặt giữ chỏm xương cánh tay ép vững vào diện lõm nông của ổ chảo. Cơ trên gai khởi đầu dạng 0-15°; Cơ dưới gai & tròn bé xoay ngoài; Cơ dưới vai xoay trong cánh tay.",
+        clinical: "RÁCH CHÓP XOAY (Rotator Cuff Tear): Gân CƠ TRÊN GAI là gân hay bị viêm xơ và rách nhất cơ thể (chiếm >85%) do chạy qua khoang hẹp dưới mỏm cùng vai và có vùng tưới máu kém ('vùng tới hạn' - critical zone). Bệnh nhân không thể chủ động bắt đầu dạng cánh tay hoặc rơi tay đột ngột khi hạ tay từ từ (Drop Arm Test dương tính).",
+        cameraOffset: { x: -0.65, y: 1.65, z: -1.2 },
+        pinPos: { x: -0.38, y: 1.74, z: -0.06 }
+      },
+      biceps_brachii: {
+        id: "biceps_brachii",
+        region: "arm",
+        nameVi: "Cơ nhị đầu cánh tay (Đầu dài & Đầu ngắn, Trướng cân nhị đầu)",
+        nameLatin: "Musculus Biceps Brachii",
+        nameEn: "Biceps Brachii Muscle",
+        layer: "muscular",
+        subCategory: "muscle_arm",
+        badge: "Cánh Tay Trước (Nông)",
+        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
+        location: "Cơ lớn nổi rõ ở mặt trước cánh tay, gồm 2 đầu nguyên ủy riêng biệt hợp thành một bụng cơ.",
+        origin: "Đầu dài: củ trên ổ chảo xương vai (luồn qua ổ khớp trong rãnh gian củ). Đầu ngắn: mỏm quạ xương vai.",
+        insertion: "Lồi củ xương quay và trướng cân nhị đầu (bicipital aponeurosis) tỏa vào mạc cẳng tay trong.",
+        innervation: "Thần kinh cơ bì (Nervus Musculocutaneus, C5-C7).",
+        action: "Cơ NGỬA cẳng tay mạnh nhất cơ thể (khi khuỷu gập 90° - như động tác vặn mở nút chai hoặc siết ốc vít); đồng thời gập mạnh khớp khuỷu và gập khớp vai.",
+        clinical: "1. Đứt gân đầu dài cơ nhị đầu tạo hình ảnh khối cơ tụ lại tròn phồng ở 1/3 dưới cánh tay gọi là 'Dấu hiệu bắp tay Popeye' (Popeye deformity).\n2. Trướng cân nhị đầu che chở động mạch cánh tay và thần kinh giữa trong hố khuỷu, nằm sâu hơn tĩnh mạch giữa khuỷu.",
+        cameraOffset: { x: -0.45, y: 1.25, z: 1.5 },
+        pinPos: { x: -0.35, y: 1.25, z: 0.16 }
+      },
+      brachialis: {
+        id: "brachialis",
+        region: "arm",
+        nameVi: "Cơ cánh tay (Brachialis - Cơ gập thuần túy khớp khuỷu)",
+        nameLatin: "Musculus Brachialis",
+        nameEn: "Brachialis Muscle",
+        layer: "muscular",
+        isDeep: true,
+        subCategory: "muscle_arm",
+        badge: "Cánh Tay Trước (Sâu)",
+        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
+        location: "Nằm sâu dưới cơ nhị đầu cánh tay, bao phủ nửa dưới mặt trước xương cánh tay.",
+        origin: "1/2 dưới mặt trước xương cánh tay và các vách gian cơ.",
+        insertion: "Mỏm vẹt và lồi củ xương trụ.",
+        innervation: "Thần kinh cơ bì (C5-C6) (phần ngoài nhận một nhánh nhỏ từ TK quay).",
+        action: "Cơ GẬP KHỚP KHUỶU CHÍNH VÀ THUẦN TÚY NHẤT. Hoạt động mạnh mẽ ở mọi tư thế (dù cẳng tay đang sấp hay ngửa - 'con ngựa thồ của khớp khuỷu' workhorse of elbow flexion).",
+        clinical: "Khác với cơ nhị đầu chỉ gập khuỷu tối đa khi cẳng tay ngửa, cơ cánh tay bám vào xương trụ nên lực gập không bị ảnh hưởng bởi động tác sấp/ngửa của xương quay.",
+        cameraOffset: { x: -0.35, y: 1.15, z: 1.2 },
+        pinPos: { x: -0.32, y: 1.12, z: 0.1 }
+      },
+      triceps_brachii: {
+        id: "triceps_brachii",
+        region: "arm",
+        nameVi: "Cơ tam đầu cánh tay (Đầu dài, Đầu ngoài & Đầu trong)",
+        nameLatin: "Musculus Triceps Brachii",
+        nameEn: "Triceps Brachii Muscle",
+        layer: "muscular",
+        subCategory: "muscle_arm",
+        badge: "Cánh Tay Sau",
+        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
+        location: "Chiếm toàn bộ khoang sau của cánh tay, gồm 3 đầu cơ hợp thành một gân dày khỏe bám vào mỏm khuỷu.",
+        origin: "Đầu dài: củ dưới ổ chảo xương vai. Đầu ngoài: mặt sau xương cánh tay, phía trên rãnh TK quay. Đầu trong (sâu): mặt sau xương cánh tay, phía dưới rãnh TK quay.",
+        insertion: "Mặt trên mỏm khuỷu xương trụ.",
+        innervation: "Thần kinh quay (Nervus Radialis, C6-C8).",
+        action: "Cơ DUỖI DUY NHẤT VÀ MẠNH NHẤT của khớp khuỷu; đầu dài tham gia duỗi và khép cánh tay ở khớp vai.",
+        clinical: "Phản xạ gân cơ tam đầu (C7): gõ búa phản xạ vào gân cơ tam đầu ngay trên mỏm khuỷu làm cẳng tay duỗi nảy ra trước. Giúp đánh giá tính toàn vẹn của rễ thần kinh tủy gai C7.",
+        cameraOffset: { x: -0.5, y: 1.25, z: -1.4 },
+        pinPos: { x: -0.32, y: 1.3, z: -0.15 }
+      },
+      forearm_flexors_superficial: {
+        id: "forearm_flexors_superficial",
+        region: "arm",
+        nameVi: "Nhóm cơ gấp cẳng tay nông (Cơ sấp tròn, Gấp cổ tay quay, Gan tay dài, Gấp cổ tay trụ)",
+        nameLatin: "Musculi Flexores Antebrachii Superficiales (Pronator Teres, FCR, Palmaris Longus, FCU)",
+        nameEn: "Superficial Forearm Flexors",
+        layer: "muscular",
+        subCategory: "muscle_forearm",
+        badge: "Cẳng Tay Trước (Nông)",
+        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
+        location: "Khối cơ xuất phát từ một gân chung ở mỏm trên lồi cầu trong xương cánh tay tỏa hình quạt xuống cẳng tay và bàn tay.",
+        origin: "Mỏm trên lồi cầu trong xương cánh tay (Gân gấp chung - Common Flexor Tendon).",
+        insertion: "Giữa xương quay (cơ sấp tròn), nền xương đốt bàn II-III (cơ gấp cổ tay quay), mạc giữ gân gấp & cân gan tay (cơ gan tay dài), xương đậu & xương móc & nền đốt bàn V (cơ gấp cổ tay trụ).",
+        innervation: "TK giữa (Cơ sấp tròn, FCR, Palmaris Longus); TK trụ (Cơ gấp cổ tay trụ - FCU).",
+        action: "Sấp cẳng tay, gập mạnh cổ tay và nghiêng quay/nghiêng trụ bàn tay.",
+        clinical: "1. Viêm lồi cầu trong xương cánh tay ('Golfer's Elbow' / Khuỷu tay người đánh golf): viêm điểm bám gân gấp chung do vận động gập sấp cổ tay quá mức.\n2. Gân cơ gan tay dài (Palmaris longus) không có ở ~14% dân số; đây là nguồn gân quý giá để ghép gân trong phẫu thuật tạo hình chấn thương bàn tay.",
+        cameraOffset: { x: -0.4, y: 0.75, z: 1.3 },
+        pinPos: { x: -0.32, y: 0.76, z: 0.12 }
+      },
+      flexor_digitorum_superficialis: {
+        id: "flexor_digitorum_superficialis",
+        region: "arm",
+        nameVi: "Cơ gấp các ngón nông (Flexor Digitorum Superficialis - FDS)",
+        nameLatin: "Musculus Flexor Digitorum Superficialis",
+        nameEn: "Flexor Digitorum Superficialis Muscle",
+        layer: "muscular",
+        subCategory: "muscle_forearm",
+        badge: "Cẳng Tay Trước (Giữa)",
+        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
+        location: "Cơ rộng nằm ở lớp giữa của khu cẳng tay trước, tách thành 4 gân chạy qua ống cổ tay.",
+        origin: "Đầu cánh tay - trụ: mỏm trên lồi cầu trong và mỏm vẹt. Đầu quay: đường chéo xương quay.",
+        insertion: "4 gân chạy vào các ngón II - V; ở đốt gần, mỗi gân XẺ ĐÔI THÀNH HAI TRẢI GÂN để gân gấp sâu chui qua, sau đó bám vào hai bên thân đốt giữa.",
+        innervation: "Thần kinh giữa (C7, C8, T1).",
+        action: "Gập đốt ngón giữa của 4 ngón tay từ II đến V; hỗ trợ gập khớp đốt bàn - ngón và gập cổ tay.",
+        clinical: "Gân FDS thủng lỗ (chạc Camper) cho gân gấp ngón sâu (chui qua) là một kỳ quan cơ sinh học giải phẫu của bàn tay người. Giúp gấp độc lập từng khớp ngón tay.",
+        cameraOffset: { x: -0.38, y: 0.55, z: 1.1 },
+        pinPos: { x: -0.34, y: 0.55, z: 0.08 }
+      },
+      forearm_flexors_deep: {
+        id: "forearm_flexors_deep",
+        region: "arm",
+        nameVi: "Nhóm cơ gấp cẳng tay sâu (Gấp các ngón sâu, Gấp ngón cái dài, Sấp vuông)",
+        nameLatin: "Musculi Flexores Antebrachii Profundi (FDP, FPL, Pronator Quadratus)",
+        nameEn: "Deep Forearm Flexors",
+        layer: "muscular",
+        isDeep: true,
+        subCategory: "muscle_forearm",
+        badge: "Cẳng Tay Trước (Sâu)",
+        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
+        location: "Nằm áp sát vào xương trụ, xương quay và màng gian cốt cẳng tay.",
+        origin: "3/4 trên mặt trước xương trụ (FDP), mặt trước xương quay (FPL), 1/4 dưới mặt trước xương trụ (cơ sấp vuông).",
+        insertion: "Gân FDP xuyên qua chạc gân nông bám tận nền ĐỐT XA ngón II-V; gân FPL bám nền ĐỐT XA ngón cái; cơ sấp vuông bám 1/4 dưới xương quay.",
+        innervation: "TK giữa (nhánh gian cốt trước) cho FPL, Pronator Quadratus và nửa ngoài FDP (ngón II & III); TK trụ cho nửa trong FDP (ngón IV & V).",
+        action: "FDP là cơ duy nhất GẬP ĐỐT XA CÁC NGÓN TAY. FPL gập đốt xa ngón cái. Cơ sấp vuông khởi xướng và duy trì sấp cẳng tay.",
+        clinical: "Ngón tay Jersey (Jersey finger): đứt gân FDP ở nền đốt xa do ngón tay bị giật mạnh khi đang gấp chặt (hay gặp ở VĐV bóng bầu dục chụp áo đối thủ), bệnh nhân mất hoàn toàn khả năng chủ động gập đốt xa.",
+        cameraOffset: { x: -0.35, y: 0.45, z: 1.0 },
+        pinPos: { x: -0.31, y: 0.45, z: 0.05 }
+      },
+      brachioradialis: {
+        id: "brachioradialis",
+        region: "arm",
+        nameVi: "Cơ cánh tay - quay (Brachioradialis)",
+        nameLatin: "Musculus Brachioradialis",
+        nameEn: "Brachioradialis Muscle",
+        layer: "muscular",
+        subCategory: "muscle_forearm",
+        badge: "Cẳng Tay Ngoài",
+        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
+        location: "Cơ dày hình dải tạo nên gờ thịt tròn ở mặt ngoài trên cẳng tay.",
+        origin: "2/3 trên gờ trên mỏm lồi cầu ngoài xương cánh tay.",
+        insertion: "Mặt ngoài đáy mỏm trâm xương quay.",
+        innervation: "Thần kinh quay (Nervus Radialis, C5-C6).",
+        action: "Gập khớp khuỷu mạnh mẽ nhất khi cẳng tay ở TƯ THẾ TRUNG GIAN (tư thế bắt tay). Đưa cẳng tay về tư thế trung gian từ cả vị trí sấp hoàn toàn hoặc ngửa hoàn toàn.",
+        clinical: "Phản xạ gân cơ cánh tay - quay (C6): gõ vào mỏm trâm xương quay gây gập và hơi sấp nhẹ cẳng tay. Là mốc giải phẫu xác định động mạch quay và thần kinh quay ở cẳng tay.",
+        cameraOffset: { x: -0.55, y: 0.85, z: 1.2 },
+        pinPos: { x: -0.42, y: 0.85, z: 0.08 }
+      },
+      forearm_extensors_superficial: {
+        id: "forearm_extensors_superficial",
+        region: "arm",
+        nameVi: "Nhóm cơ duỗi cẳng tay nông (Duỗi cổ tay quay dài & ngắn, Duỗi các ngón, Duỗi ngón út, Duỗi cổ tay trụ)",
+        nameLatin: "Musculi Extensores Antebrachii Superficiales (ECRL, ECRB, ED, EDM, ECU)",
+        nameEn: "Superficial Forearm Extensors",
+        layer: "muscular",
+        subCategory: "muscle_forearm",
+        badge: "Cẳng Tay Sau (Nông)",
+        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
+        location: "Nhóm cơ nằm ở mặt sau cẳng tay, xuất phát từ mỏm trên lồi cầu ngoài xương cánh tay.",
+        origin: "Mỏm trên lồi cầu ngoài xương cánh tay (Gân duỗi chung - Common Extensor Tendon).",
+        insertion: "Nền xương đốt bàn II-III (ECRL, ECRB), dải gân duỗi các đốt ngón II-V (ED), dải gân ngón út (EDM), nền xương đốt bàn V (ECU).",
+        innervation: "Thần kinh quay và nhánh sâu thần kinh quay (C7-C8).",
+        action: "Duỗi cổ tay và duỗi các ngón tay; giữ cổ tay duỗi vững chắc khi các ngón tay nắm chặt đồ vật.",
+        clinical: "VIÊM LỒI CẦU NGOÀI XƯƠNG CÁNH TAY ('Tennis Elbow' / Khuỷu tay người chơi quần vợt): viêm thoái hóa vi chấn thương tại điểm bám gân duỗi chung (đặc biệt gân cơ duỗi cổ tay quay ngắn - ECRB) do đánh trái tay hoặc vặn siết cổ tay lặp lại. Đau chói lói khi ấn mỏm lồi cầu ngoài hoặc khi duỗi cổ tay có lực cản (nghiệm pháp Cozen dương tính).",
+        cameraOffset: { x: -0.45, y: 0.75, z: -1.2 },
+        pinPos: { x: -0.38, y: 0.76, z: -0.1 }
+      },
+      forearm_extensors_deep: {
+        id: "forearm_extensors_deep",
+        region: "arm",
+        nameVi: "Nhóm cơ duỗi sâu & Hõm lào giải phẫu (Cơ ngửa, Dạng ngón cái dài, Duỗi ngắn & Duỗi dài ngón cái)",
+        nameLatin: "Musculi Extensores Profundi (Supinator, APL, EPB, EPL) & Fovea Radialis",
+        nameEn: "Deep Forearm Extensors & Anatomical Snuffbox",
+        layer: "muscular",
+        isDeep: true,
+        subCategory: "muscle_forearm",
+        badge: "Cẳng Tay Sau (Sâu)",
+        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
+        location: "Lớp cơ sâu mặt sau cẳng tay; các gân chạy chéo qua cổ tay ngoài tạo thành hõm lõm tam giác đặc biệt ở gốc ngón cái.",
+        origin: "Mặt sau xương trụ, xương quay và màng gian cốt; mào cơ ngửa.",
+        insertion: "Cơ ngửa bám cổ và thân xương quay; APL bám nền đốt bàn I; EPB bám nền đốt gần ngón cái; EPL bám nền đốt xa ngón cái.",
+        innervation: "Nhánh gian cốt sau của thần kinh quay (C7-C8).",
+        action: "Cơ ngửa hỗ trợ ngửa cẳng tay khi khuỷu duỗi; APL, EPB, EPL điều khiển độc lập mọi cử động duỗi và dạng ngón tay cái.",
+        clinical: "HÕM LÀO GIẢI PHẪU (Anatomical Snuffbox): Giới hạn ngoài bởi gân APL và EPB; giới hạn trong bởi gân EPL. ĐÁY LÀ XƯƠNG THUYỀN VÀ XƯƠNG THANG; ĐỘNG MẠCH QUAY CHẠY XUYÊN QUA ĐÁY HÕM LÀO. Ấn đau chói trong hõm lào là dấu hiệu kinh điển của gãy xương thuyền!",
+        cameraOffset: { x: -0.5, y: 0.35, z: 0.9 },
+        pinPos: { x: -0.44, y: 0.32, z: 0.04 }
+      },
+      hand_intrinsic_muscles: {
+        id: "hand_intrinsic_muscles",
+        region: "arm",
+        nameVi: "Cơ nội tại bàn tay (Mô cái, Mô út, Các cơ giun & Các cơ gian cốt)",
+        nameLatin: "Musculi Manus (Thenar, Hypothenar, Lumbricales, Interossei)",
+        nameEn: "Intrinsic Hand Muscles",
+        layer: "muscular",
+        subCategory: "muscle_hand",
+        badge: "Cơ Bàn Tay",
+        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
+        location: "Gồm gò mô cái (gốc ngón I), gò mô út (gốc ngón V), và các cơ sâu nằm giữa các xương đốt bàn tay.",
+        origin: "Mạc giữ gân gấp, các xương cổ tay và thân các xương đốt bàn tay I - V.",
+        insertion: "Nền các đốt ngón tay I - V và dải gân mu ngón tay.",
+        innervation: "1. Thần kinh giữa: chi phối 3 cơ mô cái (Dạng ngắn, Gấp ngắn, Đối chiếu ngón cái) và 2 cơ giun ngoài (I & II).\n2. Thần kinh trụ: chi phối toàn bộ các cơ còn lại (Toàn bộ mô út, Cơ khép ngón cái, 2 cơ giun trong III & IV, toàn bộ cơ gian cốt mu tay và gan tay).",
+        action: "Cơ đối chiếu ngón cái (Opponens pollicis) xoay ngón cái đối diện với các ngón khác; Cơ gian cốt mu tay DẠNG ngón (DAB: Dorsal ABduct); Cơ gian cốt gan tay KHÉP ngón (PAD: Palmar ADduct); Cơ giun gập khớp đốt bàn - ngón và duỗi khớp liên ngón.",
+        clinical: "1. Dấu hiệu Froment (+): khi kéo một tờ giấy kẹp giữa ngón cái và ngón trỏ, bệnh nhân liệt TK trụ không khép được ngón cái nên phải gập đốt xa ngón cái (bằng cơ FPL do TK giữa chi phối) để giữ giấy.\n2. Teo mô cái tạo hình ảnh 'Bàn tay khỉ' trong tổn thương TK giữa muộn.\n3. Teo cơ gian cốt trũng sâu mu tay trong tổn thương TK trụ.",
+        cameraOffset: { x: -0.42, y: 0.0, z: 0.75 },
+        pinPos: { x: -0.4, y: -0.02, z: 0.05 }
+      },
+
+      // =======================================================================
+      // CHI TRÊN: MẠCH MÁU & THẦN KINH (NEUROVASCULAR SYSTEM)
+      // =======================================================================
+      brachial_artery: {
+        id: "brachial_artery",
+        region: "arm",
+        nameVi: "Động mạch cánh tay & Động mạch nách",
+        nameLatin: "Arteria Brachialis & Arteria Axillaris",
+        nameEn: "Brachial Artery & Axillary Artery",
+        layer: "cardiovascular",
+        subCategory: "vascular_artery",
+        badge: "Động Mạch Cánh Tay",
+        badgeColor: "bg-red-500/20 text-red-300 border-red-400/30",
+        location: "Tiếp nối động mạch nách tại bờ dưới cơ tròn lớn, chạy dọc bờ trong cơ nhị đầu cánh tay xuống hố khuỷu.",
+        origin: "Động mạch dưới đòn -> Động mạch nách -> Động mạch cánh tay.",
+        insertion: "Tại ngang mức cổ xương quay trong hố khuỷu chia thành 2 nhánh tận: Động mạch quay và Động mạch trụ.",
+        innervation: "Các sợi thần kinh giao cảm quanh mạch.",
+        action: "Cung cấp máu chính cho toàn bộ cánh tay, cẳng tay và bàn tay.",
+        clinical: "1. Vị trí kinh điển ĐO HUYẾT ÁP BẰNG ỐNG NGHE: đặt loa ống nghe ở hố khuỷu ngay phía trong gân cơ nhị đầu cánh tay để nghe tiếng đập Korotkoff.\n2. Bắt mạch cánh tay ở trẻ nhũ nhi hồi sức tim phổi (CPR) vì mạch cổ khó bắt do cổ ngắn và nhiều mỡ.\n3. Hội chứng Volkmann: co rút gập thiếu máu cục bộ cơ cẳng tay do chèn ép khoang hoặc gãy trên lồi cầu xương cánh tay làm tắc ĐM cánh tay.",
+        cameraOffset: { x: -0.3, y: 1.15, z: 1.3 },
+        pinPos: { x: -0.27, y: 1.18, z: 0.1 }
+      },
+      radial_ulnar_arteries: {
+        id: "radial_ulnar_arteries",
+        region: "arm",
+        nameVi: "Động mạch quay, Động mạch trụ & Các cung gan tay",
+        nameLatin: "Arteria Radialis, Arteria Ulnaris & Arcus Palmares",
+        nameEn: "Radial & Ulnar Arteries, Palmar Arches",
+        layer: "cardiovascular",
+        subCategory: "vascular_artery",
+        badge: "Mạch Cẳng Bàn Tay",
+        badgeColor: "bg-red-500/20 text-red-300 border-red-400/30",
+        location: "ĐM quay đi dọc bờ ngoài cẳng tay, qua rãnh mạch quay và hõm lào vào gan tay sâu; ĐM trụ đi dọc bờ trong cùng TK trụ qua kênh Guyon vào gan tay nông.",
+        origin: "Hai nhánh tận của động mạch cánh tay tại hố khuỷu.",
+        insertion: "Hợp thành Cung động mạch gan tay nông (chủ yếu từ ĐM trụ) và Cung động mạch gan tay sâu (chủ yếu từ ĐM quay), cho các ĐM ngón tay chung và riêng.",
+        innervation: "Các sợi thần kinh giao cảm từ hạch cổ ngực.",
+        action: "Tưới máu phong phú cho khối cơ cẳng tay, khối xương cổ tay và toàn bộ các ngón tay thông qua mạng lưới tuần hoàn bàng hệ dồi dào.",
+        clinical: "1. VỊ TRÍ BẮT MẠCH KINH ĐIỂN NHẤT CƠ THỂ: Động mạch quay ở rãnh mạch quay (giữa gân cơ cánh tay - quay và gân cơ gấp cổ tay quay).\n2. NGHIỆM PHÁP ALLEN (Allen's Test): ép chặt cả ĐM quay và ĐM trụ rồi bảo bệnh nhân nắm mở tay cho bàn tay trắng bợt, sau đó thả ĐM trụ ra để kiểm tra xem cung gan tay có đủ thông nối tưới máu bàn tay trước khi chọc khí máu động mạch quay (ABG) hoặc đặt catheter động mạch.",
+        cameraOffset: { x: -0.38, y: 0.35, z: 1.1 },
+        pinPos: { x: -0.36, y: 0.32, z: 0.08 }
+      },
+      arm_superficial_veins: {
+        id: "arm_superficial_veins",
+        region: "arm",
+        nameVi: "Tĩnh mạch đầu, Tĩnh mạch nền & Tĩnh mạch giữa khuỷu",
+        nameLatin: "Vena Cephalica, Vena Basilica & Vena Mediana Cubiti",
+        nameEn: "Cephalic, Basilic & Median Cubital Veins",
+        layer: "cardiovascular",
+        subCategory: "vascular_vein",
+        badge: "Tĩnh Mạch Nông",
+        badgeColor: "bg-blue-500/20 text-blue-300 border-blue-400/30",
+        location: "Mạng tĩnh mạch nông nằm ngay dưới da cẳng tay và cánh tay: TM đầu chạy ở phía ngoài, TM nền chạy ở phía trong, nối với nhau ở nếp khuỷu.",
+        origin: "Mạng lưới tĩnh mạch mu bàn tay.",
+        insertion: "TM đầu đổ vào tĩnh mạch nách tại rãnh delta - ngực; TM nền chui sâu hợp với TM cánh tay tạo thành tĩnh mạch nách.",
+        innervation: "Sợi vận mạch giao cảm.",
+        action: "Dẫn lưu phần lớn máu từ da và mô dưới da của chi trên trở về tim.",
+        clinical: "1. TĨNH MẠCH GIỮA KHUỶU (Median cubital vein): vị trí VÀNG được lựa chọn hàng đầu trên toàn thế giới để LẤY MÁU XÉT NGHIỆM, TIÊM TRUYỀN TĨNH MẠCH và HIẾN MÁU nhờ kích thước lớn, nằm nông và được cố định chắc chắn bởi trướng cân nhị đầu.\n2. Tĩnh mạch đầu ở rãnh delta-ngực là đường vào kinh điển để đặt dây điện cực máy tạo nhịp tim.",
+        cameraOffset: { x: -0.4, y: 0.95, z: 1.2 },
+        pinPos: { x: -0.36, y: 0.98, z: 0.12 }
+      },
+      radial_nerve: {
+        id: "radial_nerve",
+        region: "arm",
+        nameVi: "Thần kinh quay (Chi phối toàn bộ hệ duỗi chi trên)",
+        nameLatin: "Nervus Radialis",
+        nameEn: "Radial Nerve",
+        layer: "nervous",
+        subCategory: "nervous_arm",
+        badge: "Thần Kinh Quay",
+        badgeColor: "bg-amber-500/20 text-amber-300 border-amber-400/30",
+        location: "Nhánh lớn nhất của bó sau đám rối cánh tay (C5-T1), đi xoắn quanh rãnh thần kinh quay ở mặt sau xương cánh tay, ra trước ở rãnh nhị đầu ngoài, xuống cẳng tay chia nhánh nông (cảm giác) và nhánh sâu (vận động).",
+        origin: "Bó sau đám rối thần kinh cánh tay (C5, C6, C7, C8, T1).",
+        insertion: "Vận động: cơ tam đầu cánh tay, cơ khuỷu, cơ cánh tay - quay, toàn bộ cơ duỗi cổ tay và ngón tay; Cảm giác: mặt sau cánh tay, cẳng tay và nửa ngoài mu bàn tay (hõm lào).",
+        innervation: "Vận động và cảm giác toàn bộ khu sau chi trên.",
+        action: "Chủ trì động tác DUỖI KHUỶU, DUỖI CỔ TAY và DUỖI CÁC NGÓN TAY; ngửa cẳng tay.",
+        clinical: "DẤU HIỆU BÀN TAY RỦ CỔ CÒ (Wrist Drop):\n- Nguyên nhân: Gãy 1/3 giữa thân xương cánh tay (chèn ép trong rãnh xoắn) hoặc hội chứng 'Liệt đêm thứ bảy' (Saturday night palsy - ngủ gục tì đè cánh tay lên lưng ghế sau khi say rượu).\n- Biểu hiện: Bệnh nhân mất hoàn toàn khả năng duỗi cổ tay và duỗi các ngón tay, bàn tay rủ lòng thòng như cổ con cò. Mất cảm giác vùng hõm lào giải phẫu.",
+        cameraOffset: { x: -0.4, y: 1.05, z: -1.2 },
+        pinPos: { x: -0.33, y: 1.15, z: -0.06 }
+      },
+      median_nerve: {
+        id: "median_nerve",
+        region: "arm",
+        nameVi: "Thần kinh giữa (Chủ trì hệ gấp cẳng tay & Ống cổ tay)",
+        nameLatin: "Nervus Medianus",
+        nameEn: "Median Nerve",
+        layer: "nervous",
+        subCategory: "nervous_arm",
+        badge: "Thần Kinh Giữa",
+        badgeColor: "bg-amber-500/20 text-amber-300 border-amber-400/30",
+        location: "Hình thành từ hai rễ của bó ngoài và bó trong đám rối cánh tay (C5-T1). Đi kèm ĐM cánh tay, qua hố khuỷu, chui giữa 2 đầu cơ sấp tròn, chạy dọc giữa cẳng tay và chui qua ỐNG CỔ TAY vào bàn tay.",
+        origin: "Bó ngoài và bó trong đám rối cánh tay (C5, C6, C7, C8, T1).",
+        insertion: "Vận động: hầu hết các cơ gấp và sấp cẳng tay, 3 cơ mô cái, 2 cơ giun ngoài; Cảm giác: mặt gan tay của ngón cái, trỏ, giữa và nửa ngoài ngón nhẫn.",
+        innervation: "Vận động nhóm cơ gập/sấp và cơ đối chiếu ngón cái; cảm giác tinh vi gan bàn tay.",
+        action: "Điều khiển động tác gấp cổ tay, gập các ngón tay và đặc biệt là ĐỘNG TÁC ĐỐI CHIẾU NGÓN CÁI (Opposition) để cầm bút, kim gút.",
+        clinical: "1. TỔN THƯƠNG TẠI CỔ TAY (Hội chứng ống cổ tay): Teo mô cái tạo hình ảnh 'BÀN TAY KHỈ' (Ape Hand - ngón cái phẳng nằm cùng mặt phẳng với các ngón khác do mất động tác đối chiếu).\n2. TỔN THƯƠNG CAO TẠI KHỦYU TAY: Dấu hiệu 'BÀN TAY CẦU NGUYỆN' (Hand of Benediction) - khi bảo bệnh nhân nắm chặt tay lại, các ngón I, II, III không thể gập được và vẫn duỗi thẳng ra.",
+        cameraOffset: { x: -0.32, y: 0.6, z: 1.2 },
+        pinPos: { x: -0.31, y: 0.58, z: 0.08 }
+      },
+      ulnar_nerve: {
+        id: "ulnar_nerve",
+        region: "arm",
+        nameVi: "Thần kinh trụ (Thần kinh tinh tế của bàn tay - Funny Bone)",
+        nameLatin: "Nervus Ulnaris",
+        nameEn: "Ulnar Nerve",
+        layer: "nervous",
+        subCategory: "nervous_arm",
+        badge: "Thần Kinh Trụ",
+        badgeColor: "bg-amber-500/20 text-amber-300 border-amber-400/30",
+        location: "Nhánh tận lớn nhất của bó trong đám rối cánh tay (C8-T1). Đi ở mặt trong cánh tay, vòng sau mỏm trên lồi cầu trong xương cánh tay, đi giữa 2 đầu cơ gấp cổ tay trụ xuống cẳng tay trong và chui qua KÊNH GUYON vào gan tay.",
+        origin: "Bó trong đám rối thần kinh cánh tay (C8, T1).",
+        insertion: "Vận động: cơ gấp cổ tay trụ, nửa trong cơ gấp sâu (ngón 4-5), toàn bộ mô út, cơ khép ngón cái, toàn bộ cơ gian cốt, 2 cơ giun trong; Cảm giác: ngón út và nửa trong ngón nhẫn (cả gan và mu tay).",
+        innervation: "Chi phối hầu hết các cơ nội tại tinh vi của bàn tay nhạc sĩ, họa sĩ và bác sĩ phẫu thuật.",
+        action: "Khép và dạng các ngón tay (cơ gian cốt), khép ngón cái, gấp khớp bàn ngón và duỗi liên ngón.",
+        clinical: "1. DẤU HIỆU BÀN TAY VUỐT TRỤ (Claw Hand / Ulnar Claw):\n- Liệt các cơ giun 3, 4 và các cơ gian cốt làm khớp bàn-ngón bị quá duỗi (do cơ duỗi đối kháng kéo) trong khi khớp liên ngón bị gập quắp lại ở ngón IV và V giống như móng vuốt chim ưng.\n2. Hội chứng kênh Guyon: chèn ép TK trụ tại cổ tay do chấn thương móc xương móc hoặc tì đè lâu khi đi xe đạp đường dài.\n3. Rãnh TK trụ ở khuỷu tay là nơi dây thần kinh nông nhất ('Funny bone'), dễ bị đụng dập gây cảm giác giật điện buốt thấu xương.",
+        cameraOffset: { x: -0.25, y: 0.65, z: 0.8 },
+        pinPos: { x: -0.24, y: 0.62, z: -0.02 }
+      },
+      axillary_musculocutaneous_nerves: {
+        id: "axillary_musculocutaneous_nerves",
+        region: "arm",
+        nameVi: "Thần kinh nách & Thần kinh cơ bì",
+        nameLatin: "Nervus Axillaris & Nervus Musculocutaneus",
+        nameEn: "Axillary & Musculocutaneous Nerves",
+        layer: "nervous",
+        subCategory: "nervous_arm",
+        badge: "Đám Rối Cánh Tay",
+        badgeColor: "bg-amber-500/20 text-amber-300 border-amber-400/30",
+        location: "TK nách chui qua lỗ tứ giác vòng quanh cổ phẫu thuật xương cánh tay; TK cơ bì xuyên qua cơ quạ - cánh tay chạy giữa cơ nhị đầu và cơ cánh tay.",
+        origin: "Bó sau (TK nách, C5-C6) và Bó ngoài (TK cơ bì, C5-C7) của đám rối cánh tay.",
+        insertion: "TK nách vận động cơ delta và cơ tròn bé, cảm giác vùng phù hiệu quân hàm; TK cơ bì vận động 3 cơ cánh tay trước và cảm giác mặt ngoài cẳng tay.",
+        innervation: "Vận động cơ dạng vai chính (delta) và cơ gập khuỷu chính (cơ bì).",
+        action: "Dạng cánh tay, gập cẳng tay và ngửa cẳng tay.",
+        clinical: "Mất cảm giác vùng da hình oval ở mặt ngoài cơ delta ('Vùng phù hiệu quân hàm' - Sergeant's patch) là dấu hiệu chẩn đoán chắc chắn tổn thương thần kinh nách sau chấn thương trật khớp vai hoặc gãy cổ phẫu thuật.",
+        cameraOffset: { x: -0.4, y: 1.6, z: 1.2 },
+        pinPos: { x: -0.32, y: 1.62, z: 0.08 }
       }
+
     };
 
 
     /* =========================================================================
-     * THREE.JS ENGINE & MEDICAL STUDIO ENVIRONMENT
+     * THIẾT LẬP SCENE 3D, CAMERA, LIGHTING & RENDERER
      * ========================================================================= */
     const container = document.getElementById('canvas-container');
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x070b16);
-    scene.fog = new THREE.FogExp2(0x070b16, 0.08);
+    scene.background = new THREE.Color(0x070a12);
+    scene.fog = new THREE.FogExp2(0x070a12, 0.045);
 
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    const DEFAULT_CAMERA_POS = new THREE.Vector3(0, 0.4, 4.8);
-    const DEFAULT_CAMERA_TARGET = new THREE.Vector3(0, 0.1, 0);
-    camera.position.copy(DEFAULT_CAMERA_POS);
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    const DEFAULT_CAMERA_POS_LEG = new THREE.Vector3(0, 0.1, 4.2);
+    const DEFAULT_CAMERA_TARGET_LEG = new THREE.Vector3(0, 0.1, 0);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
-    renderer.setSize(width, height);
+    const DEFAULT_CAMERA_POS_ARM = new THREE.Vector3(-0.35, 0.9, 2.8);
+    const DEFAULT_CAMERA_TARGET_ARM = new THREE.Vector3(-0.35, 0.9, 0);
+
+    let activeRegion = 'leg'; // Mặc định mở Chi Dưới hoặc có thể chuyển Chi Trên
+
+    camera.position.copy(DEFAULT_CAMERA_POS_LEG);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
+    renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.25;
-    renderer.localClippingEnabled = true; // Kích hoạt tính năng cắt lát y khoa
+    renderer.toneMappingExposure = 1.15;
+    renderer.localClippingEnabled = true;
     container.appendChild(renderer.domElement);
 
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.maxDistance = 8.5;
-    controls.minDistance = 0.6;
-    controls.target.copy(DEFAULT_CAMERA_TARGET);
-    controls.autoRotate = false;
-    controls.autoRotateSpeed = 0.8;
+    controls.maxDistance = 8.0;
+    controls.minDistance = 0.3;
+    controls.target.copy(DEFAULT_CAMERA_TARGET_LEG);
+    controls.maxPolarAngle = Math.PI * 0.88;
 
-    // Medical Lighting
-    const ambientLight = new THREE.AmbientLight(0xdbeafe, 0.9);
-    scene.add(ambientLight);
-
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
-    keyLight.position.set(4, 7, 5);
+    // Chiếu sáng y khoa (Medical Studio 3-Point Lighting)
+    const keyLight = new THREE.DirectionalLight(0xfff7ed, 1.4);
+    keyLight.position.set(3, 4, 3.5);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 2048;
     keyLight.shadow.mapSize.height = 2048;
-    keyLight.shadow.bias = -0.0001;
+    keyLight.shadow.camera.near = 0.5;
+    keyLight.shadow.camera.far = 15;
+    keyLight.shadow.bias = -0.0005;
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.7);
-    fillLight.position.set(-4, 3, 2);
+    const fillLight = new THREE.DirectionalLight(0xbae6fd, 0.7);
+    fillLight.position.set(-3.5, 2, 2.5);
     scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0x7dd3fc, 1.3);
-    rimLight.position.set(0, 4, -4);
+    const rimLight = new THREE.DirectionalLight(0x38bdf8, 1.1);
+    rimLight.position.set(0, 3, -4);
     scene.add(rimLight);
 
-    // Grid Floor
-    const grid = new THREE.GridHelper(8, 20, 0x0284c7, 0x1e293b);
-    grid.position.y = -2.5;
-    grid.material.opacity = 0.35;
-    grid.material.transparent = true;
-    scene.add(grid);
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x0f172a, 0.5);
+    scene.add(hemiLight);
 
+    // Sàn bóng đổ mờ
     const shadowFloor = new THREE.Mesh(
-      new THREE.PlaneGeometry(10, 10),
-      new THREE.ShadowMaterial({ opacity: 0.35 })
+      new THREE.PlaneGeometry(12, 12),
+      new THREE.ShadowMaterial({ opacity: 0.28 })
     );
     shadowFloor.rotation.x = -Math.PI / 2;
     shadowFloor.position.y = -2.501;
     shadowFloor.receiveShadow = true;
     scene.add(shadowFloor);
 
-    // Layer Groups
+    // =========================================================================
+    // LAYER GROUPS CHO CHI DƯỚI (LEG) VÀ CHI TRÊN (ARM)
+    // =========================================================================
     const layerGroups = {
       skeletal: new THREE.Group(),
       ligaments: new THREE.Group(),
@@ -1407,10 +2048,23 @@
       lymphatic: new THREE.Group(),
       integumentary: new THREE.Group()
     };
-
     const legRoot = new THREE.Group();
     Object.values(layerGroups).forEach(group => legRoot.add(group));
     scene.add(legRoot);
+
+    const armLayerGroups = {
+      skeletal: new THREE.Group(),
+      ligaments: new THREE.Group(),
+      muscular: new THREE.Group(),
+      cardiovascular: new THREE.Group(),
+      nervous: new THREE.Group(),
+      lymphatic: new THREE.Group(),
+      integumentary: new THREE.Group()
+    };
+    const armRoot = new THREE.Group();
+    Object.values(armLayerGroups).forEach(group => armRoot.add(group));
+    scene.add(armRoot);
+    armRoot.visible = false; // Mặc định ẩn Chi Trên lúc đầu
 
     const interactiveObjects = [];
 
@@ -2593,6 +3247,764 @@
     }
 
 
+
+    function buildProceduralArmAnatomy(armRoot, armGroups) {
+      if (!armGroups) {
+        armGroups = {
+          skeletal: new THREE.Group(),
+          ligaments: new THREE.Group(),
+          muscular: new THREE.Group(),
+          cardiovascular: new THREE.Group(),
+          nervous: new THREE.Group(),
+          lymphatic: new THREE.Group(),
+          integumentary: new THREE.Group()
+        };
+        for (const key in armGroups) {
+          armRoot.add(armGroups[key]);
+        }
+      }
+
+      // =======================================================================
+      // 1. HỆ XƯƠNG CHI TRÊN (SKELETAL SYSTEM)
+      // =======================================================================
+      const skGrp = armGroups.skeletal;
+
+      // --- 1.1 Xương đòn (Clavicle - Đường cong chữ S đặc trưng) ---
+      const clavicleCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.05, 1.84, 0.16),  // Đầu ức (Sternal end)
+        new THREE.Vector3(-0.16, 1.86, 0.22),  // Uốn lồi ra trước 2/3 trong
+        new THREE.Vector3(-0.28, 1.87, 0.18),  // Điểm chuyển tiếp
+        new THREE.Vector3(-0.38, 1.88, 0.08),  // Uốn lõm 1/3 ngoài
+        new THREE.Vector3(-0.44, 1.88, -0.02)  // Đầu cùng vai (Acromial end)
+      ]);
+      const clavicleGeo = new THREE.TubeGeometry(clavicleCurve, 32, 0.038, 16, false);
+      const clavicleMesh = new THREE.Mesh(clavicleGeo, Materials.bone);
+      registerInteractiveMesh(clavicleMesh, "clavicle", "skeletal");
+      skGrp.add(clavicleMesh);
+
+      // --- 1.2 Xương vai (Scapula - Bản dẹt, Gai vai, Mỏm cùng vai, Mỏm quạ, Ổ chảo) ---
+      const scapulaGroup = new THREE.Group();
+      
+      // Bản xương vai (Body of Scapula)
+      const scapulaShape = new THREE.Shape();
+      scapulaShape.moveTo(-0.18, 1.82); // Góc trên
+      scapulaShape.lineTo(-0.16, 1.48); // Bờ trong (vertebral border)
+      scapulaShape.lineTo(-0.24, 1.34); // Góc dưới (inferior angle)
+      scapulaShape.lineTo(-0.38, 1.68); // Bờ ngoài (axillary border)
+      scapulaShape.lineTo(-0.34, 1.80); // Bờ trên
+
+      const scapulaGeo = new THREE.ExtrudeGeometry(scapulaShape, {
+        depth: 0.035,
+        bevelEnabled: true,
+        bevelSegments: 4,
+        steps: 1,
+        bevelSize: 0.02,
+        bevelThickness: 0.02
+      });
+      const scapulaBody = new THREE.Mesh(scapulaGeo, Materials.bone);
+      scapulaBody.position.set(0, 0, -0.16);
+      scapulaBody.rotation.y = 0.15;
+      scapulaGroup.add(scapulaBody);
+
+      // Gai vai & Mỏm cùng vai (Spine of Scapula & Acromion)
+      const spineCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.17, 1.76, -0.15),
+        new THREE.Vector3(-0.28, 1.82, -0.12),
+        new THREE.Vector3(-0.40, 1.87, -0.06),
+        new THREE.Vector3(-0.45, 1.88, 0.02) // Acromion
+      ]);
+      const spineMesh = new THREE.Mesh(new THREE.TubeGeometry(spineCurve, 20, 0.036, 12, false), Materials.bone);
+      scapulaGroup.add(spineMesh);
+
+      // Mỏm quạ (Coracoid process - nhô ra trước như mỏ chim)
+      const coracoidCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.36, 1.80, -0.05),
+        new THREE.Vector3(-0.34, 1.83, 0.06),
+        new THREE.Vector3(-0.31, 1.81, 0.12)
+      ]);
+      const coracoidMesh = new THREE.Mesh(new THREE.TubeGeometry(coracoidCurve, 16, 0.026, 10, false), Materials.bone);
+      scapulaGroup.add(coracoidMesh);
+
+      // Ổ chảo (Glenoid Fossa)
+      const glenoidMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.04, 20), Materials.bone);
+      glenoidMesh.position.set(-0.39, 1.76, -0.04);
+      glenoidMesh.rotation.set(0, 0, 1.2);
+      scapulaGroup.add(glenoidMesh);
+
+      registerInteractiveMesh(scapulaBody, "scapula", "skeletal");
+      registerInteractiveMesh(spineMesh, "scapula", "skeletal");
+      registerInteractiveMesh(coracoidMesh, "scapula", "skeletal");
+      registerInteractiveMesh(glenoidMesh, "scapula", "skeletal");
+      skGrp.add(scapulaGroup);
+
+      // --- 1.3 Xương cánh tay (Humerus) ---
+      const humerusGroup = new THREE.Group();
+
+      // Chỏm xương cánh tay (Humeral Head - 1/3 hình cầu hướng vào trong)
+      const humerusHead = new THREE.Mesh(new THREE.SphereGeometry(0.125, 24, 24), Materials.bone);
+      humerusHead.position.set(-0.36, 1.75, -0.02);
+      humerusGroup.add(humerusHead);
+
+      // Củ lớn & Củ bé (Greater & Lesser Tubercles, Rãnh gian củ)
+      const greaterTubercle = new THREE.Mesh(new THREE.SphereGeometry(0.065, 16, 16), Materials.bone);
+      greaterTubercle.position.set(-0.46, 1.76, 0.01);
+      const lesserTubercle = new THREE.Mesh(new THREE.SphereGeometry(0.05, 14, 14), Materials.bone);
+      lesserTubercle.position.set(-0.38, 1.72, 0.08);
+      humerusGroup.add(greaterTubercle, lesserTubercle);
+
+      // Thân xương cánh tay (Shaft of Humerus)
+      const humerusShaftCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.41, 1.68, 0.0),
+        new THREE.Vector3(-0.40, 1.48, 0.01),
+        new THREE.Vector3(-0.38, 1.28, 0.0),
+        new THREE.Vector3(-0.35, 1.08, -0.01)
+      ]);
+      const humerusShaftGeo = new THREE.TubeGeometry(humerusShaftCurve, 32, 0.062, 18, false);
+      const humerusShaft = new THREE.Mesh(humerusShaftGeo, Materials.bone);
+      humerusGroup.add(humerusShaft);
+
+      // Đầu dưới: Lồi cầu (Capitulum), Ròng rọc (Trochlea), Mỏm trên lồi cầu trong & ngoài
+      const distalHumerus = new THREE.Group();
+      distalHumerus.position.set(-0.35, 1.04, -0.01);
+
+      // Ròng rọc (Trochlea - hình ròng rọc khớp mỏm vẹt/khuỷu)
+      const trochleaMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.055, 0.08, 16), Materials.bone);
+      trochleaMesh.rotation.z = Math.PI / 2;
+      trochleaMesh.position.set(0.04, 0, 0);
+
+      // Lồi cầu (Capitulum - hình bán cầu tròn khớp chỏm quay)
+      const capitulumMesh = new THREE.Mesh(new THREE.SphereGeometry(0.058, 16, 16), Materials.bone);
+      capitulumMesh.position.set(-0.05, -0.01, 0.02);
+
+      // Mỏm trên lồi cầu trong (Medial Epicondyle - gờ nhô lớn có rãnh TK trụ phía sau)
+      const medialEpicondyle = new THREE.Mesh(new THREE.SphereGeometry(0.048, 12, 12), Materials.bone);
+      medialEpicondyle.position.set(0.11, 0.03, -0.02);
+
+      // Mỏm trên lồi cầu ngoài (Lateral Epicondyle)
+      const lateralEpicondyle = new THREE.Mesh(new THREE.SphereGeometry(0.042, 12, 12), Materials.bone);
+      lateralEpicondyle.position.set(-0.11, 0.02, 0);
+
+      distalHumerus.add(trochleaMesh, capitulumMesh, medialEpicondyle, lateralEpicondyle);
+      humerusGroup.add(distalHumerus);
+
+      registerInteractiveMesh(humerusHead, "humerus", "skeletal");
+      registerInteractiveMesh(greaterTubercle, "humerus", "skeletal");
+      registerInteractiveMesh(humerusShaft, "humerus", "skeletal");
+      registerInteractiveMesh(trochleaMesh, "humerus", "skeletal");
+      registerInteractiveMesh(capitulumMesh, "humerus", "skeletal");
+      registerInteractiveMesh(medialEpicondyle, "humerus", "skeletal");
+      skGrp.add(humerusGroup);
+
+      // --- 1.4 Xương quay (Radius - Nằm ngoài, xoay sấp ngửa) ---
+      const radiusGroup = new THREE.Group();
+
+      // Chỏm quay (Radial Head - đĩa lõm tiếp xúc lồi cầu)
+      const radialHead = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.05, 0.045, 18), Materials.bone);
+      radialHead.position.set(-0.41, 0.99, 0.01);
+      radiusGroup.add(radialHead);
+
+      // Củ quay (Radial tuberosity cho gân nhị đầu)
+      const radialTuberosity = new THREE.Mesh(new THREE.SphereGeometry(0.036, 12, 12), Materials.bone);
+      radialTuberosity.position.set(-0.38, 0.92, 0.03);
+      radiusGroup.add(radialTuberosity);
+
+      // Thân xương quay (cong lồi ra ngoài)
+      const radiusShaftCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.41, 0.96, 0.01),
+        new THREE.Vector3(-0.43, 0.78, 0.02),
+        new THREE.Vector3(-0.45, 0.58, 0.03),
+        new THREE.Vector3(-0.44, 0.38, 0.03),
+        new THREE.Vector3(-0.43, 0.23, 0.03)  // Đầu dưới mở rộng
+      ]);
+      const radiusShaftGeo = new THREE.TubeGeometry(radiusShaftCurve, 28, 0.046, 14, false);
+      const radiusShaft = new THREE.Mesh(radiusShaftGeo, Materials.bone);
+      radiusGroup.add(radiusShaft);
+
+      // Mỏm trâm quay (Styloid process of radius - nhô thấp hơn mỏm trâm trụ 1cm)
+      const radialStyloid = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.07, 12), Materials.bone);
+      radialStyloid.position.set(-0.47, 0.19, 0.03);
+      radialStyloid.rotation.z = 0.2;
+      radiusGroup.add(radialStyloid);
+
+      registerInteractiveMesh(radialHead, "radius", "skeletal");
+      registerInteractiveMesh(radiusShaft, "radius", "skeletal");
+      registerInteractiveMesh(radialStyloid, "radius", "skeletal");
+      skGrp.add(radiusGroup);
+
+      // --- 1.5 Xương trụ (Ulna - Nằm trong, mỏm khuỷu ôm ròng rọc) ---
+      const ulnaGroup = new THREE.Group();
+
+      // Mỏm khuỷu (Olecranon - mỏm dày khỏe phía sau)
+      const olecranonMesh = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.09, 0.08), Materials.bone);
+      olecranonMesh.position.set(-0.31, 1.04, -0.04);
+      ulnaGroup.add(olecranonMesh);
+
+      // Mỏm vẹt (Coronoid process phía trước)
+      const coronoidMesh = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.06, 12), Materials.bone);
+      coronoidMesh.position.set(-0.31, 0.98, 0.02);
+      coronoidMesh.rotation.x = -Math.PI / 4;
+      ulnaGroup.add(coronoidMesh);
+
+      // Thân xương trụ
+      const ulnaShaftCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.31, 0.98, -0.02),
+        new THREE.Vector3(-0.31, 0.78, -0.01),
+        new THREE.Vector3(-0.32, 0.58, 0.0),
+        new THREE.Vector3(-0.33, 0.38, 0.01),
+        new THREE.Vector3(-0.34, 0.24, 0.01)
+      ]);
+      const ulnaShaftGeo = new THREE.TubeGeometry(ulnaShaftCurve, 28, 0.044, 14, false);
+      const ulnaShaft = new THREE.Mesh(ulnaShaftGeo, Materials.bone);
+      ulnaGroup.add(ulnaShaft);
+
+      // Mỏm trâm trụ (Styloid process of ulna)
+      const ulnarStyloid = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.05, 10), Materials.bone);
+      ulnarStyloid.position.set(-0.34, 0.21, -0.01);
+      ulnaGroup.add(ulnarStyloid);
+
+      registerInteractiveMesh(olecranonMesh, "ulna", "skeletal");
+      registerInteractiveMesh(coronoidMesh, "ulna", "skeletal");
+      registerInteractiveMesh(ulnaShaft, "ulna", "skeletal");
+      registerInteractiveMesh(ulnarStyloid, "ulna", "skeletal");
+      skGrp.add(ulnaGroup);
+
+      // --- 1.6 Màng gian cốt cẳng tay (Interosseous Membrane) ---
+      const membraneShape = new THREE.Shape();
+      membraneShape.moveTo(-0.39, 0.90);
+      membraneShape.lineTo(-0.33, 0.90);
+      membraneShape.lineTo(-0.34, 0.28);
+      membraneShape.lineTo(-0.41, 0.28);
+      const membraneGeo = new THREE.ShapeGeometry(membraneShape);
+      const interosseousMesh = new THREE.Mesh(membraneGeo, Materials.fascia);
+      interosseousMesh.position.z = 0.01;
+      registerInteractiveMesh(interosseousMesh, "interosseous_membrane_arm", "ligaments");
+      armGroups.ligaments.add(interosseousMesh);
+
+      // --- 1.7 Khối 8 xương cổ tay (8 Carpal Bones - Vòm cổ tay) ---
+      const carpalGroup = new THREE.Group();
+
+      // Hàng gần: Thuyền (Scaphoid), Nguyệt (Lunate), Tháp (Triquetrum), Đậu (Pisiform)
+      const scaphoidMesh = new THREE.Mesh(new THREE.SphereGeometry(0.038, 14, 14), Materials.bone);
+      scaphoidMesh.position.set(-0.42, 0.18, 0.03); // Nằm dưới mỏm trâm quay, đáy hõm lào
+      scaphoidMesh.scale.set(1.2, 0.8, 0.9);
+
+      const lunateMesh = new THREE.Mesh(new THREE.SphereGeometry(0.035, 14, 14), Materials.bone);
+      lunateMesh.position.set(-0.37, 0.19, 0.02); // Trung tâm hàng gần
+
+      const triquetrumMesh = new THREE.Mesh(new THREE.SphereGeometry(0.032, 12, 12), Materials.bone);
+      triquetrumMesh.position.set(-0.32, 0.18, 0.0);
+
+      const pisiformMesh = new THREE.Mesh(new THREE.SphereGeometry(0.022, 10, 10), Materials.bone);
+      pisiformMesh.position.set(-0.31, 0.16, 0.05); // Nổi phía trước
+
+      // Hàng xa: Thang (Trapezium), Thê (Trapezoid), Cả (Capitate), Móc (Hamate)
+      const trapeziumMesh = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.04, 0.04), Materials.bone);
+      trapeziumMesh.position.set(-0.45, 0.12, 0.04); // Khớp yên ngựa ngón I
+
+      const trapezoidMesh = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.038, 0.035), Materials.bone);
+      trapezoidMesh.position.set(-0.40, 0.13, 0.025);
+
+      const capitateMesh = new THREE.Mesh(new THREE.SphereGeometry(0.042, 14, 14), Materials.bone);
+      capitateMesh.position.set(-0.36, 0.12, 0.015); // Xương lớn nhất ở trung tâm
+
+      const hamateMesh = new THREE.Mesh(new THREE.BoxGeometry(0.042, 0.042, 0.04), Materials.bone);
+      hamateMesh.position.set(-0.32, 0.12, 0.01);
+      // Mỏm móc (Hook of hamate)
+      const hookMesh = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.03, 10), Materials.bone);
+      hookMesh.position.set(-0.32, 0.11, 0.04);
+      hookMesh.rotation.x = -Math.PI / 3;
+
+      carpalGroup.add(scaphoidMesh, lunateMesh, triquetrumMesh, pisiformMesh, trapeziumMesh, trapezoidMesh, capitateMesh, hamateMesh, hookMesh);
+      registerInteractiveMesh(scaphoidMesh, "carpal_bones", "skeletal");
+      registerInteractiveMesh(lunateMesh, "carpal_bones", "skeletal");
+      registerInteractiveMesh(capitateMesh, "carpal_bones", "skeletal");
+      registerInteractiveMesh(hamateMesh, "carpal_bones", "skeletal");
+      skGrp.add(carpalGroup);
+
+      // --- 1.8 5 Xương đốt bàn tay (Metacarpals I - V) & 14 Đốt ngón tay (Phalanges) ---
+      const metacarpalsGroup = new THREE.Group();
+      const phalangesGroup = new THREE.Group();
+
+      // Cấu hình vị trí các tia xương bàn tay
+      const fingerConfigs = [
+        { id: 1, angle: -0.42, base: new THREE.Vector3(-0.46, 0.10, 0.05), len: 0.12, name: 'Thumb' },
+        { id: 2, angle: -0.15, base: new THREE.Vector3(-0.41, 0.09, 0.03), len: 0.16, name: 'Index' },
+        { id: 3, angle: 0.0,   base: new THREE.Vector3(-0.36, 0.09, 0.02), len: 0.17, name: 'Middle' },
+        { id: 4, angle: 0.12,  base: new THREE.Vector3(-0.32, 0.09, 0.015), len: 0.15, name: 'Ring' },
+        { id: 5, angle: 0.28,  base: new THREE.Vector3(-0.28, 0.09, 0.01), len: 0.13, name: 'Little' }
+      ];
+
+      fingerConfigs.forEach(f => {
+        // Xương đốt bàn (Metacarpal)
+        const mcDir = new THREE.Vector3(Math.sin(f.angle), -Math.cos(f.angle), (f.id === 1 ? 0.25 : 0.0)).normalize();
+        const mcEnd = f.base.clone().add(mcDir.clone().multiplyScalar(f.len));
+        
+        const mcCurve = new THREE.LineCurve3(f.base, mcEnd);
+        const mcMesh = new THREE.Mesh(new THREE.TubeGeometry(mcCurve, 10, (f.id === 1 ? 0.026 : 0.021), 10, false), Materials.bone);
+        // Chỏm đốt bàn (Knuckle head)
+        const mcHead = new THREE.Mesh(new THREE.SphereGeometry(0.028, 12, 12), Materials.bone);
+        mcHead.position.copy(mcEnd);
+        metacarpalsGroup.add(mcMesh, mcHead);
+
+        // Các đốt ngón tay (Phalanges)
+        let curPos = mcEnd.clone();
+        const phCount = (f.id === 1 ? 2 : 3); // Ngón cái 2 đốt, các ngón khác 3 đốt
+        const phLens = (f.id === 1 ? [0.08, 0.065] : [0.085, 0.065, 0.045]);
+
+        for (let p = 0; p < phCount; p++) {
+          const phNext = curPos.clone().add(mcDir.clone().multiplyScalar(phLens[p]));
+          const phCurve = new THREE.LineCurve3(curPos, phNext);
+          const phMesh = new THREE.Mesh(new THREE.TubeGeometry(phCurve, 8, 0.018 - p * 0.003, 10, false), Materials.bone);
+          const phJoint = new THREE.Mesh(new THREE.SphereGeometry(0.022 - p * 0.003, 10, 10), Materials.bone);
+          phJoint.position.copy(phNext);
+          
+          phalangesGroup.add(phMesh, phJoint);
+          curPos = phNext;
+        }
+      });
+
+      registerInteractiveMesh(metacarpalsGroup.children[0], "metacarpals_arm", "skeletal");
+      registerInteractiveMesh(phalangesGroup.children[0], "phalanges_arm", "skeletal");
+      skGrp.add(metacarpalsGroup, phalangesGroup);
+
+      // =======================================================================
+      // 2. KHỚP & DÂY CHẰNG (LIGAMENTS & JOINTS)
+      // =======================================================================
+      const ligGrp = armGroups.ligaments;
+
+      // --- 2.1 Khớp vai & Sụn viền ổ chảo (Glenohumeral Joint & Labrum) ---
+      const labrumMesh = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.022, 12, 24), Materials.cartilage);
+      labrumMesh.position.set(-0.39, 1.76, -0.04);
+      labrumMesh.rotation.set(0, 0, 1.2);
+      
+      const shoulderCapsule = new THREE.Mesh(new THREE.SphereGeometry(0.14, 20, 20), Materials.ligament);
+      shoulderCapsule.position.set(-0.38, 1.75, -0.03);
+      shoulderCapsule.scale.set(1.0, 1.1, 0.85);
+
+      registerInteractiveMesh(labrumMesh, "glenohumeral_joint", "ligaments");
+      registerInteractiveMesh(shoulderCapsule, "glenohumeral_joint", "ligaments");
+      ligGrp.add(labrumMesh, shoulderCapsule);
+
+      // --- 2.2 Vòm quạ - cùng vai & Dây chằng quạ - đòn (Coracoacromial Arch) ---
+      const caLigCurve = new THREE.LineCurve3(
+        new THREE.Vector3(-0.33, 1.81, 0.10), // Mỏm quạ
+        new THREE.Vector3(-0.43, 1.88, 0.02)  // Mỏm cùng vai
+      );
+      const caLigMesh = new THREE.Mesh(new THREE.TubeGeometry(caLigCurve, 10, 0.022, 8, false), Materials.tendon);
+      
+      const ccLigCurve = new THREE.LineCurve3(
+        new THREE.Vector3(-0.34, 1.82, 0.06), // Mỏm quạ
+        new THREE.Vector3(-0.36, 1.87, 0.10)  // Xương đòn
+      );
+      const ccLigMesh = new THREE.Mesh(new THREE.TubeGeometry(ccLigCurve, 8, 0.024, 8, false), Materials.tendon);
+
+      registerInteractiveMesh(caLigMesh, "coracoacromial_arch", "ligaments");
+      ligGrp.add(caLigMesh, ccLigMesh);
+
+      // --- 2.3 Khớp khuỷu: Dây chằng vòng quay & Dây chằng bên (Annular, UCL, RCL) ---
+      // Dây chằng vòng quay (Annular ligament - đai ôm quanh chỏm quay)
+      const annularMesh = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.018, 12, 24, Math.PI * 1.6), Materials.ligament);
+      annularMesh.position.set(-0.39, 0.98, 0.01);
+      annularMesh.rotation.x = Math.PI / 2;
+
+      // Dây chằng bên trụ (UCL - Tommy John)
+      const uclCurve = new THREE.LineCurve3(
+        new THREE.Vector3(-0.25, 1.05, -0.02), // Mỏm trên lồi cầu trong
+        new THREE.Vector3(-0.30, 0.97, -0.01)  // Mỏm vẹt/khuỷu
+      );
+      const uclMesh = new THREE.Mesh(new THREE.TubeGeometry(uclCurve, 10, 0.022, 8, false), Materials.tendon);
+
+      // Dây chằng bên quay (RCL)
+      const rclCurve = new THREE.LineCurve3(
+        new THREE.Vector3(-0.45, 1.05, 0.0), // Mỏm trên lồi cầu ngoài
+        new THREE.Vector3(-0.42, 0.98, 0.01) // Hòa vào dây chằng vòng
+      );
+      const rclMesh = new THREE.Mesh(new THREE.TubeGeometry(rclCurve, 10, 0.020, 8, false), Materials.tendon);
+
+      registerInteractiveMesh(annularMesh, "elbow_ligaments", "ligaments");
+      registerInteractiveMesh(uclMesh, "elbow_ligaments", "ligaments");
+      ligGrp.add(annularMesh, uclMesh, rclMesh);
+
+      // --- 2.4 Mạc giữ gân gấp (Flexor Retinaculum / Ống Cổ Tay) ---
+      const carpalTunnelMesh = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.055, 0.025), Materials.tendon);
+      carpalTunnelMesh.position.set(-0.37, 0.16, 0.06);
+      carpalTunnelMesh.rotation.set(0.1, -0.15, 0.12);
+
+      registerInteractiveMesh(carpalTunnelMesh, "carpal_tunnel_retinaculum", "ligaments");
+      ligGrp.add(carpalTunnelMesh);
+
+      // --- 2.5 Cân gan tay (Palmar Aponeurosis) ---
+      const palmarShape = new THREE.Shape();
+      palmarShape.moveTo(-0.37, 0.15); // Đỉnh tiếp nối gân gan tay dài
+      palmarShape.lineTo(-0.44, 0.03); // Tỏa sang mô cái
+      palmarShape.lineTo(-0.29, 0.03); // Tỏa sang mô út
+      const palmarGeo = new THREE.ShapeGeometry(palmarShape);
+      const palmarMesh = new THREE.Mesh(palmarGeo, Materials.fascia);
+      palmarMesh.position.z = 0.055;
+      registerInteractiveMesh(palmarMesh, "palmar_aponeurosis", "ligaments");
+      ligGrp.add(palmarMesh);
+
+      // =======================================================================
+      // 3. HỆ CƠ NÔNG & SÂU (MUSCULAR SYSTEM)
+      // =======================================================================
+      const musGrp = armGroups.muscular;
+
+      // --- 3.1 Cơ Delta (Deltoid - Nông) ---
+      const deltoidCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.46, 1.88, 0.02), // Acromion
+        new THREE.Vector3(-0.56, 1.72, 0.04), // Bụng cơ phồng ngoài
+        new THREE.Vector3(-0.48, 1.54, 0.02),
+        new THREE.Vector3(-0.42, 1.45, 0.01)  // Bám tận lồi củ delta
+      ]);
+      const deltoidGeo = new THREE.TubeGeometry(deltoidCurve, 24, 0.095, 16, false);
+      const deltoidMesh = new THREE.Mesh(deltoidGeo, Materials.muscle);
+      registerInteractiveMesh(deltoidMesh, "deltoid", "muscular", false);
+      musGrp.add(deltoidMesh);
+
+      // --- 3.2 Nhóm cơ Chóp Xoay SITS (Rotator Cuff - Sâu) ---
+      // Supraspinatus (Cơ trên gai)
+      const supraspinatusCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.25, 1.82, -0.12),
+        new THREE.Vector3(-0.35, 1.84, -0.06),
+        new THREE.Vector3(-0.45, 1.78, 0.0) // Luồn dưới acromion tới củ lớn
+      ]);
+      const supraMesh = new THREE.Mesh(new THREE.TubeGeometry(supraspinatusCurve, 16, 0.045, 12, false), Materials.muscle);
+      
+      // Infraspinatus (Cơ dưới gai) & Teres minor (Tròn bé)
+      const infraCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.24, 1.62, -0.14),
+        new THREE.Vector3(-0.35, 1.68, -0.08),
+        new THREE.Vector3(-0.45, 1.74, -0.03)
+      ]);
+      const infraMesh = new THREE.Mesh(new THREE.TubeGeometry(infraCurve, 16, 0.052, 12, false), Materials.muscle);
+
+      // Subscapularis (Cơ dưới vai - mặt trước)
+      const subscapCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.26, 1.64, -0.08),
+        new THREE.Vector3(-0.34, 1.70, 0.02),
+        new THREE.Vector3(-0.38, 1.72, 0.07) // Bám củ bé
+      ]);
+      const subscapMesh = new THREE.Mesh(new THREE.TubeGeometry(subscapCurve, 16, 0.055, 12, false), Materials.muscle);
+
+      registerInteractiveMesh(supraMesh, "rotator_cuff_sits", "muscular", true);
+      registerInteractiveMesh(infraMesh, "rotator_cuff_sits", "muscular", true);
+      registerInteractiveMesh(subscapMesh, "rotator_cuff_sits", "muscular", true);
+      musGrp.add(supraMesh, infraMesh, subscapMesh);
+
+      // --- 3.3 Cơ nhị đầu cánh tay (Biceps Brachii - Nông) ---
+      // Gân đầu dài (Long head tendon)
+      const bicepsLongTendon = new THREE.Mesh(
+        new THREE.TubeGeometry(new THREE.LineCurve3(
+          new THREE.Vector3(-0.38, 1.78, -0.01),
+          new THREE.Vector3(-0.39, 1.65, 0.06)
+        ), 10, 0.018, 8, false),
+        Materials.tendon
+      );
+      // Gân đầu ngắn (Short head tendon từ mỏm quạ)
+      const bicepsShortTendon = new THREE.Mesh(
+        new THREE.LineCurve3(
+          new THREE.Vector3(-0.31, 1.81, 0.12),
+          new THREE.Vector3(-0.36, 1.65, 0.08)
+        ) ? new THREE.TubeGeometry(new THREE.LineCurve3(
+          new THREE.Vector3(-0.31, 1.81, 0.12),
+          new THREE.Vector3(-0.36, 1.65, 0.08)
+        ), 10, 0.018, 8, false) : null,
+        Materials.tendon
+      );
+
+      // Bụng cơ nhị đầu (Biceps belly)
+      const bicepsBellyCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.38, 1.65, 0.07),
+        new THREE.Vector3(-0.37, 1.45, 0.12),
+        new THREE.Vector3(-0.36, 1.25, 0.10),
+        new THREE.Vector3(-0.36, 1.08, 0.06)
+      ]);
+      const bicepsBellyGeo = new THREE.TubeGeometry(bicepsBellyCurve, 24, 0.088, 16, false);
+      const bicepsMesh = new THREE.Mesh(bicepsBellyGeo, Materials.muscle);
+
+      // Gân bám tận củ quay & Trướng cân nhị đầu
+      const bicepsDistalTendon = new THREE.Mesh(
+        new THREE.TubeGeometry(new THREE.LineCurve3(
+          new THREE.Vector3(-0.36, 1.08, 0.06),
+          new THREE.Vector3(-0.38, 0.94, 0.03)
+        ), 10, 0.024, 8, false),
+        Materials.tendon
+      );
+
+      registerInteractiveMesh(bicepsMesh, "biceps_brachii", "muscular", false);
+      registerInteractiveMesh(bicepsDistalTendon, "biceps_brachii", "muscular", false);
+      musGrp.add(bicepsLongTendon, bicepsShortTendon, bicepsMesh, bicepsDistalTendon);
+
+      // --- 3.4 Cơ cánh tay (Brachialis - Sâu) ---
+      const brachialisCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.37, 1.38, 0.03),
+        new THREE.Vector3(-0.36, 1.20, 0.05),
+        new THREE.Vector3(-0.33, 1.04, 0.04),
+        new THREE.Vector3(-0.31, 0.98, 0.02) // Mỏm vẹt xương trụ
+      ]);
+      const brachialisGeo = new THREE.TubeGeometry(brachialisCurve, 20, 0.072, 14, false);
+      const brachialisMesh = new THREE.Mesh(brachialisGeo, Materials.muscle);
+      registerInteractiveMesh(brachialisMesh, "brachialis", "muscular", true);
+      musGrp.add(brachialisMesh);
+
+      // --- 3.5 Cơ tam đầu cánh tay (Triceps Brachii - Nông & Sau) ---
+      const tricepsCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.35, 1.68, -0.08), // Đầu dài
+        new THREE.Vector3(-0.36, 1.48, -0.11), // Bụng cơ phồng sau
+        new THREE.Vector3(-0.34, 1.25, -0.09),
+        new THREE.Vector3(-0.31, 1.06, -0.05)  // Gân bám mỏm khuỷu
+      ]);
+      const tricepsGeo = new THREE.TubeGeometry(tricepsCurve, 24, 0.092, 16, false);
+      const tricepsMesh = new THREE.Mesh(tricepsGeo, Materials.muscle);
+      registerInteractiveMesh(tricepsMesh, "triceps_brachii", "muscular", false);
+      musGrp.add(tricepsMesh);
+
+      // --- 3.6 Cơ cánh tay - quay (Brachioradialis - Nông) ---
+      const brachioradialisCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.43, 1.15, 0.01),
+        new THREE.Vector3(-0.46, 0.95, 0.05),
+        new THREE.Vector3(-0.47, 0.72, 0.06),
+        new THREE.Vector3(-0.46, 0.45, 0.05),
+        new THREE.Vector3(-0.47, 0.22, 0.03) // Mỏm trâm quay
+      ]);
+      const brMesh = new THREE.Mesh(new THREE.TubeGeometry(brachioradialisCurve, 24, 0.058, 14, false), Materials.muscle);
+      registerInteractiveMesh(brMesh, "brachioradialis", "muscular", false);
+      musGrp.add(brMesh);
+
+      // --- 3.7 Nhóm cơ gấp cẳng tay nông (Forearm Flexors Superficial) ---
+      const flexSupCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.26, 1.04, -0.01), // Mỏm trên lồi cầu trong
+        new THREE.Vector3(-0.32, 0.82, 0.07),  // Pronator teres & FCR
+        new THREE.Vector3(-0.36, 0.58, 0.08),
+        new THREE.Vector3(-0.38, 0.26, 0.07)   // Đi vào cổ tay
+      ]);
+      const flexSupMesh = new THREE.Mesh(new THREE.TubeGeometry(flexSupCurve, 24, 0.068, 14, false), Materials.muscle);
+      registerInteractiveMesh(flexSupMesh, "forearm_flexors_superficial", "muscular", false);
+      musGrp.add(flexSupMesh);
+
+      // --- 3.8 Cơ gấp các ngón nông (Flexor Digitorum Superficialis - FDS) ---
+      const fdsCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.32, 0.88, 0.04),
+        new THREE.Vector3(-0.35, 0.65, 0.06),
+        new THREE.Vector3(-0.37, 0.40, 0.06),
+        new THREE.Vector3(-0.37, 0.18, 0.05) // Qua ống cổ tay
+      ]);
+      const fdsMesh = new THREE.Mesh(new THREE.TubeGeometry(fdsCurve, 20, 0.062, 12, false), Materials.muscle);
+      registerInteractiveMesh(fdsMesh, "flexor_digitorum_superficialis", "muscular", false);
+      musGrp.add(fdsMesh);
+
+      // --- 3.9 Nhóm cơ gấp cẳng tay sâu (Forearm Flexors Deep - Sâu) ---
+      const flexDeepCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.33, 0.80, 0.01),
+        new THREE.Vector3(-0.34, 0.60, 0.03),
+        new THREE.Vector3(-0.35, 0.38, 0.03),
+        new THREE.Vector3(-0.36, 0.20, 0.03)
+      ]);
+      const flexDeepMesh = new THREE.Mesh(new THREE.TubeGeometry(flexDeepCurve, 20, 0.058, 12, false), Materials.muscle);
+      registerInteractiveMesh(flexDeepMesh, "forearm_flexors_deep", "muscular", true);
+      musGrp.add(flexDeepMesh);
+
+      // --- 3.10 Nhóm cơ duỗi cẳng tay nông (Forearm Extensors Superficial) ---
+      const extSupCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.44, 1.05, -0.01), // Mỏm trên lồi cầu ngoài
+        new THREE.Vector3(-0.43, 0.82, -0.06), // ECRL, ECRB, ED
+        new THREE.Vector3(-0.40, 0.58, -0.06),
+        new THREE.Vector3(-0.38, 0.26, -0.04)  // Mu cổ tay
+      ]);
+      const extSupMesh = new THREE.Mesh(new THREE.TubeGeometry(extSupCurve, 24, 0.066, 14, false), Materials.muscle);
+      registerInteractiveMesh(extSupMesh, "forearm_extensors_superficial", "muscular", false);
+      musGrp.add(extSupMesh);
+
+      // --- 3.11 Nhóm cơ duỗi sâu & Hõm lào giải phẫu (Deep Extensors & Snuffbox - Sâu) ---
+      const extDeepCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.34, 0.70, -0.03),
+        new THREE.Vector3(-0.38, 0.52, -0.02),
+        new THREE.Vector3(-0.42, 0.34, 0.01),
+        new THREE.Vector3(-0.45, 0.18, 0.04)  // Gốc ngón cái (APL, EPB, EPL)
+      ]);
+      const extDeepMesh = new THREE.Mesh(new THREE.TubeGeometry(extDeepCurve, 20, 0.048, 12, false), Materials.muscle);
+      registerInteractiveMesh(extDeepMesh, "forearm_extensors_deep", "muscular", true);
+      musGrp.add(extDeepMesh);
+
+      // --- 3.12 Cơ nội tại bàn tay: Mô cái & Mô út (Intrinsic Hand Muscles) ---
+      // Mô cái (Thenar eminence)
+      const thenarMesh = new THREE.Mesh(new THREE.SphereGeometry(0.048, 16, 16), Materials.muscle);
+      thenarMesh.position.set(-0.43, 0.06, 0.06);
+      thenarMesh.scale.set(1.1, 1.4, 0.85);
+
+      // Mô út (Hypothenar eminence)
+      const hypothenarMesh = new THREE.Mesh(new THREE.SphereGeometry(0.042, 14, 14), Materials.muscle);
+      hypothenarMesh.position.set(-0.30, 0.06, 0.04);
+      hypothenarMesh.scale.set(0.9, 1.4, 0.8);
+
+      registerInteractiveMesh(thenarMesh, "hand_intrinsic_muscles", "muscular", false);
+      registerInteractiveMesh(hypothenarMesh, "hand_intrinsic_muscles", "muscular", false);
+      musGrp.add(thenarMesh, hypothenarMesh);
+
+      // =======================================================================
+      // 4. HỆ MẠCH MÁU CHI TRÊN (VASCULAR SYSTEM)
+      // =======================================================================
+      const vasGrp = armGroups.cardiovascular;
+
+      // --- 4.1 Động mạch nách & Động mạch cánh tay (Brachial Artery) ---
+      const brachialCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.30, 1.76, 0.04), // ĐM nách
+        new THREE.Vector3(-0.32, 1.55, 0.05),
+        new THREE.Vector3(-0.32, 1.35, 0.05), // Bờ trong cơ nhị đầu
+        new THREE.Vector3(-0.31, 1.15, 0.04),
+        new THREE.Vector3(-0.33, 1.02, 0.04)  // Hố khuỷu (bắt mạch / đo HA)
+      ]);
+      const brachialGeo = new THREE.TubeGeometry(brachialCurve, 28, 0.024, 12, false);
+      const brachialMesh = new THREE.Mesh(brachialGeo, Materials.artery);
+      registerInteractiveMesh(brachialMesh, "brachial_artery", "cardiovascular");
+      vasGrp.add(brachialMesh);
+
+      // --- 4.2 Động mạch quay, Động mạch trụ & Cung gan tay ---
+      // Động mạch quay (Radial Artery - rãnh mạch quay & hõm lào)
+      const radialArtCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.33, 1.00, 0.04),
+        new THREE.Vector3(-0.38, 0.80, 0.05),
+        new THREE.Vector3(-0.42, 0.55, 0.05),
+        new THREE.Vector3(-0.43, 0.28, 0.05), // Rãnh mạch quay
+        new THREE.Vector3(-0.45, 0.16, 0.03), // Đáy hõm lào
+        new THREE.Vector3(-0.40, 0.08, 0.03)  // Cung gan tay sâu
+      ]);
+      const radialArtMesh = new THREE.Mesh(new THREE.TubeGeometry(radialArtCurve, 24, 0.018, 10, false), Materials.artery);
+
+      // Động mạch trụ (Ulnar Artery - kênh Guyon & cung gan tay nông)
+      const ulnarArtCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.33, 1.00, 0.04),
+        new THREE.Vector3(-0.30, 0.80, 0.02),
+        new THREE.Vector3(-0.29, 0.55, 0.02),
+        new THREE.Vector3(-0.30, 0.28, 0.03),
+        new THREE.Vector3(-0.32, 0.16, 0.05), // Kênh Guyon
+        new THREE.Vector3(-0.35, 0.07, 0.05)  // Cung gan tay nông
+      ]);
+      const ulnarArtMesh = new THREE.Mesh(new THREE.TubeGeometry(ulnarArtCurve, 24, 0.018, 10, false), Materials.artery);
+
+      // Cung động mạch gan tay (Palmar Arches)
+      const archCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.40, 0.08, 0.04),
+        new THREE.Vector3(-0.36, 0.05, 0.05),
+        new THREE.Vector3(-0.32, 0.07, 0.05)
+      ]);
+      const archMesh = new THREE.Mesh(new THREE.TubeGeometry(archCurve, 12, 0.016, 8, false), Materials.artery);
+
+      registerInteractiveMesh(radialArtMesh, "radial_ulnar_arteries", "cardiovascular");
+      registerInteractiveMesh(ulnarArtMesh, "radial_ulnar_arteries", "cardiovascular");
+      vasGrp.add(radialArtMesh, ulnarArtMesh, archMesh);
+
+      // --- 4.3 Tĩnh mạch nông (Đầu, Nền, Giữa khuỷu) ---
+      // Tĩnh mạch đầu (Cephalic vein)
+      const cephalicCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.45, 0.25, 0.06),
+        new THREE.Vector3(-0.46, 0.60, 0.07),
+        new THREE.Vector3(-0.44, 0.98, 0.07), // Phía ngoài hố khuỷu
+        new THREE.Vector3(-0.44, 1.35, 0.10), // Rãnh delta ngực
+        new THREE.Vector3(-0.38, 1.72, 0.12)
+      ]);
+      const cephalicMesh = new THREE.Mesh(new THREE.TubeGeometry(cephalicCurve, 24, 0.019, 10, false), Materials.vein);
+
+      // Tĩnh mạch nền (Basilic vein)
+      const basilicCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.28, 0.25, 0.05),
+        new THREE.Vector3(-0.27, 0.60, 0.05),
+        new THREE.Vector3(-0.28, 0.98, 0.06), // Phía trong hố khuỷu
+        new THREE.Vector3(-0.29, 1.35, 0.06)
+      ]);
+      const basilicMesh = new THREE.Mesh(new THREE.TubeGeometry(basilicCurve, 20, 0.019, 10, false), Materials.vein);
+
+      // Tĩnh mạch giữa khuỷu (Median cubital vein - lấy máu xét nghiệm)
+      const medianCubitalCurve = new THREE.LineCurve3(
+        new THREE.Vector3(-0.42, 0.96, 0.07), // Từ TM đầu
+        new THREE.Vector3(-0.29, 1.02, 0.06)  // Đến TM nền
+      );
+      const medianCubitalMesh = new THREE.Mesh(new THREE.TubeGeometry(medianCubitalCurve, 10, 0.021, 10, false), Materials.vein);
+
+      registerInteractiveMesh(medianCubitalMesh, "arm_superficial_veins", "cardiovascular");
+      registerInteractiveMesh(cephalicMesh, "arm_superficial_veins", "cardiovascular");
+      vasGrp.add(cephalicMesh, basilicMesh, medianCubitalMesh);
+
+      // =======================================================================
+      // 5. HỆ THẦN KINH CHI TRÊN (NERVOUS SYSTEM)
+      // =======================================================================
+      const nerGrp = armGroups.nervous;
+
+      // --- 5.1 Thần kinh quay (Radial Nerve - Rãnh xoắn xương cánh tay -> Bàn tay rủ cổ cò) ---
+      const radialNrvCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.32, 1.72, -0.04), // Bó sau
+        new THREE.Vector3(-0.36, 1.48, -0.08), // Vòng vào rãnh xoắn mặt sau
+        new THREE.Vector3(-0.41, 1.25, -0.04), // Chui qua vách gian cơ ngoài
+        new THREE.Vector3(-0.43, 1.06, 0.03),  // Trước mỏm trên lồi cầu ngoài
+        new THREE.Vector3(-0.44, 0.80, 0.04),
+        new THREE.Vector3(-0.45, 0.50, 0.04),
+        new THREE.Vector3(-0.46, 0.25, 0.04)   // Nhánh nông tới mu hõm lào
+      ]);
+      const radialNrvGeo = new THREE.TubeGeometry(radialNrvCurve, 32, 0.018, 10, false);
+      const radialNrvMesh = new THREE.Mesh(radialNrvGeo, Materials.nerve);
+      registerInteractiveMesh(radialNrvMesh, "radial_nerve", "nervous");
+      nerGrp.add(radialNrvMesh);
+
+      // --- 5.2 Thần kinh giữa (Median Nerve - Đi cùng ĐM cánh tay -> Ống cổ tay -> Bàn tay khỉ) ---
+      const medianNrvCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.31, 1.72, 0.03), // Hợp bởi bó ngoài & trong
+        new THREE.Vector3(-0.32, 1.42, 0.04),
+        new THREE.Vector3(-0.32, 1.15, 0.04),
+        new THREE.Vector3(-0.33, 1.02, 0.04), // Hố khuỷu
+        new THREE.Vector3(-0.34, 0.78, 0.05), // Giữa cẳng tay
+        new THREE.Vector3(-0.35, 0.45, 0.05),
+        new THREE.Vector3(-0.36, 0.18, 0.05), // CHUI QUA ỐNG CỔ TAY
+        new THREE.Vector3(-0.38, 0.05, 0.06)  // Nhánh vận động mô cái
+      ]);
+      const medianNrvGeo = new THREE.TubeGeometry(medianNrvCurve, 32, 0.018, 10, false);
+      const medianNrvMesh = new THREE.Mesh(medianNrvGeo, Materials.nerve);
+      registerInteractiveMesh(medianNrvMesh, "median_nerve", "nervous");
+      nerGrp.add(medianNrvMesh);
+
+      // --- 5.3 Thần kinh trụ (Ulnar Nerve - Sau mỏm trên lồi cầu trong -> Funny bone -> Vuốt trụ) ---
+      const ulnarNrvCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.29, 1.72, 0.01), // Bó trong
+        new THREE.Vector3(-0.28, 1.40, 0.0),
+        new THREE.Vector3(-0.26, 1.15, -0.02),
+        new THREE.Vector3(-0.25, 1.04, -0.03), // RÃNH TK TRỤ (FUNNY BONE)
+        new THREE.Vector3(-0.27, 0.80, -0.01),
+        new THREE.Vector3(-0.28, 0.50, 0.01),
+        new THREE.Vector3(-0.30, 0.22, 0.02),
+        new THREE.Vector3(-0.31, 0.14, 0.04),  // Kênh Guyon
+        new THREE.Vector3(-0.30, 0.02, 0.04)   // Nhánh ngón IV & V
+      ]);
+      const ulnarNrvGeo = new THREE.TubeGeometry(ulnarNrvCurve, 32, 0.018, 10, false);
+      const ulnarNrvMesh = new THREE.Mesh(ulnarNrvGeo, Materials.nerve);
+      registerInteractiveMesh(ulnarNrvMesh, "ulnar_nerve", "nervous");
+      nerGrp.add(ulnarNrvMesh);
+
+      // --- 5.4 Thần kinh nách & Thần kinh cơ bì (Axillary & Musculocutaneous) ---
+      // TK nách (vòng qua cổ phẫu thuật)
+      const axillaryNrvCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.34, 1.70, -0.02),
+        new THREE.Vector3(-0.42, 1.68, -0.06),
+        new THREE.Vector3(-0.48, 1.66, 0.0) // Vòng quanh cổ phẫu thuật tới cơ delta
+      ]);
+      const axillaryMesh = new THREE.Mesh(new THREE.TubeGeometry(axillaryNrvCurve, 16, 0.018, 8, false), Materials.nerve);
+
+      // TK cơ bì (xuyên qua cơ quạ cánh tay)
+      const musculoNrvCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.33, 1.72, 0.06),
+        new THREE.Vector3(-0.35, 1.55, 0.08),
+        new THREE.Vector3(-0.38, 1.25, 0.08)
+      ]);
+      const musculoMesh = new THREE.Mesh(new THREE.TubeGeometry(musculoNrvCurve, 16, 0.016, 8, false), Materials.nerve);
+
+      registerInteractiveMesh(axillaryMesh, "axillary_musculocutaneous_nerves", "nervous");
+      nerGrp.add(axillaryMesh, musculoMesh);
+    }
+
+    function buildAllAnatomy() {
+      buildProceduralAnatomy(); // Builds Leg into legRoot & layerGroups
+      buildProceduralArmAnatomy(armRoot, armLayerGroups); // Builds Arm into armRoot & armLayerGroups
+    }
+
+
     /* =========================================================================
      * 3D PINS & CALLOUT LABELS ENGINE
      * ========================================================================= */
@@ -2606,6 +4018,8 @@
 
       Object.values(ANATOMY_DATABASE).forEach(item => {
         if (!item.pinPos) return;
+        const itemRegion = item.region || 'leg';
+        if (itemRegion !== activeRegion) return;
 
         const pinDiv = document.createElement('div');
         pinDiv.className = 'pin-marker';
@@ -2669,7 +4083,7 @@
      * ========================================================================= */
     const DISSECTION_LABELS = [
       "Lớp 0: Toàn bộ (Khung hoàn chỉnh)",
-      "Lớp 1: Cân mạc & Dải chậu chày",
+      "Lớp 1: Cân mạc & Dải liên kết",
       "Lớp 2: Chỉ nhóm cơ nông (Ẩn cơ sâu)",
       "Lớp 3: Bóc cơ nông lộ cơ sâu",
       "Lớp 4: Mạch máu & Thần kinh",
@@ -2715,28 +4129,27 @@
           });
           break;
         case 4:
-          // Mạch máu & Thần kinh
-          syncAllLayers(true, true, false, true, true, false, false);
+          syncAllLayers(true, false, false, true, true, false, false);
           break;
         case 5:
-          // Dây chằng và sụn khớp (Ẩn cơ)
           syncAllLayers(true, true, false, false, false, false, false);
           break;
         case 6:
-          // Chỉ riêng hệ xương
           syncAllLayers(true, false, false, false, false, false, false);
           break;
       }
+      updateActiveLayersBadge();
+      update3DPins();
     }
 
-    function syncAllLayers(skeletal, ligaments, muscular, cardio, nervous, lymph, skin) {
+    function syncAllLayers(sk, lig, mus, vas, ner, lym, skin) {
       const state = {
-        skeletal: skeletal,
-        ligaments: ligaments,
-        muscular: muscular,
-        cardiovascular: cardio,
-        nervous: nervous,
-        lymphatic: lymph,
+        skeletal: sk,
+        ligaments: lig,
+        muscular: mus,
+        cardiovascular: vas,
+        nervous: ner,
+        lymphatic: lym,
         integumentary: skin
       };
 
@@ -2748,9 +4161,9 @@
     }
 
     /* =========================================================================
-     * MEDICAL QUIZ / FLASHCARD ENGINE (CHẾ ĐỘ ÔN THI Y KHOA)
+     * BỘ CÂU HỎI THI Y KHOA (LEG & ARM CLINICAL QUIZ POOL)
      * ========================================================================= */
-    const QUIZ_QUESTIONS = [
+    const LEG_QUIZ_QUESTIONS = [
       {
         targetId: "acl",
         question: "1. Hãy nhấp vào Dây chằng chéo trước (ACL) - cấu trúc thường bị đứt trong chấn thương xoắn gối thể thao (dấu hiệu ngăn kéo trước dương tính)?",
@@ -2813,9 +4226,76 @@
       }
     ];
 
+    const ARM_QUIZ_QUESTIONS = [
+      {
+        targetId: "radial_nerve",
+        question: "1. Hãy nhấp vào Thần kinh quay - tổn thương trong gãy thân xương cánh tay hoặc tì đè gây hội chứng 'Bàn tay rủ cổ cò' (Wrist drop)?",
+        hint: "Dây thần kinh màu vàng đi xoắn quanh rãnh xoắn ở mặt sau xương cánh tay xuống cẳng tay.",
+        explanation: "Chính xác! Thần kinh quay chi phối toàn bộ cơ duỗi cánh tay và cẳng tay. Khi bị liệt, bệnh nhân mất hoàn toàn khả năng duỗi cổ tay và các ngón tay."
+      },
+      {
+        targetId: "carpal_bones",
+        question: "2. Hãy chỉ ra Xương thuyền (Scaphoid) nằm dưới đáy hõm lào giải phẫu - xương cổ tay hay bị gãy nhất khi ngã chống tay duỗi?",
+        hint: "Xương cổ tay nằm ngay dưới mỏm trâm quay ở phía ngón tay cái, thuộc hàng gần của khối xương cổ tay.",
+        explanation: "Chính xác! Xương thuyền chiếm >70% các ca gãy xương cổ tay. Do mạch máu nuôi dưỡng đi ngược dòng từ xa về gần nên gãy eo xương thuyền có nguy cơ hoại tử vô mạch cực cao."
+      },
+      {
+        targetId: "carpal_tunnel_retinaculum",
+        question: "3. Hãy chỉ ra Mạc giữ gân gấp (Ống Cổ Tay) - nơi chèn ép Thần kinh giữa gây Hội chứng ống cổ tay và teo mô cái (bàn tay khỉ)?",
+        hint: "Dải xơ trắng ngà bắc ngang vòm cổ tay phía trước tạo thành đường hầm cho 9 gân gấp và dây thần kinh giữa chui qua.",
+        explanation: "Chính xác! Hội chứng ống cổ tay (Carpal Tunnel Syndrome) là bệnh lý chèn ép thần kinh ngoại biên phổ biến nhất thế giới. Dấu hiệu Tinel và nghiệm pháp Phalen dùng để chẩn đoán."
+      },
+      {
+        targetId: "ulnar_nerve",
+        question: "4. Hãy chỉ ra Thần kinh trụ - đi qua rãnh sau mỏm trên lồi cầu trong ('funny bone'), tổn thương gây dấu hiệu 'Bàn tay vuốt trụ' (Claw hand)?",
+        hint: "Dây thần kinh màu vàng chạy ở mặt trong khuỷu tay ngay sau mỏm trên lồi cầu trong xương cánh tay.",
+        explanation: "Chính xác! Thần kinh trụ là thần kinh tinh tế chi phối hầu hết các cơ nội tại bàn tay. Khi bị tổn thương gây liệt cơ gian cốt và cơ giun 3, 4, tạo tư thế vuốt trụ ở ngón IV và V."
+      },
+      {
+        targetId: "rotator_cuff_sits",
+        question: "5. Hãy chỉ ra Nhóm cơ Chóp Xoay (SITS) - đặc biệt gân cơ trên gai hay bị rách nhất trong các cử động dạng khớp vai?",
+        hint: "Nhóm cơ sâu xuất phát từ các hố xương vai bọc lấy chỏm xương cánh tay (trên gai, dưới gai, tròn bé, dưới vai).",
+        explanation: "Chính xác! Rách chóp xoay thường gặp nhất ở gân cơ trên gai (Supraspinatus) do bị chèn ép dưới vòm quạ - cùng vai và có vùng tới hạn kém nuôi dưỡng."
+      },
+      {
+        targetId: "deltoid",
+        question: "6. Hãy chỉ ra Cơ Delta - cơ lớn hình tam giác úp trùm khớp vai, vị trí tiêm bắp sâu kinh điển và do thần kinh nách chi phối?",
+        hint: "Khối cơ đỏ dày hình tam giác trùm quanh mặt ngoài của khớp vai.",
+        explanation: "Chính xác! Cơ delta là cơ dạng cánh tay chính từ 15° đến 90°. Thần kinh nách đi vòng quanh cổ phẫu thuật xương cánh tay để chi phối cơ này."
+      },
+      {
+        targetId: "biceps_brachii",
+        question: "7. Hãy chỉ ra Cơ nhị đầu cánh tay - cơ ngửa cẳng tay mạnh nhất cơ thể khi khuỷu gập và đứt gân đầu dài gây dấu hiệu bắp tay Popeye?",
+        hint: "Cơ nổi rõ ở mặt trước cánh tay gồm đầu dài và đầu ngắn, bám tận vào lồi củ xương quay.",
+        explanation: "Chính xác! Cơ nhị đầu cánh tay hoạt động tối ưu như một cái mở nút chai rượu (ngửa cẳng tay mạnh mẽ khi gập khuỷu 90°)."
+      },
+      {
+        targetId: "elbow_ligaments",
+        question: "8. Hãy chỉ ra Dây chằng vòng quay & Khớp khuỷu - cấu trúc bị trật bán phần trong chấn thương 'Khuỷu tay người trông trẻ' (Nursemaid's elbow)?",
+        hint: "Dải dây chằng màu trắng ôm quanh chỏm xương quay ở mặt ngoài khớp khuỷu.",
+        explanation: "Chính xác! Ở trẻ dưới 5 tuổi, chỏm quay chưa phát triển hoàn chỉnh nên lực giật dọc cánh tay có thể làm chỏm quay trượt một phần ra khỏi dây chằng vòng."
+      },
+      {
+        targetId: "radial_ulnar_arteries",
+        question: "9. Hãy chỉ ra Động mạch quay tại rãnh mạch quay - vị trí bắt mạch kinh điển nhất cơ thể và dùng trong nghiệm pháp Allen?",
+        hint: "Mạch máu đỏ tươi chạy dọc bờ ngoài cẳng tay đến rãnh mạch quay và đi qua đáy hõm lào giải phẫu.",
+        explanation: "Chính xác! Động mạch quay là vị trí bắt mạch cổ tay phổ biến nhất trên lâm sàng. Nghiệm pháp Allen đánh giá lưu thông máu trước khi chọc khí máu động mạch (ABG)."
+      },
+      {
+        targetId: "arm_superficial_veins",
+        question: "10. Hãy chỉ ra Tĩnh mạch giữa khuỷu - vị trí số 1 trên toàn thế giới để lấy máu xét nghiệm và tiêm truyền tĩnh mạch?",
+        hint: "Tĩnh mạch xanh bắc chéo hình chữ V hoặc N ở chính giữa hố khuỷu nối tĩnh mạch đầu và tĩnh mạch nền.",
+        explanation: "Chính xác! Tĩnh mạch giữa khuỷu (Median cubital vein) to, nằm nông và được cố định chắc bởi trướng cân nhị đầu, là vị trí ưu tiên hàng đầu để lấy máu tĩnh mạch."
+      }
+    ];
+
     let currentQuizIndex = 0;
     let quizScore = 0;
     let isQuizActive = false;
+
+    function getActiveQuizList() {
+      return activeRegion === 'arm' ? ARM_QUIZ_QUESTIONS : LEG_QUIZ_QUESTIONS;
+    }
 
     function switchMode(mode) {
       ['explore', 'dissection', 'crosssection', 'quiz'].forEach(m => {
@@ -2844,6 +4324,7 @@
       currentQuizIndex = 0;
       quizScore = 0;
       document.getElementById('quiz-score').textContent = `Điểm: 0`;
+      document.getElementById('quiz-region-badge').textContent = activeRegion === 'arm' ? 'Chi Trên' : 'Chi Dưới';
       document.getElementById('quiz-panel').classList.remove('hidden');
       loadQuizQuestion(currentQuizIndex);
     }
@@ -2854,18 +4335,19 @@
     }
 
     function loadQuizQuestion(index) {
-      if (index >= QUIZ_QUESTIONS.length) {
+      const qList = getActiveQuizList();
+      if (index >= qList.length) {
         document.getElementById('quiz-counter').textContent = 'Hoàn thành!';
-        document.getElementById('quiz-question').innerHTML = `🎉 <b>Chúc mừng! Bạn đã hoàn thành xuất sắc 10/10 bài kiểm tra giải phẫu!</b><br>Tổng điểm: ${quizScore} / ${QUIZ_QUESTIONS.length}`;
-        document.getElementById('quiz-instruction').textContent = 'Bạn đã nắm vững các mốc giải phẫu then chốt chi dưới và bàn chân.';
+        document.getElementById('quiz-question').innerHTML = `🎉 <b>Chúc mừng! Bạn đã hoàn thành xuất sắc 10/10 bài kiểm tra giải phẫu ${activeRegion === 'arm' ? 'Chi Trên' : 'Chi Dưới'}!</b><br>Tổng điểm: ${quizScore} / ${qList.length}`;
+        document.getElementById('quiz-instruction').textContent = 'Bạn đã nắm vững các mốc giải phẫu then chốt và ứng dụng lâm sàng.';
         document.getElementById('quiz-feedback').classList.add('hidden');
         document.getElementById('btn-next-question').classList.add('hidden');
         confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
         return;
       }
 
-      const q = QUIZ_QUESTIONS[index];
-      document.getElementById('quiz-counter').textContent = `Câu ${index + 1}/${QUIZ_QUESTIONS.length}`;
+      const q = qList[index];
+      document.getElementById('quiz-counter').textContent = `Câu ${index + 1}/${qList.length}`;
       document.getElementById('quiz-question').textContent = q.question;
       document.getElementById('quiz-instruction').textContent = 'Hãy nhấp trực tiếp vào bộ phận đó trên mô hình 3D!';
       document.getElementById('quiz-feedback').classList.add('hidden');
@@ -2874,7 +4356,8 @@
 
     function verifyQuizAnswer(clickedPartId) {
       if (!isQuizActive) return;
-      const q = QUIZ_QUESTIONS[currentQuizIndex];
+      const qList = getActiveQuizList();
+      const q = qList[currentQuizIndex];
       const feedbackEl = document.getElementById('quiz-feedback');
       feedbackEl.classList.remove('hidden');
 
@@ -2893,7 +4376,8 @@
     }
 
     function quizShowHint() {
-      const q = QUIZ_QUESTIONS[currentQuizIndex];
+      const qList = getActiveQuizList();
+      const q = qList[currentQuizIndex];
       const feedbackEl = document.getElementById('quiz-feedback');
       feedbackEl.classList.remove('hidden');
       feedbackEl.className = 'mt-3 p-3 rounded-xl bg-amber-950/60 border border-amber-500/40 text-amber-200 text-xs leading-relaxed';
@@ -2906,7 +4390,138 @@
     }
 
     /* =========================================================================
-     * RAYCASTING & TƯƠNG TÁC CHỌN BỘ PHẬN
+     * BỘ CHỌN PHÂN VÙNG GIẢI PHẪU (BODY REGION SWITCHER ENGINE)
+     * ========================================================================= */
+    function switchBodyRegion(region) {
+      if (region === activeRegion) return;
+      activeRegion = region;
+
+      const btnLeg = document.getElementById('region-btn-leg');
+      const btnArm = document.getElementById('region-btn-arm');
+
+      if (region === 'leg') {
+        btnLeg.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-sky-600 text-white shadow-md';
+        btnArm.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition flex items-center gap-1.5';
+        legRoot.visible = true;
+        armRoot.visible = false;
+        document.getElementById('region-badge-pill').textContent = 'Chi Dưới (Leg & Foot)';
+        document.getElementById('region-sub-label').textContent = 'Giáo trình Giải phẫu Chi Dưới & Bàn Chân Y Khoa';
+        setCameraAngle('anterior');
+      } else {
+        btnArm.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-sky-600 text-white shadow-md';
+        btnLeg.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition flex items-center gap-1.5';
+        legRoot.visible = false;
+        armRoot.visible = true;
+        document.getElementById('region-badge-pill').textContent = 'Chi Trên (Arm & Hand)';
+        document.getElementById('region-sub-label').textContent = 'Giáo trình Giải phẫu Chi Trên, Cánh Tay & Bàn Tay Y Khoa';
+        setCameraAngle('anterior');
+      }
+
+      // Cập nhật giao diện phụ trợ
+      updateCrossSectionUI();
+      updateKinesiologyUI();
+      updateFunctionalGroupSelect();
+      updateCameraButtonsLabels();
+      init3DPins();
+      closeInfoCard();
+
+      if (isQuizActive) {
+        startQuizMode();
+      }
+    }
+
+    function updateCrossSectionUI() {
+      const container = document.getElementById('quick-slices-container');
+      const slider = document.getElementById('clip-height-slider');
+
+      if (activeRegion === 'leg') {
+        slider.min = "-2.2";
+        slider.max = "2.6";
+        slider.value = "2.6";
+        clipPlane.constant = 2.6;
+        container.innerHTML = `
+          <button onclick="setQuickSlice(1.3)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Đùi giữa</button>
+          <button onclick="setQuickSlice(0.18)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Khớp gối</button>
+          <button onclick="setQuickSlice(-0.7)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cẳng chân</button>
+          <button onclick="setQuickSlice(-1.95)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cổ chân</button>
+        `;
+      } else {
+        slider.min = "-0.25";
+        slider.max = "2.1";
+        slider.value = "2.1";
+        clipPlane.constant = 2.1;
+        container.innerHTML = `
+          <button onclick="setQuickSlice(1.40)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cánh tay</button>
+          <button onclick="setQuickSlice(1.02)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Hố khuỷu</button>
+          <button onclick="setQuickSlice(0.65)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cẳng tay</button>
+          <button onclick="setQuickSlice(0.18)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Ống cổ tay</button>
+        `;
+      }
+    }
+
+    function updateCameraButtonsLabels() {
+      const btnJoint = document.getElementById('camera-btn-joint');
+      const btnDistal = document.getElementById('camera-btn-distal');
+      if (activeRegion === 'arm') {
+        btnJoint.textContent = 'Khớp khuỷu';
+        btnDistal.textContent = 'Bàn tay';
+      } else {
+        btnJoint.textContent = 'Khớp gối';
+        btnDistal.textContent = 'Bàn chân';
+      }
+    }
+
+    function updateKinesiologyUI() {
+      const container = document.getElementById('kinesiology-buttons-container');
+      if (activeRegion === 'leg') {
+        container.innerHTML = `
+          <button onclick="playKinesiologyMotion('knee_flex')" class="bg-slate-900/80 hover:bg-emerald-600/30 text-slate-300 hover:text-emerald-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60 flex items-center justify-center gap-1">
+            <i data-lucide="corner-down-right" class="w-3 h-3"></i> Gập / Duỗi gối
+          </button>
+          <button onclick="playKinesiologyMotion('plantarflex')" class="bg-slate-900/80 hover:bg-emerald-600/30 text-slate-300 hover:text-emerald-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60 flex items-center justify-center gap-1">
+            <i data-lucide="arrow-up" class="w-3 h-3"></i> Nhón gót chân
+          </button>
+        `;
+      } else {
+        container.innerHTML = `
+          <button onclick="playKinesiologyMotion('elbow_flex')" class="bg-slate-900/80 hover:bg-emerald-600/30 text-slate-300 hover:text-emerald-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60 flex items-center justify-center gap-1">
+            <i data-lucide="corner-down-right" class="w-3 h-3"></i> Gập / Duỗi khuỷu
+          </button>
+          <button onclick="playKinesiologyMotion('pronation_supination')" class="bg-slate-900/80 hover:bg-emerald-600/30 text-slate-300 hover:text-emerald-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60 flex items-center justify-center gap-1">
+            <i data-lucide="rotate-cw" class="w-3 h-3"></i> Sấp / Ngửa cẳng tay
+          </button>
+        `;
+      }
+      lucide.createIcons();
+    }
+
+    function updateFunctionalGroupSelect() {
+      const sel = document.getElementById('functional-group-select');
+      if (activeRegion === 'leg') {
+        sel.innerHTML = `
+          <option value="all">-- Hiển thị tất cả nhóm cơ --</option>
+          <option value="knee_extensor">Nhóm duỗi gối (Cơ tứ đầu đùi)</option>
+          <option value="knee_flexor">Nhóm gập gối (Nhóm Hamstrings)</option>
+          <option value="hip_flexor">Nhóm gấp khớp háng (Cơ may, thẳng đùi...)</option>
+          <option value="adductor">Nhóm cơ khép đùi (Adductors & Gracilis)</option>
+          <option value="plantarflexor">Nhóm gập lòng / Nhón gót (Bắp chuối, Achilles, Cơ bàn chân)</option>
+          <option value="dorsiflexor">Nhóm gập mu bàn chân (Cơ chày trước & duỗi ngón)</option>
+        `;
+      } else {
+        sel.innerHTML = `
+          <option value="all">-- Hiển thị tất cả nhóm cơ --</option>
+          <option value="shoulder_rotator">Nhóm cơ vai & Chóp xoay (Delta & SITS)</option>
+          <option value="arm_flexors">Nhóm gập cánh tay trước (Nhị đầu & Cánh tay)</option>
+          <option value="arm_extensors">Nhóm duỗi cánh tay sau (Tam đầu)</option>
+          <option value="forearm_flexors">Nhóm cơ gấp & sấp cẳng tay</option>
+          <option value="forearm_extensors">Nhóm cơ duỗi & ngửa cẳng tay</option>
+          <option value="hand_muscles">Nhóm cơ nội tại bàn tay (Mô cái, Mô út)</option>
+        `;
+      }
+    }
+
+    /* =========================================================================
+     * TƯƠNG TÁC CHUỘT / RAYCASTING (HOVER & CLICK TRÊN 3D)
      * ========================================================================= */
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
@@ -2920,15 +4535,21 @@
     window.addEventListener('pointermove', onPointerMove);
     window.addEventListener('click', onPointerClick);
 
-    function onPointerMove(event) {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    function onPointerMove(e) {
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
-      tooltipEl.style.left = `${event.clientX}px`;
-      tooltipEl.style.top = `${event.clientY}px`;
+      tooltipEl.style.left = `${e.clientX + 14}px`;
+      tooltipEl.style.top = `${e.clientY + 14}px`;
 
       raycaster.setFromCamera(mouse, camera);
-      const visibleInteractives = interactiveObjects.filter(obj => obj.visible && isLayerVisible(obj.userData.layer));
+      const visibleInteractives = interactiveObjects.filter(obj => {
+        const item = ANATOMY_DATABASE[obj.userData.partId];
+        const r = (item && item.region) ? item.region : 'leg';
+        if (r !== activeRegion) return false;
+        return obj.visible && isLayerVisible(obj.userData.layer);
+      });
+
       const intersects = raycaster.intersectObjects(visibleInteractives, true);
 
       if (intersects.length > 0) {
@@ -2941,47 +4562,52 @@
         document.body.style.cursor = 'pointer';
 
         if (hoveredObject !== topMesh) {
-          resetHoverHighlight();
+          unhoverCurrentObject();
           hoveredObject = topMesh;
-
           if (hoveredObject.material && hoveredObject.material.emissive) {
             originalEmissiveColor.copy(hoveredObject.material.emissive);
-            hoveredObject.material.emissive.setHex(0x38bdf8);
-            hoveredObject.material.emissiveIntensity = 0.55;
+            hoveredObject.material.emissive.setHex(0x0284c7);
           }
 
-          const partData = ANATOMY_DATABASE[hoveredObject.userData.partId];
-          if (partData) {
-            const shortName = partData.nameVi.split('(')[0].trim();
-            const altName = partData.nameLatin || partData.nameEn;
-            tooltipTextEl.textContent = `${shortName} (${altName})`;
-            tooltipEl.classList.remove('opacity-0');
+          const partId = hoveredObject.userData.partId;
+          const info = ANATOMY_DATABASE[partId];
+          if (info) {
+            tooltipTextEl.textContent = info.nameVi.split('(')[0].trim();
+            tooltipEl.style.opacity = '1';
           }
         }
       } else {
         document.body.style.cursor = 'default';
-        resetHoverHighlight();
-        tooltipEl.classList.add('opacity-0');
+        unhoverCurrentObject();
+        tooltipEl.style.opacity = '0';
       }
     }
 
-    function resetHoverHighlight() {
+    function unhoverCurrentObject() {
       if (hoveredObject) {
-        if (hoveredObject.material && hoveredObject.material.emissive) {
+        if (hoveredObject !== selectedObject && hoveredObject.material && hoveredObject.material.emissive) {
           hoveredObject.material.emissive.copy(originalEmissiveColor);
-          hoveredObject.material.emissiveIntensity = 0.2;
         }
         hoveredObject = null;
       }
     }
 
-    function onPointerClick(event) {
-      if (event.target.closest('#layer-panel') || event.target.closest('#info-card') || event.target.closest('header') || event.target.closest('#quiz-panel') || event.target.closest('.pin-marker')) {
+    function onPointerClick(e) {
+      if (e.target.closest('header') || e.target.closest('aside') || e.target.closest('#info-card') || e.target.closest('#quiz-panel')) {
         return;
       }
 
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
       raycaster.setFromCamera(mouse, camera);
-      const visibleInteractives = interactiveObjects.filter(obj => obj.visible && isLayerVisible(obj.userData.layer));
+      const visibleInteractives = interactiveObjects.filter(obj => {
+        const item = ANATOMY_DATABASE[obj.userData.partId];
+        const r = (item && item.region) ? item.region : 'leg';
+        if (r !== activeRegion) return false;
+        return obj.visible && isLayerVisible(obj.userData.layer);
+      });
+
       const intersects = raycaster.intersectObjects(visibleInteractives, true);
 
       if (intersects.length > 0) {
@@ -3008,6 +4634,12 @@
       const data = ANATOMY_DATABASE[partId];
       if (!data) return;
 
+      // Tự động chuyển vùng giải phẫu nếu bộ phận thuộc vùng khác
+      const itemRegion = data.region || 'leg';
+      if (itemRegion !== activeRegion) {
+        switchBodyRegion(itemRegion);
+      }
+
       selectedObject = targetMesh || interactiveObjects.find(obj => obj.userData.partId === partId);
 
       document.getElementById('info-name-vi').textContent = data.nameVi;
@@ -3030,7 +4662,7 @@
         const box = new THREE.Box3().setFromObject(selectedObject);
         box.getCenter(targetCenter);
       } else if (data.cameraOffset) {
-        targetCenter.set(0, data.cameraOffset.y, 0);
+        targetCenter.set((itemRegion === 'arm' ? -0.35 : 0), data.cameraOffset.y, 0);
       }
 
       const targetCamPos = new THREE.Vector3(
@@ -3078,116 +4710,140 @@
     }
 
     function resetCameraView() {
+      const defaultCam = (activeRegion === 'arm') ? DEFAULT_CAMERA_POS_ARM : DEFAULT_CAMERA_POS_LEG;
+      const defaultTarget = (activeRegion === 'arm') ? DEFAULT_CAMERA_TARGET_ARM : DEFAULT_CAMERA_TARGET_LEG;
+
       gsap.to(camera.position, {
-        x: DEFAULT_CAMERA_POS.x,
-        y: DEFAULT_CAMERA_POS.y,
-        z: DEFAULT_CAMERA_POS.z,
+        x: defaultCam.x,
+        y: defaultCam.y,
+        z: defaultCam.z,
         duration: 1.1,
         ease: "power2.inOut"
       });
 
       gsap.to(controls.target, {
-        x: DEFAULT_CAMERA_TARGET.x,
-        y: DEFAULT_CAMERA_TARGET.y,
-        z: DEFAULT_CAMERA_TARGET.z,
+        x: defaultTarget.x,
+        y: defaultTarget.y,
+        z: defaultTarget.z,
         duration: 1.1,
         ease: "power2.inOut",
         onUpdate: () => controls.update()
       });
     }
 
-    // Góc nhìn Camera cài sẵn chuyên dụng
     function setCameraAngle(angle) {
-      const posMap = {
-        anterior: { x: 0, y: 0.3, z: 4.6 },
-        posterior: { x: 0, y: 0.3, z: -4.6 },
-        medial: { x: -4.4, y: 0.3, z: 0.5 },
-        lateral: { x: 4.4, y: 0.3, z: 0.5 },
-        knee: { x: 0.1, y: 0.22, z: 1.35 },
-        foot: { x: 0.05, y: -1.75, z: 1.45 }
-      };
-      const targetMap = {
-        anterior: { x: 0, y: 0.1, z: 0 },
-        posterior: { x: 0, y: 0.1, z: 0 },
-        medial: { x: 0, y: 0.1, z: 0 },
-        lateral: { x: 0, y: 0.1, z: 0 },
-        knee: { x: 0.02, y: 0.18, z: 0.08 },
-        foot: { x: 0.01, y: -2.05, z: 0.25 }
-      };
+      let pos, target;
 
-      const pos = posMap[angle] || posMap.anterior;
-      const target = targetMap[angle] || targetMap.anterior;
-
-      // Nếu chọn Khớp gối: làm mờ cơ phía trước để lộ rõ sụn chêm và dây chằng chéo!
-      if (angle === 'knee') {
-        Materials.muscleSuperficial.opacity = 0.15;
-        Materials.muscleSuperficial.transparent = true;
-        Materials.muscleDeep.opacity = 0.15;
-        Materials.muscleDeep.transparent = true;
-        toggleLayer('ligaments', true);
-        document.getElementById('layer-ligaments').checked = true;
-      } else if (angle === 'foot') {
-        toggleLayer('skeletal', true);
-        toggleLayer('ligaments', true);
-        document.getElementById('layer-ligaments').checked = true;
+      if (activeRegion === 'leg') {
+        const posMap = {
+          anterior: { x: 0, y: 0.1, z: 4.2 },
+          posterior: { x: 0, y: 0.1, z: -4.2 },
+          medial: { x: -4.0, y: 0.1, z: 0.2 },
+          lateral: { x: 4.0, y: 0.1, z: 0.2 },
+          joint: { x: 0.2, y: 0.25, z: 1.4 },  // Khớp gối
+          distal: { x: 0.1, y: -2.0, z: 1.2 }  // Bàn chân
+        };
+        const targetMap = {
+          anterior: { x: 0, y: 0.1, z: 0 },
+          posterior: { x: 0, y: 0.1, z: 0 },
+          medial: { x: 0, y: 0.1, z: 0 },
+          lateral: { x: 0, y: 0.1, z: 0 },
+          joint: { x: 0.02, y: 0.18, z: 0.08 },
+          distal: { x: 0.01, y: -2.05, z: 0.25 }
+        };
+        pos = posMap[angle];
+        target = targetMap[angle];
       } else {
-        Materials.muscleSuperficial.opacity = 1.0;
-        Materials.muscleSuperficial.transparent = false;
-        Materials.muscleDeep.opacity = 1.0;
-        Materials.muscleDeep.transparent = false;
+        const posMap = {
+          anterior: { x: -0.35, y: 0.9, z: 2.8 },
+          posterior: { x: -0.35, y: 0.9, z: -2.8 },
+          medial: { x: 2.2, y: 0.9, z: 0.1 },
+          lateral: { x: -2.8, y: 0.9, z: 0.1 },
+          joint: { x: -0.34, y: 1.0, z: 1.3 },   // Khớp khuỷu
+          distal: { x: -0.38, y: 0.05, z: 0.9 }  // Bàn tay
+        };
+        const targetMap = {
+          anterior: { x: -0.35, y: 0.9, z: 0 },
+          posterior: { x: -0.35, y: 0.9, z: 0 },
+          medial: { x: -0.35, y: 0.9, z: 0 },
+          lateral: { x: -0.35, y: 0.9, z: 0 },
+          joint: { x: -0.34, y: 1.0, z: 0 },
+          distal: { x: -0.38, y: 0.05, z: 0 }
+        };
+        pos = posMap[angle];
+        target = targetMap[angle];
       }
 
-      gsap.to(camera.position, { x: pos.x, y: pos.y, z: pos.z, duration: 1.2, ease: "power2.inOut" });
-      gsap.to(controls.target, { x: target.x, y: target.y, z: target.z, duration: 1.2, ease: "power2.inOut", onUpdate: () => controls.update() });
-    }
+      if (!pos) return;
 
-    // Cô lập đối tượng
-    let isIsolated = false;
-    function isolateSelectedPart() {
-      if (!selectedObject) return;
-      isIsolated = !isIsolated;
+      gsap.to(camera.position, {
+        x: pos.x, y: pos.y, z: pos.z,
+        duration: 1.0,
+        ease: "power2.inOut"
+      });
 
-      const btn = document.getElementById('btn-isolate');
-      if (isIsolated) {
-        btn.classList.add('bg-sky-500', 'text-white');
-        btn.querySelector('span').textContent = 'Xem lại tất cả';
-
-        interactiveObjects.forEach(obj => {
-          if (obj !== selectedObject && obj.userData.partId !== selectedObject.userData.partId) {
-            obj.visible = false;
-          }
-        });
-      } else {
-        restoreAllFromIsolation();
-      }
-    }
-
-    function restoreAllFromIsolation() {
-      isIsolated = false;
-      const btn = document.getElementById('btn-isolate');
-      if (btn) {
-        btn.classList.remove('bg-sky-500', 'text-white');
-        btn.querySelector('span').textContent = 'Cô lập cấu trúc';
-      }
-
-      Object.keys(layerGroups).forEach(key => {
-        const checkbox = document.getElementById(`layer-${key}`);
-        if (checkbox) toggleLayer(key, checkbox.checked);
+      gsap.to(controls.target, {
+        x: target.x, y: target.y, z: target.z,
+        duration: 1.0,
+        ease: "power2.inOut",
+        onUpdate: () => controls.update()
       });
     }
 
+    let isIsolated = false;
+    function isolateSelectedPart() {
+      if (!selectedObject) return;
+      isIsolated = true;
+      interactiveObjects.forEach(obj => {
+        if (obj !== selectedObject && !selectedObject.children.includes(obj)) {
+          obj.visible = false;
+        }
+      });
+      document.getElementById('btn-isolate-part').innerHTML = `<i data-lucide="eye-off" class="w-3 h-3"></i><span>Bỏ cô lập</span>`;
+      document.getElementById('btn-isolate-part').onclick = restoreAllFromIsolation;
+      lucide.createIcons();
+    }
+
+    function restoreAllFromIsolation() {
+      if (!isIsolated) return;
+      isIsolated = false;
+      interactiveObjects.forEach(obj => {
+        obj.visible = isLayerVisible(obj.userData.layer);
+      });
+      document.getElementById('btn-isolate-part').innerHTML = `<i data-lucide="eye" class="w-3 h-3"></i><span>Cô lập</span>`;
+      document.getElementById('btn-isolate-part').onclick = isolateSelectedPart;
+      lucide.createIcons();
+    }
+
+    function pronouncePartName() {
+      if (!('speechSynthesis' in window)) {
+        alert('Trình duyệt của bạn không hỗ trợ tính năng phát âm Web Speech API.');
+        return;
+      }
+      const latinName = document.getElementById('info-name-latin').textContent;
+      const utterance = new SpeechSynthesisUtterance(latinName);
+      utterance.lang = 'it-IT';
+      utterance.rate = 0.85;
+      speechSynthesis.speak(utterance);
+    }
+
     /* =========================================================================
-     * ĐIỀU KHIỂN HỆ CƠ QUAN
+     * BẬT/TẮT TỪNG HỆ CƠ QUAN (LAYERS VISIBILITY)
      * ========================================================================= */
     function toggleLayer(layerName, isVisible) {
       if (layerGroups[layerName]) {
         layerGroups[layerName].visible = isVisible;
-        updateActiveLayersBadge();
       }
+      if (armLayerGroups[layerName]) {
+        armLayerGroups[layerName].visible = isVisible;
+      }
+      updateActiveLayersBadge();
+      update3DPins();
     }
 
     function isLayerVisible(layerName) {
-      return layerGroups[layerName] ? layerGroups[layerName].visible : true;
+      const activeGroups = (activeRegion === 'arm') ? armLayerGroups : layerGroups;
+      return activeGroups[layerName] ? activeGroups[layerName].visible : true;
     }
 
     function setSkinOpacity(value) {
@@ -3195,7 +4851,8 @@
     }
 
     function updateActiveLayersBadge() {
-      const activeCount = Object.keys(layerGroups).filter(key => layerGroups[key].visible).length;
+      const activeGroups = (activeRegion === 'arm') ? armLayerGroups : layerGroups;
+      const activeCount = Object.keys(activeGroups).filter(key => activeGroups[key].visible).length;
       document.getElementById('active-layers-count').textContent = `${activeCount}/7`;
     }
 
@@ -3210,7 +4867,7 @@
       interactiveObjects.forEach(obj => {
         if (obj.userData.layer === 'muscular') {
           const partData = ANATOMY_DATABASE[obj.userData.partId];
-          obj.visible = (partData && partData.functionalGroup === groupName);
+          obj.visible = (partData && (partData.subCategory === groupName || partData.functionalGroup === groupName || partData.id === groupName));
         }
       });
     }
@@ -3234,7 +4891,7 @@
           }
         });
       } else if (motion === 'plantarflex') {
-        setCameraAngle('foot');
+        setCameraAngle('distal');
         gsap.to(legRoot.position, {
           y: 0.15,
           duration: 0.8,
@@ -3246,11 +4903,37 @@
             isMotionPlaying = false;
           }
         });
+      } else if (motion === 'elbow_flex') {
+        setCameraAngle('joint');
+        gsap.to(armRoot.rotation, {
+          x: 0.42,
+          duration: 1.0,
+          yoyo: true,
+          repeat: 3,
+          ease: "power2.inOut",
+          onComplete: () => {
+            armRoot.rotation.x = 0;
+            isMotionPlaying = false;
+          }
+        });
+      } else if (motion === 'pronation_supination') {
+        setCameraAngle('distal');
+        gsap.to(armRoot.rotation, {
+          y: 0.65,
+          duration: 0.9,
+          yoyo: true,
+          repeat: 3,
+          ease: "power2.inOut",
+          onComplete: () => {
+            armRoot.rotation.y = 0;
+            isMotionPlaying = false;
+          }
+        });
       }
     }
 
     /* =========================================================================
-     * TÌM KIẾM TỨC THÌ
+     * TÌM KIẾM CẤU TRÚC GIẢI PHẪU (THÔNG MINH TỰ ĐỘNG CHUYỂN VÙNG)
      * ========================================================================= */
     const searchInput = document.getElementById('anatomy-search-input');
     searchInput.addEventListener('input', (e) => {
@@ -3263,6 +4946,11 @@
         const matchEn = item.nameEn.toLowerCase().includes(query);
 
         if (matchVi || matchLatin || matchEn) {
+          const itemRegion = item.region || 'leg';
+          if (itemRegion !== activeRegion) {
+            switchBodyRegion(itemRegion);
+          }
+
           const checkbox = document.getElementById(`layer-${item.layer}`);
           if (checkbox && !checkbox.checked) {
             checkbox.checked = true;
@@ -3274,89 +4962,45 @@
       }
     });
 
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeInfoCard();
-        closeQuizMode();
-      } else if (e.key === 'r' || e.key === 'R') {
-        resetCameraView();
-      }
-    });
-
-    let isAutoRotating = false;
-    document.getElementById('btn-toggle-rotate').addEventListener('click', () => {
-      isAutoRotating = !isAutoRotating;
-      controls.autoRotate = isAutoRotating;
-      document.getElementById('btn-toggle-rotate').classList.toggle('text-sky-400');
-    });
-
-    document.getElementById('btn-fullscreen').addEventListener('click', () => {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-      }
-    });
-
-    window.addEventListener('resize', () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    });
+    /* =========================================================================
+     * NẠP MÔ HÌNH 3D (.GLB / .GLTF) TÙY BIẾN
+     * ========================================================================= */
+    function showLoader(text) {
+      document.getElementById('loader-status').textContent = text;
+      document.getElementById('loader').style.opacity = '1';
+      document.getElementById('loader').style.pointerEvents = 'auto';
+    }
 
     function hideLoader() {
-      const loader = document.getElementById('loader');
-      loader.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => {
-        loader.style.display = 'none';
-      }, 500);
+      document.getElementById('loader').style.opacity = '0';
+      document.getElementById('loader').style.pointerEvents = 'none';
     }
 
-    // Hỗ trợ nạp file mô hình 3D GLB / GLTF từ máy tính hoặc kéo thả trực tiếp
     function handleGLBUpload(event) {
       const file = event.target.files[0];
-      if (file) loadCustomGLB(file);
-    }
+      if (!file) return;
 
-    window.addEventListener('dragover', (e) => e.preventDefault());
-    window.addEventListener('drop', (e) => {
-      e.preventDefault();
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        const file = e.dataTransfer.files[0];
-        if (file.name.endsWith('.glb') || file.name.endsWith('.gltf')) {
-          loadCustomGLB(file);
-        }
-      }
-    });
-
-    function loadCustomGLB(file) {
+      showLoader(`Đang nạp file mô hình 3D: ${file.name}...`);
       const reader = new FileReader();
-      const statusEl = document.getElementById('loader-status');
-      const loader = document.getElementById('loader');
-      loader.style.display = 'flex';
-      loader.classList.remove('opacity-0', 'pointer-events-none');
-      statusEl.textContent = 'Đang nạp mô hình 3D ' + file.name + '...';
 
       reader.onload = function(e) {
         const contents = e.target.result;
-        const gltfLoader = new THREE.GLTFLoader();
-        gltfLoader.parse(contents, '', (gltf) => {
-          while (legRoot.children.length > 0) {
-            legRoot.remove(legRoot.children[0]);
-          }
-          interactiveObjects.length = 0;
+        const loader = new THREE.GLTFLoader();
+
+        loader.parse(contents, '', (gltf) => {
+          const targetRoot = (activeRegion === 'arm') ? armRoot : legRoot;
+          const targetGroups = (activeRegion === 'arm') ? armLayerGroups : layerGroups;
+          targetGroups.skeletal.clear();
 
           const model = gltf.scene;
           model.traverse((child) => {
             if (child.isMesh) {
               child.castShadow = true;
               child.receiveShadow = true;
-              registerInteractiveMesh(child, matchPartId(child.name.toLowerCase(), 'femur'), 'skeletal');
+              registerInteractiveMesh(child, matchPartId(child.name.toLowerCase(), (activeRegion === 'arm' ? 'humerus' : 'femur')), 'skeletal');
             }
           });
-          legRoot.add(model);
+          targetRoot.add(model);
           hideLoader();
         }, (err) => {
           console.error(err);
@@ -3386,10 +5030,21 @@
 
     // Khởi tạo hệ thống
     lucide.createIcons();
-    buildProceduralAnatomy();
+    buildAllAnatomy();
+    updateCrossSectionUI();
+    updateKinesiologyUI();
+    updateFunctionalGroupSelect();
+    updateCameraButtonsLabels();
     init3DPins();
     hideLoader();
     animate();
+
+    // Hỗ trợ resize cửa sổ trình duyệt
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
   </script>
 </body>
 </html>
