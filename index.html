@@ -21,7 +21,7 @@
               800: '#075985',
               900: '#0c4a6e',
               dark: '#080c16',
-              panel: 'rgba(11, 18, 36, 0.85)'
+              panel: 'rgba(11, 18, 36, 0.88)'
             }
           },
           fontFamily: {
@@ -41,10 +41,10 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- Canvas Confetti for Medical Quiz Celebrations -->
+  <!-- Canvas Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
-  <!-- Three.js + OrbitControls + GSAP -->
+  <!-- Three.js + OrbitControls + GSAP + GLTFLoader -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -63,7 +63,6 @@
       width: 100vw;
       height: 100vh;
     }
-    /* Custom Scrollbar */
     ::-webkit-scrollbar {
       width: 5px;
     }
@@ -78,13 +77,12 @@
       background: rgba(14, 165, 233, 0.75);
     }
     .glass-panel {
-      background: rgba(11, 19, 38, 0.86);
+      background: rgba(11, 19, 38, 0.88);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      box-shadow: 0 12px 36px -10px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      box-shadow: 0 12px 36px -10px rgba(0, 0, 0, 0.65);
     }
-    /* 3D Pin Callouts */
     .pin-marker {
       position: absolute;
       transform: translate(-50%, -50%);
@@ -110,7 +108,7 @@
       animation: pinPulse 2s infinite ease-in-out;
     }
     .pin-label {
-      background: rgba(15, 23, 42, 0.88);
+      background: rgba(15, 23, 42, 0.9);
       backdrop-filter: blur(8px);
       border: 1px solid rgba(56, 189, 248, 0.35);
       color: #e0f2fe;
@@ -147,7 +145,7 @@
     <p id="loader-status" class="text-xs text-sky-300/80 mt-1.5 font-mono">Đang khởi tạo cấu trúc xương, cơ vân, dây chằng & mạch máu...</p>
   </div>
 
-  <!-- Top Navigation & Study Bar -->
+  <!-- Top Navigation Bar -->
   <header class="absolute top-0 left-0 right-0 z-20 flex flex-wrap items-center justify-between p-3 md:px-6 pointer-events-none gap-2">
     <!-- Brand / Title -->
     <div class="flex items-center space-x-3 pointer-events-auto">
@@ -163,7 +161,7 @@
             Medical Atlas
           </span>
         </div>
-        <p class="text-xs text-slate-400">Giáo trình Giải phẫu Chi dưới & Sinh lý Vận động Y khoa</p>
+        <p class="text-xs text-slate-400">Giáo trình Giải phẫu Chi dưới & Bàn chân Y khoa</p>
       </div>
     </div>
 
@@ -177,21 +175,25 @@
         <i data-lucide="scissors" class="w-3.5 h-3.5"></i>
         <span>Bóc tách tầng</span>
       </button>
+      <button id="mode-crosssection" onclick="switchMode('crosssection')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5">
+        <i data-lucide="scan-line" class="w-3.5 h-3.5 text-amber-400"></i>
+        <span>Cắt lát CT/MRI</span>
+      </button>
       <button id="mode-quiz" onclick="switchMode('quiz')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5">
         <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i>
         <span>Ôn thi Y khoa</span>
       </button>
     </div>
 
-    <!-- Quick Tools & Presets -->
+    <!-- Quick Tools -->
     <div class="flex items-center space-x-2 pointer-events-auto">
       <!-- Search Input -->
-      <div class="relative hidden lg:block w-52">
+      <div class="relative hidden lg:block w-48">
         <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
         <input type="text" id="anatomy-search-input" placeholder="Tìm cơ, xương, TK..." class="w-full bg-slate-900/90 border border-slate-700/80 rounded-lg pl-8 pr-3 py-1.5 text-xs text-sky-200 focus:outline-none focus:border-sky-400">
       </div>
 
-      <!-- Nạp file 3D GLB tùy chọn -->
+      <!-- Upload GLB -->
       <button onclick="document.getElementById('glb-file-input').click()" title="Nạp file mô hình 3D (.glb, .gltf)" class="glass-panel text-emerald-400 hover:bg-emerald-500/20 px-2.5 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition">
         <i data-lucide="upload-cloud" class="w-4 h-4"></i>
         <span class="hidden xl:inline">Nạp .GLB</span>
@@ -227,14 +229,14 @@
     <span id="tooltip-text">Bộ phận</span>
   </div>
 
-  <!-- Medical Quiz Card Overlay (Khi bật Mode Ôn thi Y khoa) -->
+  <!-- Medical Quiz Card Overlay -->
   <div id="quiz-panel" class="fixed top-20 left-1/2 -translate-x-1/2 z-30 w-full max-w-lg glass-panel rounded-2xl p-4 transition-all duration-300 shadow-2xl border border-sky-400/40 hidden">
     <div class="flex items-center justify-between pb-2 border-b border-slate-700/60 mb-3">
       <div class="flex items-center gap-2">
         <span class="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-400/30 text-[11px] font-bold uppercase">
           Thực hành Giải phẫu
         </span>
-        <span id="quiz-counter" class="text-xs text-slate-400">Câu 1/8</span>
+        <span id="quiz-counter" class="text-xs text-slate-400">Câu 1/10</span>
       </div>
       <div class="flex items-center gap-3">
         <div class="text-xs font-semibold text-emerald-400 flex items-center gap-1">
@@ -269,7 +271,29 @@
   <!-- Right Layer & Dissection Control Panel -->
   <aside id="layer-panel" class="absolute top-20 right-4 z-20 w-84 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-6rem)] overflow-y-auto glass-panel rounded-2xl p-4 transition-all duration-300 shadow-2xl">
     
-    <!-- Dissection Depth Slider Section -->
+    <!-- SECTION 1: CẮT LÁT CT/MRI (CROSS-SECTION SLICER) -->
+    <div id="crosssection-box" class="pb-3 border-b border-slate-700/60 mb-3 bg-amber-500/10 p-3 rounded-xl border border-amber-400/30">
+      <div class="flex items-center justify-between mb-1.5">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="scan-line" class="w-4 h-4 text-amber-400"></i>
+          <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase">Mặt Cắt Ngang (CT/MRI)</h2>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="toggle-clipping" class="sr-only peer" onchange="toggleClippingPlane(this.checked)">
+          <div class="w-8 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-500"></div>
+        </label>
+      </div>
+      <p class="text-[10px] text-slate-300 mb-2">Kéo thanh trượt để cắt ngang qua bất kỳ cao độ nào:</p>
+      <input type="range" id="clip-height-slider" min="-2.2" max="2.6" step="0.05" value="2.6" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-400" oninput="setClipPlaneHeight(this.value)">
+      <div class="grid grid-cols-4 gap-1 text-[9px] font-semibold text-center mt-2">
+        <button onclick="setQuickSlice(1.3)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Đùi giữa</button>
+        <button onclick="setQuickSlice(0.18)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Khớp gối</button>
+        <button onclick="setQuickSlice(-0.7)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cẳng chân</button>
+        <button onclick="setQuickSlice(-1.95)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cổ chân</button>
+      </div>
+    </div>
+
+    <!-- SECTION 2: BÓC TÁCH ĐA TẦNG (DISSECTION DEPTH SLIDER) -->
     <div class="pb-3 border-b border-slate-700/60 mb-3">
       <div class="flex items-center justify-between mb-1.5">
         <div class="flex items-center space-x-2">
@@ -285,12 +309,12 @@
         <span>Cơ nông</span>
         <span>Cơ sâu</span>
         <span>Mạch/TK</span>
-        <span>Khớp</span>
+        <span>Dây chằng</span>
         <span>Xương</span>
       </div>
     </div>
 
-    <!-- Camera Presets -->
+    <!-- SECTION 3: GÓC NHÌN GIẢI PHẪU -->
     <div class="mb-3.5">
       <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block flex items-center gap-1">
         <i data-lucide="video" class="w-3 h-3 text-sky-400"></i> Góc nhìn giải phẫu
@@ -300,15 +324,15 @@
         <button onclick="setCameraAngle('posterior')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Sau</button>
         <button onclick="setCameraAngle('medial')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Trong</button>
         <button onclick="setCameraAngle('lateral')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Ngoài</button>
-        <button onclick="setCameraAngle('knee')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Khớp gối</button>
-        <button onclick="setCameraAngle('foot')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Cổ chân</button>
+        <button onclick="setCameraAngle('knee')" class="bg-teal-900/40 hover:bg-teal-600/40 text-teal-300 py-1.5 px-2 rounded-lg transition border border-teal-500/40 font-bold">Khớp gối</button>
+        <button onclick="setCameraAngle('foot')" class="bg-indigo-900/40 hover:bg-indigo-600/40 text-indigo-300 py-1.5 px-2 rounded-lg transition border border-indigo-500/40 font-bold">Bàn chân</button>
       </div>
     </div>
 
-    <!-- Individual Layer Toggles -->
+    <!-- SECTION 4: BẬT/TẮT TỪNG HỆ CƠ QUAN -->
     <div class="space-y-2" id="layers-container">
       <div class="flex items-center justify-between pb-1">
-        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Bật/Tắt hệ cơ quan</span>
+        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hệ cơ quan</span>
         <span id="active-layers-count" class="text-[10px] px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 font-mono">7/7</span>
       </div>
 
@@ -316,7 +340,7 @@
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
           <input type="checkbox" id="layer-skeletal" checked class="w-4 h-4 accent-sky-400 rounded cursor-pointer" onchange="toggleLayer('skeletal', this.checked)">
-          <span class="text-xs font-semibold text-slate-200">1. Hệ Xương (Skeletal)</span>
+          <span class="text-xs font-semibold text-slate-200">1. Hệ Xương (Pelvis, Đùi, Chày, Mác, Bàn chân)</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-slate-200 shadow-[0_0_8px_rgba(241,245,249,0.5)]"></span>
       </div>
@@ -325,7 +349,7 @@
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
           <input type="checkbox" id="layer-ligaments" checked class="w-4 h-4 accent-teal-400 rounded cursor-pointer" onchange="toggleLayer('ligaments', this.checked)">
-          <span class="text-xs font-semibold text-slate-200">2. Dây chằng & Sụn khớp (Ligaments)</span>
+          <span class="text-xs font-semibold text-teal-300">2. Dây chằng, Sụn chêm & Cân gan chân</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.5)]"></span>
       </div>
@@ -334,7 +358,7 @@
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
           <input type="checkbox" id="layer-muscular" checked class="w-4 h-4 accent-rose-500 rounded cursor-pointer" onchange="toggleLayer('muscular', this.checked)">
-          <span class="text-xs font-semibold text-slate-200">3. Hệ Cơ (Muscular System)</span>
+          <span class="text-xs font-semibold text-slate-200">3. Hệ Cơ (Cơ đùi, Cẳng chân & Cơ bàn chân)</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]"></span>
       </div>
@@ -343,7 +367,7 @@
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
           <input type="checkbox" id="layer-cardiovascular" checked class="w-4 h-4 accent-red-600 rounded cursor-pointer" onchange="toggleLayer('cardiovascular', this.checked)">
-          <span class="text-xs font-semibold text-slate-200">4. Hệ Mạch Máu (Cardiovascular)</span>
+          <span class="text-xs font-semibold text-slate-200">4. Hệ Mạch Máu (ĐM đùi, khoeo, mu chân...)</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></span>
       </div>
@@ -352,7 +376,7 @@
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
           <input type="checkbox" id="layer-nervous" checked class="w-4 h-4 accent-yellow-400 rounded cursor-pointer" onchange="toggleLayer('nervous', this.checked)">
-          <span class="text-xs font-semibold text-slate-200">5. Hệ Thần Kinh (Nervous)</span>
+          <span class="text-xs font-semibold text-slate-200">5. Hệ Thần Kinh (TK tọa, TK mác chung...)</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.5)]"></span>
       </div>
@@ -361,12 +385,12 @@
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
           <input type="checkbox" id="layer-lymphatic" checked class="w-4 h-4 accent-emerald-500 rounded cursor-pointer" onchange="toggleLayer('lymphatic', this.checked)">
-          <span class="text-xs font-semibold text-slate-200">6. Hệ Bạch Huyết (Lymphatic)</span>
+          <span class="text-xs font-semibold text-slate-200">6. Hệ Bạch Huyết (Chuỗi hạch bẹn chữ T)</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]"></span>
       </div>
 
-      <!-- 7. Integumentary (Skin) -->
+      <!-- 7. Integumentary -->
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition">
         <div class="flex items-center justify-between">
           <label class="flex items-center space-x-2.5 cursor-pointer">
@@ -382,7 +406,7 @@
       </div>
     </div>
 
-    <!-- Functional Muscle Compartment Filter -->
+    <!-- SECTION 5: LỌC NHÓM CƠ THEO CHỨC NĂNG -->
     <div class="mt-3.5 pt-3 border-t border-slate-700/60">
       <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block flex items-center gap-1">
         <i data-lucide="zap" class="w-3 h-3 text-amber-400"></i> Lọc nhóm vận động (Kinesiology)
@@ -393,12 +417,12 @@
         <option value="knee_flexor">Nhóm gập gối (Nhóm Hamstrings)</option>
         <option value="hip_flexor">Nhóm gấp khớp háng (Cơ may, thẳng đùi...)</option>
         <option value="adductor">Nhóm cơ khép đùi (Adductors & Gracilis)</option>
-        <option value="plantarflexor">Nhóm gập lòng / Nhón gót (Bắp chuối & Achilles)</option>
-        <option value="dorsiflexor">Nhóm gập mu bàn chân (Cơ chày trước)</option>
+        <option value="plantarflexor">Nhóm gập lòng / Nhón gót (Bắp chuối, Achilles, Cơ bàn chân)</option>
+        <option value="dorsiflexor">Nhóm gập mu bàn chân (Cơ chày trước & duỗi ngón)</option>
       </select>
     </div>
 
-    <!-- Biomechanics Animation Demo -->
+    <!-- SECTION 6: MÔ PHỎNG ĐỘNG TÁC -->
     <div class="mt-3.5 pt-3 border-t border-slate-700/60">
       <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block flex items-center gap-1">
         <i data-lucide="play-circle" class="w-3 h-3 text-emerald-400"></i> Mô phỏng chuyển động khớp
@@ -414,7 +438,7 @@
     </div>
   </aside>
 
-  <!-- Left Bottom Detailed Medical Card (Chuẩn Atlas Y Khoa) -->
+  <!-- Left Bottom Detailed Medical Card -->
   <div id="info-card" class="fixed left-4 bottom-4 z-30 w-96 max-w-[calc(100vw-2rem)] glass-panel rounded-2xl p-5 translate-y-8 opacity-0 pointer-events-none transition-all duration-300 shadow-2xl">
     <div class="flex items-start justify-between">
       <div>
@@ -440,9 +464,8 @@
       <button id="tab-btn-clinical" onclick="switchMedicalTab('clinical')" class="text-slate-400 hover:text-slate-200 pb-1 px-1">Lâm sàng</button>
     </div>
 
-    <!-- Tab Content Container -->
+    <!-- Tab Content -->
     <div class="mt-3 text-xs leading-relaxed max-h-56 overflow-y-auto pr-1 space-y-2">
-      <!-- Tab 1: Origin & Insertion -->
       <div id="tab-content-origin" class="space-y-2">
         <div>
           <h4 class="font-semibold text-slate-300 flex items-center gap-1.5 text-[10px] uppercase tracking-wider">
@@ -464,7 +487,6 @@
         </div>
       </div>
 
-      <!-- Tab 2: Action & Biomechanics -->
       <div id="tab-content-action" class="space-y-2 hidden">
         <div>
           <h4 class="font-semibold text-slate-300 flex items-center gap-1.5 text-[10px] uppercase tracking-wider">
@@ -480,7 +502,6 @@
         </div>
       </div>
 
-      <!-- Tab 3: Clinical & Pathology -->
       <div id="tab-content-clinical" class="space-y-2 hidden">
         <div class="p-2.5 rounded-xl bg-rose-950/20 border border-rose-500/30">
           <h4 class="font-bold text-rose-300 flex items-center gap-1.5 text-[11px] uppercase tracking-wider mb-1">
@@ -503,7 +524,7 @@
     </div>
   </div>
 
-  <!-- Instruction Hint Overlay (Bottom Center) -->
+  <!-- Instruction Hint Overlay -->
   <div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-10 pointer-events-none hidden md:flex items-center space-x-3 text-[11px] text-slate-400 glass-panel px-4 py-1.5 rounded-full border border-slate-700/60">
     <span class="flex items-center gap-1"><i data-lucide="mouse-pointer" class="w-3 h-3 text-sky-400"></i> Chuột trái: Xoay 360°</span>
     <span>•</span>
@@ -521,21 +542,21 @@
       // ==================== HỆ XƯƠNG (SKELETAL SYSTEM) ====================
       pelvis: {
         id: "pelvis",
-        nameVi: "Xương chậu (Cánh chậu, Ổ cối, Ụ ngồi)",
+        nameVi: "Xương chậu (Cánh chậu, Ổ cối, Ụ ngồi, Ngành mu)",
         nameLatin: "Os Coxae (Ilium, Ischium, Pubis)",
         nameEn: "Hip Bone (Pelvic Girdle)",
         layer: "skeletal",
         subCategory: "skeletal_pelvis",
         badge: "Khung chậu",
         badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
-        location: "Vùng đáy thân dưới, tiếp khớp với xương cùng ở phía sau và xương đùi ở ổ cối.",
-        origin: "Là nơi nguyên ủy của hầu hết các cơ lớn vùng chi dưới (Cơ mông, Cơ may, Cơ thẳng đùi, Nhóm cơ đùi sau, Nhóm cơ khép).",
-        insertion: "Tiếp nhận các cơ thành bụng (Cơ chéo bụng ngoài, trong, cơ ngang bụng) bám vào mào chậu.",
-        innervation: "Đám rối thắt lưng (Lumbar plexus) & Đám rối cùng (Sacral plexus).",
-        action: "Chịu và truyền toàn bộ trọng lượng thân trên xuống hai chi dưới; bảo vệ các tạng trong chậu hông bé.",
-        clinical: "Mào chậu và Gai chậu trước trên (ASIS) là các mốc nhân trắc học và lâm sàng quan trọng nhất để chọc hút tủy xương làm sinh thiết, xác định mặt phẳng ngang chậu hông và đo chiều dài chi dưới (đo chiều dài thực và chiều dài tương đối khi nghi ngờ gãy xương hay trật khớp háng).",
+        location: "Khung xương chậu tiếp khớp xương cùng ở sau và xương đùi ở ổ cối.",
+        origin: "Nguyên ủy của cơ mông lớn/nhỡ/bé, cơ may, cơ thẳng đùi, cơ căng mạc đùi, nhóm cơ khép, nhóm Hamstrings.",
+        insertion: "Nhận cơ chéo bụng ngoài, trong, cơ ngang bụng bám vào mào chậu.",
+        innervation: "Đám rối thắt lưng & cùng.",
+        action: "Chịu và truyền toàn bộ trọng lượng thân trên xuống chi dưới; bảo vệ tạng chậu hông bé.",
+        clinical: "Mào chậu và Gai chậu trước trên (ASIS) là mốc nhân trắc học và lâm sàng quan trọng nhất: chọc hút tủy xương sinh thiết, xác định mặt phẳng chậu hông và đo chiều dài chi dưới (đo chiều dài thực từ ASIS đến mắt cá trong).",
         cameraOffset: { x: 0.3, y: 2.3, z: 2.2 },
-        pinPos: { x: -0.32, y: 2.45, z: 0.32 }
+        pinPos: { x: -0.35, y: 2.45, z: 0.32 }
       },
       femur: {
         id: "femur",
@@ -546,14 +567,14 @@
         subCategory: "skeletal_thigh",
         badge: "Hệ Xương",
         badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
-        location: "Kéo dài từ khớp háng xuống đến khớp gối, uốn cong nhẹ lồi ra phía trước.",
-        origin: "Đường ráp (Linea aspera) và thân xương đùi là nguyên ủy của 3 cơ rộng (Vastus medialis, lateralis, intermedius) và đầu ngắn cơ nhị đầu đùi.",
-        insertion: "Chỏm đùi tiếp khớp ổ cối; Mấu chuyển lớn nhận cơ mông nhỡ, bé, hình lê; Mấu chuyển bé nhận cơ thắt lưng chậu (Iliopsoas).",
-        innervation: "Cung cấp thần kinh cảm giác màng xương qua Thần kinh đùi (N. femoralis) và TK bịt.",
-        action: "Cột chịu lực trung tâm của chi dưới; cánh tay đòn cơ học chính cho chuyển động đi bộ, chạy nhảy và nâng trọng lượng cơ thể.",
-        clinical: "Gãy cổ xương đùi ở người cao tuổi rất phổ biến do loãng xương, nguy cơ cao dẫn đến hoại tử vô mạch chỏm xương đùi (Avascular necrosis) do đứt nhánh mạch nuôi từ động mạch mũ đùi trong (Medial circumflex femoral a.). Góc cổ-thân bình thường khoảng 125°-130° (giảm gây Coxa vara, tăng gây Coxa valga).",
+        location: "Xương dài nhất cơ thể nối từ khớp háng đến khớp gối, uốn cong nhẹ lồi ra trước.",
+        origin: "Đường ráp (Linea aspera) là nguyên ủy của 3 cơ rộng (Vastus lateralis, medialis, intermedius) và đầu ngắn cơ nhị đầu đùi.",
+        insertion: "Chỏm tiếp khớp ổ cối; Mấu chuyển lớn nhận cơ mông nhỡ, bé, hình lê; Mấu chuyển bé nhận cơ thắt lưng chậu (Iliopsoas).",
+        innervation: "Cung cấp cảm giác màng xương qua Thần kinh đùi và TK bịt.",
+        action: "Trụ chịu lực chính của chi dưới; đòn bẩy trung tâm cho chuyển động chạy nhảy.",
+        clinical: "Gãy cổ xương đùi ở người cao tuổi rất phổ biến do loãng xương, nguy cơ hoại tử vô mạch chỏm xương đùi (Avascular necrosis) do đứt nhánh động mạch mũ đùi trong. Góc cổ-thân bình thường 125°-130°.",
         cameraOffset: { x: 0.2, y: 1.3, z: 2.4 },
-        pinPos: { x: 0.28, y: 1.95, z: 0.15 }
+        pinPos: { x: 0.25, y: 1.95, z: 0.12 }
       },
       patella: {
         id: "patella",
@@ -564,14 +585,14 @@
         subCategory: "skeletal_knee",
         badge: "Hệ Xương",
         badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
-        location: "Nằm ở mặt trước khớp gối, lồng trọn trong gân cơ tứ đầu đùi và dây chằng bánh chè.",
-        origin: "Đáy hướng lên trên nhận gân cơ tứ đầu đùi; Đỉnh hướng xuống dưới tiếp nối dây chằng bánh chè.",
-        insertion: "Mặt sau có 2 diện khớp nhẵn (diện trong và diện ngoài lớn hơn) trượt trên diện bánh chè của đầu dưới xương đùi.",
-        innervation: "Chi phối cảm giác bởi nhánh bì trước thần kinh đùi.",
-        action: "Tăng cánh tay đòn cơ học cho cơ tứ đầu đùi thêm khoảng 30%, biến đổi hướng kéo của gân, bảo vệ mặt trước khớp gối khỏi sang chấn trực tiếp.",
-        clinical: "Dấu hiệu 'bập bềnh xương bánh chè' (Patellar tap test) là dấu hiệu kinh điển phát hiện tràn dịch khớp gối. Trật xương bánh chè thường lệch ra ngoài do hướng kéo chéo của cơ tứ đầu (góc Q).",
+        location: "Xương vừng lớn nhất cơ thể, nằm ở mặt trước khớp gối lồng trong gân cơ tứ đầu đùi.",
+        origin: "Đáy hướng lên trên nhận gân cơ tứ đầu; Đỉnh hướng xuống tiếp nối dây chằng bánh chè.",
+        insertion: "Mặt sau khớp với diện bánh chè của đầu dưới xương đùi.",
+        innervation: "Nhánh bì trước thần kinh đùi.",
+        action: "Tăng cánh tay đòn cơ học cho cơ tứ đầu đùi thêm khoảng 30%, bảo vệ mặt trước khớp gối.",
+        clinical: "Dấu hiệu bập bềnh xương bánh chè (Patellar tap test) là dấu hiệu kinh điển phát hiện tràn dịch khớp gối. Trật xương bánh chè thường lệch ra ngoài do góc Q.",
         cameraOffset: { x: 0, y: 0.2, z: 1.6 },
-        pinPos: { x: 0, y: 0.18, z: 0.32 }
+        pinPos: { x: 0.02, y: 0.2, z: 0.28 }
       },
       tibia: {
         id: "tibia",
@@ -584,12 +605,12 @@
         badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
         location: "Xương lớn nằm ở phía trong cẳng chân, song song với xương mác.",
         origin: "Đường cơ dép (Soleal line) ở mặt sau là nguyên ủy của cơ dép; diện ngoài là nguyên ủy cơ chày trước.",
-        insertion: "Lồi củ chày (Tibial tuberosity) nhận bám tận của dây chằng bánh chè; Mặt trong đầu trên (Chân ngỗng) nhận cơ may, thon, bán gân; Củ Gerdy nhận dải chậu chày.",
-        innervation: "Thần kinh chày (N. tibialis) và thần kinh mác sâu (Deep fibular n.).",
-        action: "Chịu tải 85-90% toàn bộ trọng lượng cơ thể từ xương đùi truyền xuống khối xương cổ chân.",
-        clinical: "Mào trước xương chày nằm sát ngay dưới da, không có cơ che phủ nên là vị trí dễ bị gãy hở nhất cơ thể. Bệnh Osgood-Schlatter là tình trạng viêm sưng lồi củ chày ở thanh thiếu niên hay chơi thể thao vận động mạnh.",
+        insertion: "Lồi củ chày nhận bám tận của dây chằng bánh chè; Chân ngỗng (Pes anserinus) nhận cơ may, thon, bán gân; Củ Gerdy nhận dải chậu chày.",
+        innervation: "Thần kinh chày và thần kinh mác sâu.",
+        action: "Chịu tải 85-90% toàn bộ trọng lượng cơ thể từ xương đùi truyền xuống cổ chân.",
+        clinical: "Mào trước xương chày nằm sát ngay dưới da, không có cơ che phủ nên là vị trí dễ bị gãy hở nhất cơ thể. Bệnh Osgood-Schlatter là tình trạng viêm lồi củ chày ở thanh thiếu niên vận động mạnh.",
         cameraOffset: { x: -0.1, y: -0.9, z: 2.1 },
-        pinPos: { x: -0.06, y: -0.22, z: 0.22 }
+        pinPos: { x: 0.01, y: -0.1, z: 0.22 }
       },
       fibula: {
         id: "fibula",
@@ -600,142 +621,232 @@
         subCategory: "skeletal_leg",
         badge: "Hệ Xương",
         badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
-        location: "Xương thanh mảnh nằm ở mặt ngoài cẳng chân, song song với xương chày.",
-        origin: "Nguyên ủy của cơ mác dài, cơ mác ngắn, cơ duỗi ngón dài, cơ gấp ngón cái dài.",
-        insertion: "Chỏm mác nhận gân bám tận của cơ nhị đầu đùi (Biceps femoris) và dây chằng bên mác (LCL).",
-        innervation: "Thần kinh mác chung (Common fibular nerve).",
-        action: "Không đóng vai trò chịu lực chính (chỉ ~10-15%), nhưng là đòn bẩy bám cơ và cùng xương chày tạo thành gọng kìm chày-mác vững chắc ôm lấy ròng rọc xương sên.",
-        clinical: "Cổ xương mác có thần kinh mác chung uốn lượn áp sát ngay màng xương. Va đập hoặc bó bột quá chặt vào vị trí này dễ gây liệt thần kinh mác dẫn đến 'Bàn chân rũ' (Foot drop). Đoạn thân xương mác là vị trí lý tưởng để lấy vạt xương ghép tự thân có cuống mạch vi phẫu.",
+        location: "Xương thanh mảnh nằm ở mặt ngoài cẳng chân, song song xương chày.",
+        origin: "Nguyên ủy của cơ mác dài, mác ngắn, cơ duỗi ngón dài, cơ gấp ngón cái dài.",
+        insertion: "Chỏm mác nhận gân bám tận của cơ nhị đầu đùi và dây chằng bên mác (LCL).",
+        innervation: "Thần kinh mác chung.",
+        action: "Giữ thăng bằng khớp cổ chân; cùng xương chày tạo gọng kìm chày-mác ôm chặt ròng rọc xương sên.",
+        clinical: "Cổ xương mác có thần kinh mác chung uốn lượn áp sát ngay màng xương. Va đập hoặc bó bột chặt vị trí này dễ gây liệt thần kinh mác dẫn đến Bàn chân rũ (Foot drop). Thân xương mác là vị trí lý tưởng để lấy vạt xương ghép tự thân.",
         cameraOffset: { x: 0.45, y: -0.9, z: 2.0 },
-        pinPos: { x: 0.35, y: 0.05, z: -0.02 }
+        pinPos: { x: 0.26, y: 0.05, z: -0.04 }
       },
-      tarsals_foot: {
-        id: "tarsals_foot",
-        nameVi: "Khối xương cổ chân & Bàn - Ngón chân",
-        nameLatin: "Ossa Tarsi, Metatarsi et Phalanges Pedis",
-        nameEn: "Tarsal Bones, Metatarsals and Phalanges",
+      talus: {
+        id: "talus",
+        nameVi: "Xương sên (Ròng rọc sên, Chỏm & Cổ sên)",
+        nameLatin: "Talus",
+        nameEn: "Talus (Ankle Bone)",
         layer: "skeletal",
         subCategory: "skeletal_foot",
-        badge: "Hệ Xương",
+        badge: "Cổ chân",
         badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
-        location: "Phần tận cùng của chi dưới, gồm 7 xương cổ chân (Sên, Gót, Ghe, Hộp, 3 Chêm), 5 xương bàn và 14 đốt ngón.",
-        origin: "Các cơ nội tại của bàn chân (Cơ gấp ngón ngắn, cơ giạng ngón cái, cơ gian cốt...).",
-        insertion: "Nhận gân gót Achilles bám vào lồi củ xương gót, gân cơ chày trước, chày sau, cơ mác dài...",
-        innervation: "Thần kinh chày qua các nhánh thần kinh gan chân trong và gan chân ngoài; Thần kinh mác nông & sâu.",
-        action: "Tạo nên vòm bàn chân dọc và ngang (Arch of foot) có tính đàn hồi cao, hấp thụ xung chấn khi tiếp đất và tạo lực đòn bẩy đẩy cơ thể về phía trước.",
-        clinical: "Gãy xương gót (Calcaneus fracture) hay gặp khi ngã từ trên cao dồn gót xuống đất cứng (Don Juan fracture), thường phối hợp với gãy nén cột sống thắt lưng. Bàn chân bẹt (Flatfoot) xảy ra do suy yếu gân cơ chày sau hoặc lỏng lẻo dây chằng gót-ghe bàn chân.",
-        cameraOffset: { x: 0, y: -1.95, z: 1.8 },
-        pinPos: { x: 0, y: -2.05, z: 0.38 }
+        location: "Xương cổ chân trung tâm, nằm trên xương gót và khớp với gọng chày mác ở trên.",
+        origin: "Không có cơ nào bám trực tiếp vào xương sên; 60% bề mặt xương sên được bao phủ bởi sụn khớp.",
+        insertion: "Khớp với đầu dưới xương chày và mác tạo khớp cổ chân (Khớp sên-cẳng chân); khớp dưới với xương gót (Khớp dưới sên) và trước với xương ghe.",
+        innervation: "Thần kinh chày và thần kinh mác sâu.",
+        action: "Chuyển tiếp toàn bộ tải trọng từ cẳng chân xuống xương gót và vòm bàn chân; cho phép động tác gập mu và gập lòng bàn chân.",
+        clinical: "Gãy cổ xương sên (Aviator's fracture) có nguy cơ hoại tử vô mạch rất cao vì nguồn cấp máu đi ngược từ trước ra sau. Dấu hiệu Hawkins sign trên X-quang giúp theo dõi phục hồi mạch máu xương sên.",
+        cameraOffset: { x: 0, y: -1.9, z: 1.6 },
+        pinPos: { x: -0.02, y: -1.9, z: 0.1 }
+      },
+      calcaneus: {
+        id: "calcaneus",
+        nameVi: "Xương gót (Lồi củ gót, Mỏm nâng sên)",
+        nameLatin: "Calcaneus",
+        nameEn: "Calcaneus (Heel Bone)",
+        layer: "skeletal",
+        subCategory: "skeletal_foot",
+        badge: "Cổ chân",
+        badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
+        location: "Xương lớn nhất và khỏe nhất trong khối xương bàn chân, nằm ở dưới xương sên.",
+        origin: "Nguyên ủy của cơ gấp các ngón ngắn, cơ giạng ngón cái, cơ giạng ngón út, cân gan chân (Plantar fascia).",
+        insertion: "Lồi củ gót sau nhận bám tận của gân gót chân (Achilles tendon); mỏm nâng sên đỡ chỏm sên.",
+        innervation: "Thần kinh chày và các nhánh gót.",
+        action: "Trụ chịu lực chính khi gót chân chạm đất (Heel strike) và là đòn bẩy phát lực khi nhón gót nhảy.",
+        clinical: "Gãy xương gót (Lover's fracture / Don Juan fracture) xảy ra khi ngã từ trên cao dồn gót xuống đất cứng, thường đi kèm gãy nén cột sống thắt lưng L1-L2. Góc Böhler giảm dưới 20° trên phim X-quang nghiêng xác định gãy lún.",
+        cameraOffset: { x: 0, y: -2.0, z: -1.8 },
+        pinPos: { x: 0.01, y: -2.05, z: -0.16 }
+      },
+      navicular_cuboid_cuneiforms: {
+        id: "navicular_cuboid_cuneiforms",
+        nameVi: "Khối xương ghe, xương hộp và 3 xương chêm",
+        nameLatin: "Os Naviculare, Os Cuboideum et Ossa Cuneiformia (I-III)",
+        nameEn: "Navicular, Cuboid & Cuneiform Bones (Midfoot)",
+        layer: "skeletal",
+        subCategory: "skeletal_foot",
+        badge: "Cổ chân trước",
+        badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
+        location: "Nằm ở phần giữa cổ chân và các xương đốt bàn chân.",
+        origin: "Điểm bám của gân cơ chày sau (vào củ xương ghe và các xương chêm), gân cơ mác dài (vào xương chêm trong).",
+        insertion: "Tạo khớp Chopart (Khớp ngang cổ chân) và Khớp Lisfranc (Khớp cổ chân - bàn chân).",
+        innervation: "Thần kinh chày và thần kinh mác sâu.",
+        action: "Tạo vòm dọc trong, vòm dọc ngoài và vòm ngang của bàn chân, giúp bàn chân thích ứng với địa hình gồ ghề và đàn hồi giảm xóc.",
+        clinical: "Tổn thương khớp Lisfranc (Lisfranc injury) là chấn thương gãy - trật khớp cổ bàn chân nghiêm trọng dễ bị bỏ sót trong thể thao. Củ xương ghe phụ (Accessory navicular) có thể gây đau vòm trong bàn chân.",
+        cameraOffset: { x: -0.1, y: -2.05, z: 1.6 },
+        pinPos: { x: -0.06, y: -2.02, z: 0.28 }
+      },
+      metatarsals_phalanges: {
+        id: "metatarsals_phalanges",
+        nameVi: "5 Xương đốt bàn và 14 Xương đốt ngón chân",
+        nameLatin: "Ossa Metatarsi (I-V) et Phalanges Digitorum Pedis",
+        nameEn: "Metatarsals & Phalanges of the Foot",
+        layer: "skeletal",
+        subCategory: "skeletal_foot",
+        badge: "Bàn ngón chân",
+        badgeColor: "bg-sky-500/20 text-sky-300 border-sky-400/30",
+        location: "Nửa trước bàn chân, gồm 5 xương bàn (Metatarsal I to V) và 14 đốt ngón (ngón cái 2 đốt, các ngón II-V có 3 đốt).",
+        origin: "Các cơ gian cốt mu chân và gan chân bám vào thân các xương bàn chân.",
+        insertion: "Nhận gân các cơ cẳng chân (Cơ chày trước, cơ mác ngắn, cơ duỗi ngón dài, cơ gấp ngón dài). Chỏm xương bàn I có 2 xương vừng.",
+        innervation: "Thần kinh mác sâu, mác nông, thần kinh gan chân trong và gan chân ngoài.",
+        action: "Phân bổ trọng tải lên 3 điểm chịu lực chính của bàn chân: Lồi củ gót, chỏm xương bàn I và chỏm xương bàn V.",
+        clinical: "Gãy Jones (Gãy nền xương đốt bàn V) là chấn thương thể thao phổ biến do cơ mác ngắn giật gián tiếp. Gãy mỏi do hành quân (March fracture / Stress fracture) hay gặp ở cổ xương bàn II hoặc III ở tân binh đi bộ dã ngoại đường dài.",
+        cameraOffset: { x: 0, y: -2.1, z: 1.8 },
+        pinPos: { x: 0.02, y: -2.12, z: 0.52 }
       },
 
-      // ==================== DÂY CHẰNG & SỤN KHỚP (LIGAMENTS & MENISCI) ====================
+      // ==================== DÂY CHẰNG & SỤN KHỚP GỐI, CỔ CHÂN & BÀN CHÂN ====================
       acl: {
         id: "acl",
         nameVi: "Dây chằng chéo trước khớp gối",
         nameLatin: "Ligamentum Cruciatum Anterius (ACL)",
         nameEn: "Anterior Cruciate Ligament (ACL)",
-        layer: "ligament",
+        layer: "ligaments",
         subCategory: "ligaments_knee",
-        badge: "Dây chằng",
+        badge: "Dây chằng gối",
         badgeColor: "bg-teal-500/20 text-teal-300 border-teal-400/30",
-        location: "Nằm trong bao khớp nhưng ngoài bao hoạt dịch khớp gối, bắt chéo với dây chằng chéo sau theo hình chữ X.",
-        origin: "Diện gian lồi cầu trước của mâm chày (Anterior intercondylar area).",
-        insertion: "Mặt trong của lồi cầu ngoài xương đùi (Medial surface of lateral femoral condyle).",
+        location: "Nằm trong bao khớp nhưng ngoài bao hoạt dịch khớp gối, bắt chéo với PCL tạo hình chữ X.",
+        origin: "Diện gian lồi cầu trước của mâm chày.",
+        insertion: "Mặt trong của lồi cầu ngoài xương đùi.",
         innervation: "Nhánh thần kinh khớp từ thần kinh chày.",
-        action: "Ngăn chặn xương chày bị trượt ra phía trước so với xương đùi, chống xoay trong quá mức của cẳng chân và hạn chế ưỡn gối quá mức.",
-        clinical: "Dây chằng bị chấn thương nhiều nhất trong thể thao (bóng đá, trượt tuyết, bóng rổ). Khám lâm sàng phát hiện dấu hiệu 'Ngăn kéo trước' (Anterior Drawer Test) và test 'Lachman' dương tính. Khi đứt ACL thường kèm rách sụn chêm trong và đứt MCL (Tam chứng bất hạnh O'Donoghue / Unhappy Triad).",
-        cameraOffset: { x: 0.05, y: 0.15, z: 1.2 },
-        pinPos: { x: 0.02, y: 0.16, z: 0.12 }
+        action: "Ngăn xương chày trượt ra trước so với xương đùi, chống xoay trong quá mức và hạn chế ưỡn gối quá mức.",
+        clinical: "Dây chằng bị đứt nhiều nhất trong chấn thương thể thao xoắn vặn gối. Dấu hiệu Ngăn kéo trước (Anterior Drawer Test) và test Lachman dương tính. Khi đứt ACL thường kèm rách sụn chêm trong và đứt MCL (Tam chứng O'Donoghue).",
+        cameraOffset: { x: 0.05, y: 0.16, z: 1.2 },
+        pinPos: { x: 0.03, y: 0.16, z: 0.12 }
       },
       pcl: {
         id: "pcl",
         nameVi: "Dây chằng chéo sau khớp gối",
         nameLatin: "Ligamentum Cruciatum Posterius (PCL)",
         nameEn: "Posterior Cruciate Ligament (PCL)",
-        layer: "ligament",
+        layer: "ligaments",
         subCategory: "ligaments_knee",
-        badge: "Dây chằng",
+        badge: "Dây chằng gối",
         badgeColor: "bg-teal-500/20 text-teal-300 border-teal-400/30",
-        location: "Nằm ở phía sau khoang gian lồi cầu khớp gối, dày và chắc khỏe hơn ACL.",
-        origin: "Diện gian lồi cầu sau của mâm chày (Posterior intercondylar area).",
-        insertion: "Mặt ngoài của lồi cầu trong xương đùi (Lateral surface of medial femoral condyle).",
+        location: "Nằm ở phía sau khoang gian lồi cầu khớp gối, dày và khỏe hơn ACL.",
+        origin: "Diện gian lồi cầu sau của mâm chày.",
+        insertion: "Mặt ngoài của lồi cầu trong xương đùi.",
         innervation: "Nhánh thần kinh khớp từ thần kinh chày.",
-        action: "Ngăn chặn xương chày bị trượt ra sau so with xương đùi, là trụ ổn định chính khi khớp gối gập 90°.",
-        clinical: "Thường tổn thương trong cơ chế chấn thương táp-lô ô tô (Dashboard injury) khi đầu gối gập va đập mạnh vào bảng điều khiển đẩy cẳng chân ra sau. Khám thấy dấu hiệu 'Ngăn kéo sau' (Posterior Drawer Test) và 'Sụt lùi cẳng chân sau' (Posterior sag sign).",
-        cameraOffset: { x: -0.05, y: 0.15, z: 1.2 },
-        pinPos: { x: -0.04, y: 0.14, z: -0.04 }
+        action: "Ngăn xương chày trượt ra sau so với xương đùi, là trụ ổn định chính khi khớp gối gập 90°.",
+        clinical: "Thường tổn thương trong cơ chế chấn thương táp-lô ô tô (Dashboard injury) khi đầu gối gập đập mạnh vào bảng điều khiển. Khám thấy dấu hiệu Ngăn kéo sau (Posterior Drawer Test) và sụt lùi cẳng chân sau.",
+        cameraOffset: { x: -0.05, y: 0.16, z: 1.2 },
+        pinPos: { x: -0.03, y: 0.15, z: -0.04 }
       },
       mcl: {
         id: "mcl",
-        nameVi: "Dây chằng bên chày (Dây chằng bên trong)",
+        nameVi: "Dây chằng bên chày (MCL - Dây chằng bên trong)",
         nameLatin: "Ligamentum Collaterale Tibiale (MCL)",
         nameEn: "Medial Collateral Ligament (MCL)",
-        layer: "ligament",
+        layer: "ligaments",
         subCategory: "ligaments_knee",
-        badge: "Dây chằng",
+        badge: "Dây chằng gối",
         badgeColor: "bg-teal-500/20 text-teal-300 border-teal-400/30",
-        location: "Dải sợi dẹt, rộng nằm ở mặt trong của khớp gối, dính chặt vào sụn chêm trong.",
-        origin: "Mỏm trên lồi cầu trong xương đùi (Medial epicondyle of femur).",
-        insertion: "Mặt trong thân xương chày, bên dưới lồi cầu trong khoảng 5cm.",
+        location: "Dải sợi dẹt rộng ở mặt trong khớp gối, dính chặt vào sụn chêm trong.",
+        origin: "Mỏm trên lồi cầu trong xương đùi.",
+        insertion: "Mặt trong thân xương chày, dưới lồi cầu trong khoảng 5cm.",
         innervation: "Nhánh thần kinh đùi và thần kinh bịt.",
-        action: "Chống lại lực vẹo ngoài (Valgus stress) tác động vào khớp gối, giữ vững khớp gối ở tư thế duỗi.",
-        clinical: "Thường bị rách khi có lực va đập từ phía ngoài gối ép gối vẹo vào trong (Valgus force). Vì dính trực tiếp vào sụn chêm trong nên rách MCL độ III hầu như luôn làm rách luôn sụn chêm trong.",
+        action: "Chống lại lực vẹo ngoài (Valgus stress) tác động vào khớp gối.",
+        clinical: "Rách do lực va đập từ ngoài gối ép gối vẹo vào trong (Valgus force). Vì dính trực tiếp vào sụn chêm trong nên rách MCL nặng hầu như luôn làm rách luôn sụn chêm trong.",
         cameraOffset: { x: -0.3, y: 0.15, z: 1.3 },
-        pinPos: { x: -0.22, y: 0.12, z: 0.05 }
+        pinPos: { x: -0.16, y: 0.14, z: 0.02 }
       },
       lcl: {
         id: "lcl",
-        nameVi: "Dây chằng bên mác (Dây chằng bên ngoài)",
+        nameVi: "Dây chằng bên mác (LCL - Dây chằng bên ngoài)",
         nameLatin: "Ligamentum Collaterale Fibulare (LCL)",
         nameEn: "Lateral Collateral Ligament (LCL)",
-        layer: "ligament",
+        layer: "ligaments",
         subCategory: "ligaments_knee",
-        badge: "Dây chằng",
+        badge: "Dây chằng gối",
         badgeColor: "bg-teal-500/20 text-teal-300 border-teal-400/30",
         location: "Dải xơ tròn chắc như sợi dây thừng, nằm độc lập tách rời khỏi sụn chêm ngoài.",
-        origin: "Mỏm trên lồi cầu ngoài xương đùi (Lateral epicondyle of femur).",
-        insertion: "Chỏm xương mác (Head of fibula).",
+        origin: "Mỏm trên lồi cầu ngoài xương đùi.",
+        insertion: "Chỏm xương mác.",
         innervation: "Nhánh thần kinh mác chung.",
         action: "Chống lại lực vẹo trong (Varus stress) tác động vào khớp gối.",
         clinical: "Tổn thương do lực tác động từ mặt trong gối ép gối vẹo ra ngoài (Varus force). Cần kiểm tra kỹ thần kinh mác chung đi sát phía dưới chỏm mác xem có bị liệt kéo căng kèm theo hay không.",
         cameraOffset: { x: 0.35, y: 0.15, z: 1.3 },
-        pinPos: { x: 0.28, y: 0.12, z: 0.02 }
+        pinPos: { x: 0.22, y: 0.14, z: 0.0 }
       },
       meniscus: {
         id: "meniscus",
-        nameVi: "Sụn chêm khớp gối (Sụn chêm trong & Sụn chêm ngoài)",
+        nameVi: "Sụn chêm khớp gối (Sụn chêm trong C-shape & Sụn chêm ngoài O-shape)",
         nameLatin: "Meniscus Medialis et Meniscus Lateralis",
         nameEn: "Medial & Lateral Menisci",
-        layer: "ligament",
+        layer: "ligaments",
         subCategory: "ligaments_knee",
         badge: "Sụn khớp",
         badgeColor: "bg-teal-500/20 text-teal-300 border-teal-400/30",
-        location: "Hai tấm sụn sợi hình bán nguyệt nằm xen giữa lồi cầu đùi và mâm chày.",
+        location: "Hai tấm sụn sợi hình bán nguyệt xanh ngọc nằm xen giữa lồi cầu đùi và mâm chày.",
         origin: "Sụn chêm trong hình chữ C rộng; Sụn chêm ngoài hình chữ O gần khép kín và di động hơn.",
-        insertion: "Cố định vào diện gian lồi cầu của xương chày qua các sừng trước và sừng sau sụn chêm.",
-        innervation: "Chỉ 1/3 ngoài có mạch máu và đầu mút thần kinh cảm giác (vùng đỏ - Red zone), 2/3 trong vô mạch (vùng trắng - White zone).",
+        insertion: "Cố định vào diện gian lồi cầu xương chày qua các sừng trước và sừng sau sụn chêm.",
+        innervation: "1/3 ngoài có mạch máu (vùng đỏ - Red zone), 2/3 trong vô mạch (vùng trắng - White zone).",
         action: "Phân phối đều áp lực tải trọng lên bề mặt sụn mâm chày, tăng độ sâu của hõm khớp gối, đệm giảm chấn và bôi trơn dịch khớp.",
-        clinical: "Rách sụn chêm quai vali (Bucket-handle tear) gây kẹt khớp gối đột ngột không thể duỗi thẳng được. Vùng đỏ 1/3 ngoài có thể khâu liền sụn, vùng trắng 2/3 trong hầu như không thể liền mạch nên thường phải cắt gọt tạo hình qua nội soi.",
+        clinical: "Rách sụn chêm quai vali (Bucket-handle tear) gây kẹt khớp gối đột ngột. Vùng đỏ 1/3 ngoài có thể khâu liền sụn, vùng trắng 2/3 trong hầu như không thể liền mạch nên thường phải cắt gọt tạo hình qua nội soi.",
         cameraOffset: { x: 0, y: 0.15, z: 1.2 },
-        pinPos: { x: -0.12, y: 0.11, z: 0.15 }
+        pinPos: { x: -0.09, y: 0.15, z: 0.08 }
       },
       patellar_ligament: {
         id: "patellar_ligament",
         nameVi: "Dây chằng bánh chè",
         nameLatin: "Ligamentum Patellae",
         nameEn: "Patellar Ligament / Tendon",
-        layer: "ligament",
+        layer: "ligaments",
         subCategory: "ligaments_knee",
-        badge: "Dây chằng",
+        badge: "Dây chằng gối",
         badgeColor: "bg-teal-500/20 text-teal-300 border-teal-400/30",
-        location: "Dải xơ dẹt cực kỳ dày chắc nối từ đỉnh xương bánh chè xuống lồi củ chày.",
-        origin: "Đỉnh và bờ dưới của xương bánh chè (thực chất là phần tiếp nối liên tục của gân cơ tứ đầu đùi).",
+        location: "Dải xơ dẹt dày chắc nối từ đỉnh xương bánh chè xuống lồi củ chày.",
+        origin: "Đỉnh và bờ dưới của xương bánh chè (tiếp nối liên tục gân cơ tứ đầu đùi).",
         insertion: "Lồi củ trước xương chày (Tuberositas tibiae).",
-        innervation: "Thần kinh đùi (N. femoralis - rễ L2, L3, L4).",
-        action: "Truyền lực co bóp khổng lồ của toàn bộ cơ tứ đầu đùi vào xương chày để thực hiện động tác duỗi thẳng khớp gối.",
-        clinical: "Vị trí kinh điển để gõ búa phản xạ gân xương trong thăm khám thần kinh: Phản xạ gân bánh chè (Patellar reflex / Knee jerk) giúp đánh giá tính toàn vẹn của cung phản xạ tủy sống đoạn thắt lưng L3 - L4.",
+        innervation: "Thần kinh đùi (rễ L2, L3, L4).",
+        action: "Truyền lực co bóp của cơ tứ đầu đùi vào xương chày để duỗi thẳng khớp gối.",
+        clinical: "Vị trí gõ búa phản xạ gân xương trong khám thần kinh: Phản xạ gân bánh chè (Patellar reflex / Knee jerk) đánh giá tính toàn vẹn của cung phản xạ tủy sống đoạn thắt lưng L3 - L4.",
         cameraOffset: { x: 0, y: 0, z: 1.4 },
-        pinPos: { x: 0, y: -0.05, z: 0.26 }
+        pinPos: { x: 0.02, y: 0.03, z: 0.22 }
+      },
+      atfl_ankle_ligaments: {
+        id: "atfl_ankle_ligaments",
+        nameVi: "Dây chằng cổ chân ngoài (ATFL, CFL, PTFL) & Dây chằng Delta",
+        nameLatin: "Ligamenta Collateralia Articulationis Talocruralis (ATFL, CFL, Lig. Deltoideum)",
+        nameEn: "Ankle Collateral Ligaments (ATFL, CFL & Deltoid)",
+        layer: "ligaments",
+        subCategory: "ligaments_foot",
+        badge: "Dây chằng cổ chân",
+        badgeColor: "bg-teal-500/20 text-teal-300 border-teal-400/30",
+        location: "Hệ thống dây chằng bao bọc mắt cá ngoài và mắt cá trong của khớp cổ chân.",
+        origin: "Dây chằng sên-mác trước (ATFL), Dây chằng gót-mác (CFL) từ mắt cá ngoài; Dây chằng Delta hình quạt từ mắt cá trong.",
+        insertion: "Bám vào cổ xương sên, thân xương gót và xương ghe.",
+        innervation: "Thần kinh mác nông, mác sâu và thần kinh chày.",
+        action: "Giữ vững khớp cổ chân chống lại các chuyển động lật nghiêng trong và nghiêng ngoài quá mức.",
+        clinical: "ATFL (Dây chằng sên-mác trước) là dây chằng bị rách/bong nhiều nhất trong cơ thể người khi bị bong gân cổ chân do chấn thương lật sơ mi (Inversion ankle sprain). Dấu hiệu ngăn kéo trước cổ chân (Anterior drawer test of the ankle) dùng để chẩn đoán đứt ATFL.",
+        cameraOffset: { x: 0.25, y: -1.9, z: 1.4 },
+        pinPos: { x: 0.14, y: -1.92, z: 0.06 }
+      },
+      plantar_fascia: {
+        id: "plantar_fascia",
+        nameVi: "Cân gan chân (Cân mạc gan chân & Dây chằng gan chân dài)",
+        nameLatin: "Aponeurosis Plantaris & Ligamentum Plantare Longum",
+        nameEn: "Plantar Fascia (Plantar Aponeurosis)",
+        layer: "ligaments",
+        subCategory: "ligaments_foot",
+        badge: "Cân gan chân",
+        badgeColor: "bg-teal-500/20 text-teal-300 border-teal-400/30",
+        location: "Dải xơ collagen cực kỳ dày chắc trải rộng dưới toàn bộ lòng bàn chân, từ củ xương gót đến nền các ngón chân.",
+        origin: "Mặt dưới củ xương gót (Tuber calcanei).",
+        insertion: "Tách thành 5 dải bám vào bao khớp và nền các đốt ngón chân I đến V.",
+        innervation: "Các nhánh thần kinh gan chân trong và gan chân ngoài.",
+        action: "Đóng vai trò như 'Dây cung' (Windlass mechanism) giữ vững vòm dọc bàn chân, hấp thụ lực nén khi tiếp đất và bật nhả năng lượng đàn hồi khi đẩy bàn chân rời đất.",
+        clinical: "Viêm cân gan chân (Plantar fasciitis) là nguyên nhân gây đau gót chân phổ biến nhất ở người trưởng thành (đau nhói gót chân ở những bước đi đầu tiên vào buổi sáng). Kéo dài có thể kích thích hình thành gai xương gót (Heel spur).",
+        cameraOffset: { x: 0, y: -2.15, z: 1.4 },
+        pinPos: { x: 0.01, y: -2.15, z: 0.15 }
       },
 
       // ==================== HỆ CƠ (MUSCULAR SYSTEM) ====================
@@ -749,12 +860,12 @@
         functionalGroup: "hip_flexor",
         badge: "Cơ đùi trước",
         badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Cơ dài nhất trong cơ thể người, chạy chéo như một dải lụa chữ S từ hông ngoài qua mặt trước đùi xuống mặt trong gối.",
-        origin: "Gai chậu trước trên (Spina iliaca anterior superior - ASIS).",
-        insertion: "Mặt trong đầu trên xương chày, tạo nên cấu trúc 'Chân ngỗng' (Pes anserinus) cùng với cơ thon và cơ bán gân.",
-        innervation: "Thần kinh đùi (Nervus femoralis - L2, L3).",
-        action: "Gấp, giạng và xoay ngoài khớp háng; gấp khớp gối. Giúp tạo tư thế ngồi xếp bằng bắt chéo chân của thợ may ngày xưa.",
-        clinical: "Bờ ngoài cơ may là cạnh ngoài của Tam giác đùi (Tam giác Scarpa) - mốc định vị phẫu thuật bộc lộ động mạch và tĩnh mạch đùi. Viêm bao hoạt dịch chân ngỗng (Pes anserine bursitis) gây đau nhói mặt trong gối.",
+        location: "Cơ dài nhất cơ thể, chạy chéo chữ S từ ASIS qua mặt trước đùi xuống mặt trong gối.",
+        origin: "Gai chậu trước trên (ASIS).",
+        insertion: "Mặt trong đầu trên xương chày, tạo nên Chân ngỗng (Pes anserinus).",
+        innervation: "Thần kinh đùi (N. femoralis - L2, L3).",
+        action: "Gấp, giạng, xoay ngoài khớp háng; gấp khớp gối. Tạo tư thế ngồi xếp bằng của thợ may.",
+        clinical: "Bờ ngoài cơ may là cạnh ngoài của Tam giác đùi Scarpa. Viêm bao hoạt dịch chân ngỗng (Pes anserine bursitis) gây đau nhói mặt trong gối.",
         cameraOffset: { x: 0.1, y: 1.3, z: 2.2 },
         pinPos: { x: 0.05, y: 1.25, z: 0.24 }
       },
@@ -768,14 +879,14 @@
         functionalGroup: "knee_extensor",
         badge: "Cơ đùi trước",
         badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Nằm chính giữa mặt trước đùi, thớ cơ xếp dạng lông chim kép (bipennate).",
-        origin: "Đầu thẳng bám Gai chậu trước dưới (AIIS); Đầu quặt bám bờ trên ổ cối xương chậu.",
-        insertion: "Hợp cùng 3 cơ rộng thành gân cơ tứ đầu đùi bám vào đáy xương bánh chè.",
-        innervation: "Thần kinh đùi (Nervus femoralis - L2, L3, L4).",
-        action: "Là phần duy nhất của cơ tứ đầu bắc qua 2 khớp: Vừa gấp khớp háng, vừa duỗi thẳng mạnh mẽ khớp gối (đặc biệt trong động tác vung chân sút bóng).",
-        clinical: "Hay bị rách/bong điểm bám gai chậu trước dưới (Avulsion fracture of AIIS) ở các cầu thủ bóng đá sút bóng hụt hoặc rướn cơ quá mức.",
+        location: "Chính giữa mặt trước đùi, thớ cơ dạng lông chim kép.",
+        origin: "Gai chậu trước dưới (AIIS) và bờ trên ổ cối.",
+        insertion: "Đáy xương bánh chè qua gân cơ tứ đầu đùi.",
+        innervation: "Thần kinh đùi (L2, L3, L4).",
+        action: "Bắc qua 2 khớp: Vừa gấp khớp háng vừa duỗi thẳng mạnh mẽ khớp gối (đặc biệt khi sút bóng).",
+        clinical: "Hay bị bong gân hoặc giật bong điểm bám gai chậu trước dưới (Avulsion fracture of AIIS) ở cầu thủ bóng đá sút bóng rướn lực.",
         cameraOffset: { x: 0, y: 1.4, z: 2.2 },
-        pinPos: { x: 0, y: 1.35, z: 0.3 }
+        pinPos: { x: 0.03, y: 1.35, z: 0.28 }
       },
       vastus_lateralis: {
         id: "vastus_lateralis",
@@ -790,9 +901,9 @@
         location: "Khối cơ đồ sộ nhất trong 4 đầu cơ tứ đầu, bao phủ toàn bộ mặt ngoài đùi.",
         origin: "Bờ ngoài mấu chuyển lớn, củ cơ mông và mép ngoài đường ráp xương đùi.",
         insertion: "Bờ ngoài xương bánh chè và gân cơ tứ đầu đùi.",
-        innervation: "Thần kinh đùi (Nervus femoralis - L2, L3, L4).",
+        innervation: "Thần kinh đùi (L2, L3, L4).",
         action: "Duỗi khớp gối và giữ vững xương bánh chè.",
-        clinical: "Vị trí ưu tiên hàng đầu để tiêm bắp sâu (Intramuscular injection) ở trẻ sơ sinh và trẻ nhỏ dưới 3 tuổi vì không có dây thần kinh hay mạch máu lớn nguy hiểm đi qua, khối cơ dày dặn.",
+        clinical: "Vị trí ưu tiên hàng đầu để tiêm bắp sâu ở trẻ sơ sinh và trẻ nhỏ dưới 3 tuổi vì khối cơ dày, không có mạch máu hay dây thần kinh lớn nguy hiểm.",
         cameraOffset: { x: 0.35, y: 1.3, z: 2.2 },
         pinPos: { x: 0.3, y: 1.25, z: 0.18 }
       },
@@ -806,18 +917,18 @@
         functionalGroup: "knee_extensor",
         badge: "Cơ đùi trước",
         badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Nằm ở mặt trong đùi, phần dưới phình to hình 'giọt nước' (teardrop) ngay phía trên khớp gối.",
+        location: "Mặt trong đùi, phần dưới phình to hình giọt nước (Teardrop / VMO) ngay trên khớp gối.",
         origin: "Đường gian mấu và mép trong đường ráp xương đùi.",
         insertion: "Bờ trong xương bánh chè và gân cơ tứ đầu.",
-        innervation: "Thần kinh đùi (Nervus femoralis - L2, L3, L4).",
-        action: "Duỗi khớp gối; Các thớ cơ chéo ở đầu dưới (VMO - Vastus Medialis Oblique) đóng vai trò sống còn kéo xương bánh chè vào trong, chống lại xu hướng trật bánh chè ra ngoài.",
-        clinical: "Cơ rộng trong teo biến rất nhanh sau chấn thương khớp gối hoặc bất động khớp gối sau mổ. Tập phục hồi chức năng cơ rộng trong (VMO strengthening) là bài tập then chốt điều trị hội chứng đau bánh chè - đùi (Patellofemoral pain syndrome).",
+        innervation: "Thần kinh đùi (L2, L3, L4).",
+        action: "Duỗi khớp gối; thớ cơ VMO kéo xương bánh chè vào trong, chống trật khớp bánh chè ra ngoài.",
+        clinical: "Teo cơ rất nhanh sau chấn thương hoặc mổ khớp gối. Bài tập làm khỏe VMO là bài tập then chốt điều trị hội chứng đau bánh chè - đùi.",
         cameraOffset: { x: -0.25, y: 0.7, z: 1.8 },
-        pinPos: { x: -0.18, y: 0.6, z: 0.22 }
+        pinPos: { x: -0.16, y: 0.58, z: 0.22 }
       },
       vastus_intermedius: {
         id: "vastus_intermedius",
-        nameVi: "Cơ rộng giữa",
+        nameVi: "Cơ rộng giữa (Lớp cơ đùi sâu)",
         nameLatin: "Musculus Vastus Intermedius",
         nameEn: "Vastus Intermedius Muscle",
         layer: "muscular",
@@ -825,14 +936,14 @@
         functionalGroup: "knee_extensor",
         badge: "Cơ đùi sâu",
         badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Nằm sâu bên dưới cơ thẳng đùi, áp sát trực tiếp mặt trước và các mặt bên của thân xương đùi.",
+        location: "Nằm sâu dưới cơ thẳng đùi, áp sát trực tiếp mặt trước thân xương đùi.",
         origin: "2/3 trên mặt trước và ngoài thân xương đùi.",
         insertion: "Bờ sâu của đáy xương bánh chè.",
-        innervation: "Thần kinh đùi (Nervus femoralis - L2, L3, L4).",
-        action: "Duỗi mạnh mẽ khớp gối.",
-        clinical: "Phía dưới cơ này có cơ khớp gối (M. articularis genus) bám vào túi cùng hoạt dịch trên bánh chè, kéo túi cùng lên khi duỗi gối để tránh kẹt màng hoạt dịch.",
+        innervation: "Thần kinh đùi (L2, L3, L4).",
+        action: "Duỗi mạnh khớp gối.",
+        clinical: "Phía dưới có cơ khớp gối (M. articularis genus) bám vào túi cùng hoạt dịch trên bánh chè, kéo túi cùng lên khi duỗi gối để tránh kẹt màng hoạt dịch.",
         cameraOffset: { x: 0, y: 1.2, z: 2.0 },
-        pinPos: { x: 0, y: 1.15, z: 0.12 }
+        pinPos: { x: 0.04, y: 1.15, z: 0.12 }
       },
       tensor_fasciae_latae: {
         id: "tensor_fasciae_latae",
@@ -844,14 +955,14 @@
         functionalGroup: "hip_abductor",
         badge: "Cơ đùi ngoài",
         badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Nằm ở mặt ngoài khớp háng, kéo dài thành dải cân xơ màu trắng ngà óng ánh (IT Band) chạy dọc xuống mặt ngoài cẳng chân.",
+        location: "Mặt ngoài khớp háng, nối tiếp dải cân xơ trắng bạc (IT Band) chạy dọc xuống củ Gerdy cẳng chân.",
         origin: "Mào chậu ngoài và gai chậu trước trên (ASIS).",
-        insertion: "Chạy dọc mặt ngoài đùi xuống bám tận vào Củ Gerdy (Gerdy's tubercle) ở mặt ngoài đầu trên xương chày.",
-        innervation: "Thần kinh mông trên (Nervus gluteus superior - L4, L5, S1).",
-        action: "Căng mạc đùi, giạng và xoay trong khớp háng; tăng cường độ vững chắc cho khớp gối ở tư thế đứng thẳng.",
-        clinical: "Hội chứng dải chậu chày (IT Band Syndrome) là chấn thương do quá tải cực kỳ phổ biến ở người chạy bộ (Runner's knee), do dải IT cọ xát liên tục vào lồi cầu ngoài xương đùi gây viêm đau nhói mặt ngoài gối.",
+        insertion: "Bám vào Củ Gerdy ở mặt ngoài đầu trên xương chày.",
+        innervation: "Thần kinh mông trên (L4, L5, S1).",
+        action: "Căng mạc đùi, giạng và xoay trong khớp háng; ổn định khớp gối khi đứng thẳng.",
+        clinical: "Hội chứng dải chậu chày (IT Band Syndrome) gây đau nhói mặt ngoài gối ở người chạy bộ (Runner's knee) do cọ xát vào lồi cầu ngoài đùi.",
         cameraOffset: { x: 0.45, y: 1.2, z: 2.2 },
-        pinPos: { x: 0.32, y: 1.1, z: 0.05 }
+        pinPos: { x: 0.3, y: 1.1, z: 0.08 }
       },
       gracilis: {
         id: "gracilis",
@@ -863,14 +974,14 @@
         functionalGroup: "adductor",
         badge: "Cơ đùi trong",
         badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Cơ mỏng dài nhất nằm sát bề mặt nhất ở mé trong của vùng đùi.",
-        origin: "Ngành dưới xương mu và thân xương mu.",
-        insertion: "Mặt trong đầu trên xương chày (góp phần tạo nên Chân ngỗng - Pes anserinus).",
-        innervation: "Thần kinh bịt (Nervus obturatorius - L2, L3).",
+        location: "Cơ mỏng dài nằm sát bề mặt nhất ở mé trong vùng đùi.",
+        origin: "Ngành dưới và thân xương mu.",
+        insertion: "Mặt trong đầu trên xương chày (Chân ngỗng - Pes anserinus).",
+        innervation: "Thần kinh bịt (L2, L3).",
         action: "Khép đùi; gấp và xoay trong cẳng chân tại khớp gối.",
-        clinical: "Gân cơ thon thường xuyên được các phẫu thuật viên chấn thương chỉnh hình bóc tách để làm mảnh ghép tái tạo dây chằng chéo trước (ACL reconstruction) nhờ chiều dài lý tưởng và ít để lại di chứng mất chức năng.",
+        clinical: "Gân cơ thon thường được bóc tách làm mảnh ghép tự thân để tái tạo dây chằng chéo trước (ACL reconstruction).",
         cameraOffset: { x: -0.25, y: 1.2, z: 2.0 },
-        pinPos: { x: -0.19, y: 1.15, z: 0.08 }
+        pinPos: { x: -0.18, y: 1.15, z: 0.08 }
       },
       adductor_longus: {
         id: "adductor_longus",
@@ -882,18 +993,18 @@
         functionalGroup: "adductor",
         badge: "Cơ đùi trong",
         badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Cơ hình tam giác nằm ở mặt trong đùi, tạo nên thành trong của Tam giác đùi (Tam giác Scarpa).",
-        origin: "Mặt trước xương mu, ngay dưới củ mu.",
+        location: "Cơ hình tam giác nằm ở mặt trong đùi, tạo thành thành trong của Tam giác đùi Scarpa.",
+        origin: "Mặt trước xương mu, dưới củ mu.",
         insertion: "1/3 giữa mép trong đường ráp xương đùi.",
-        innervation: "Thần kinh bịt (Nervus obturatorius - L2, L3, L4).",
+        innervation: "Thần kinh bịt (L2, L3, L4).",
         action: "Khép mạnh khớp háng, hỗ trợ gấp và xoay ngoài đùi.",
-        clinical: "Cơ hay bị căng/rách nhất trong chấn thương vùng bẹn (Groin strain) ở các vận động viên bóng đá, khúc côn cầu khi đổi hướng đột ngột.",
+        clinical: "Cơ hay bị rách nhất trong chấn thương căng cơ vùng bẹn (Groin strain) ở cầu thủ bóng đá khi đổi hướng đột ngột.",
         cameraOffset: { x: -0.15, y: 1.5, z: 2.0 },
         pinPos: { x: -0.12, y: 1.45, z: 0.14 }
       },
       adductor_magnus: {
         id: "adductor_magnus",
-        nameVi: "Cơ khép lớn",
+        nameVi: "Cơ khép lớn (Lớp cơ đùi sâu)",
         nameLatin: "Musculus Adductor Magnus",
         nameEn: "Adductor Magnus Muscle",
         layer: "muscular",
@@ -901,14 +1012,14 @@
         functionalGroup: "adductor",
         badge: "Cơ đùi sâu",
         badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Cơ lớn nhất và sâu nhất trong nhóm cơ khép đùi, tạo thành một vách ngăn cơ khổng lồ.",
+        location: "Khối cơ khổng lồ nằm sâu nhất trong nhóm cơ khép đùi.",
         origin: "Ngành ngồi-mu và ụ ngồi xương chậu.",
-        insertion: "Đường ráp xương đùi và Củ cơ khép (Adductor tubercle) ở trên lồi cầu trong đùi.",
-        innervation: "Chi phối kép: Phần khép do Thần kinh bịt (L2-L4); Phần ụ ngồi do Thần kinh chày (L4).",
+        insertion: "Đường ráp xương đùi và Củ cơ khép (Adductor tubercle).",
+        innervation: "Chi phối kép: Thần kinh bịt (L2-L4) và Thần kinh chày (L4).",
         action: "Khép đùi cực mạnh; phần bám ụ ngồi hỗ trợ duỗi khớp háng.",
-        clinical: "Tại điểm bám tận của cơ có một khe hở gọi là Lỗ gân cơ khép (Adductor hiatus) - nơi động mạch đùi và tĩnh mạch đùi chui qua từ mặt trước đùi ra hố khoeo ở mặt sau đùi để đổi tên thành Động mạch khoeo.",
+        clinical: "Có Lỗ gân cơ khép (Adductor hiatus) cho bó mạch đùi chui qua ra trám khoeo đổi tên thành Động mạch khoeo.",
         cameraOffset: { x: -0.15, y: 1.2, z: 2.2 },
-        pinPos: { x: -0.14, y: 1.0, z: -0.05 }
+        pinPos: { x: -0.1, y: 0.95, z: -0.04 }
       },
       gluteus_maximus: {
         id: "gluteus_maximus",
@@ -920,18 +1031,18 @@
         functionalGroup: "hip_extensor",
         badge: "Cơ mông",
         badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Khối cơ to, dày và khỏe nhất vùng mông, thớ cơ chạy xiên 45 độ xuống dưới và ra ngoài.",
-        origin: "Mặt ngoài cánh chậu phía sau đường mông sau, mặt sau xương cùng và dây chằng cùng-ụ ngồi.",
-        insertion: "Dải chậu chày (3/4 trên) và Lồi củ cơ mông của xương đùi (1/4 dưới).",
-        innervation: "Thần kinh mông dưới (Nervus gluteus inferior - L5, S1, S2).",
-        action: "Duỗi và xoay ngoài khớp háng mạnh nhất cơ thể; đẩy cơ thể đứng dậy từ tư thế ngồi xổm hoặc leo cầu thang; giữ thân trên không đổ gập về trước khi chạy.",
-        clinical: "Tổn thương thần kinh mông dưới gây dáng đi ưỡn mông (Gluteus maximus lurch): bệnh nhân phải ngả mạnh thân trên ra sau ở thì tiếp đất để giữ thăng bằng khớp háng.",
+        location: "Khối cơ dày khỏe nhất vùng mông, thớ cơ chạy xiên 45 độ.",
+        origin: "Mặt ngoài cánh chậu sau, xương cùng và dây chằng cùng-ụ ngồi.",
+        insertion: "Dải chậu chày và Lồi củ cơ mông xương đùi.",
+        innervation: "Thần kinh mông dưới (L5, S1, S2).",
+        action: "Duỗi và xoay ngoài khớp háng mạnh nhất; đẩy cơ thể đứng dậy từ tư thế ngồi xổm hoặc leo dốc.",
+        clinical: "Tổn thương thần kinh mông dưới gây dáng đi ngả mông ra sau (Gluteus maximus lurch) để giữ thăng bằng thân trên.",
         cameraOffset: { x: 0.1, y: 2.0, z: -2.3 },
         pinPos: { x: 0.18, y: 2.1, z: -0.28 }
       },
       biceps_femoris: {
         id: "biceps_femoris",
-        nameVi: "Cơ nhị đầu đùi (Thuộc nhóm Hamstrings)",
+        nameVi: "Cơ nhị đầu đùi (Nhóm Hamstrings)",
         nameLatin: "Musculus Biceps Femoris",
         nameEn: "Biceps Femoris Muscle",
         layer: "muscular",
@@ -939,52 +1050,33 @@
         functionalGroup: "knee_flexor",
         badge: "Cơ đùi sau",
         badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Nằm ở mặt sau-ngoài của vùng đùi, gồm đầu dài và đầu ngắn.",
+        location: "Mặt sau-ngoài vùng đùi, gồm đầu dài và đầu ngắn.",
         origin: "Đầu dài bám Ụ ngồi; Đầu ngắn bám mép ngoài đường ráp xương đùi.",
-        insertion: "Gân chung bám vào Chỏm xương mác (Head of fibula).",
-        innervation: "Đầu dài do phần chày của Thần kinh tọa (L5-S2); Đầu ngắn do phần mác chung của Thần kinh tọa (L5-S2).",
-        action: "Gấp khớp gối và xoay ngoài cẳng chân khi gối gập; đầu dài giúp duỗi khớp háng.",
-        clinical: "Gân cơ nhị đầu đùi tạo nên giới hạn trên-ngoài của Hố khoeo (Popliteal fossa). Chấn thương rách cơ đùi sau (Hamstring strain) rất hay xảy ra ở vị trí nối gân-cơ của đầu dài khi chạy nước rút.",
+        insertion: "Gân chung bám vào Chỏm xương mác.",
+        innervation: "Thần kinh tọa (phần chày và phần mác chung).",
+        action: "Gấp khớp gối và xoay ngoài cẳng chân; duỗi khớp háng.",
+        clinical: "Gân cơ nhị đầu đùi là giới hạn trên-ngoài của Hố khoeo. Rách cơ đùi sau (Hamstring strain) rất hay gặp khi chạy nước rút.",
         cameraOffset: { x: 0.25, y: 1.0, z: -2.2 },
         pinPos: { x: 0.22, y: 0.95, z: -0.22 }
       },
-      semitendinosus: {
-        id: "semitendinosus",
-        nameVi: "Cơ bán gân (Thuộc nhóm Hamstrings)",
-        nameLatin: "Musculus Semitendinosus",
-        nameEn: "Semitendinosus Muscle",
+      semitendinosus_semimembranosus: {
+        id: "semitendinosus_semimembranosus",
+        nameVi: "Cơ bán gân & Cơ bán màng (Nhóm Hamstrings)",
+        nameLatin: "Musculus Semitendinosus et Semimembranosus",
+        nameEn: "Semitendinosus & Semimembranosus",
         layer: "muscular",
         subCategory: "muscular_superficial",
         functionalGroup: "knee_flexor",
         badge: "Cơ đùi sau",
         badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Nằm ở mặt sau-trong vùng đùi; nửa trên là bụng cơ, nửa dưới là một gân tròn rất dài.",
-        origin: "Ụ ngồi xương chậu (chung gân với đầu dài cơ nhị đầu đùi).",
-        insertion: "Mặt trong đầu trên xương chày (hợp thành Chân ngỗng - Pes anserinus cùng cơ may và cơ thon).",
-        innervation: "Phần chày của Thần kinh tọa (Nervus tibialis - L5, S1, S2).",
-        action: "Gấp khớp gối và xoay trong cẳng chân; hỗ trợ duỗi khớp háng.",
-        clinical: "Gân cơ bán gân là 'vàng mười' trong phẫu thuật tái tạo dây chằng chéo trước (ACL) và dây chằng bên trong (MCL) nhờ độ bền kéo cơ học cực kỳ cao.",
-        cameraOffset: { x: -0.15, y: 1.0, z: -2.2 },
-        pinPos: { x: -0.12, y: 0.95, z: -0.24 }
-      },
-      semimembranosus: {
-        id: "semimembranosus",
-        nameVi: "Cơ bán màng (Thuộc nhóm Hamstrings)",
-        nameLatin: "Musculus Semimembranosus",
-        nameEn: "Semimembranosus Muscle",
-        layer: "muscular",
-        subCategory: "muscular_deep",
-        functionalGroup: "knee_flexor",
-        badge: "Cơ đùi sau",
-        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Nằm sâu ngay dưới cơ bán gân, có cấu trúc dạng màng xơ dẹt rộng ở đầu trên.",
-        origin: "Ụ ngồi xương chậu (ở phía ngoài và trên điểm bám cơ bán gân).",
-        insertion: "Mặt sau lồi cầu trong xương chày; quặt ngược tạo dây chằng khoeo chéo.",
+        location: "Mặt sau-trong vùng đùi; bán gân ở nông có gân tròn dài, bán màng ở sâu có màng xơ dẹt.",
+        origin: "Ụ ngồi xương chậu.",
+        insertion: "Bán gân bám vào Chân ngỗng xương chày; Bán màng bám vào mặt sau lồi cầu trong chày.",
         innervation: "Phần chày của Thần kinh tọa (L5, S1, S2).",
         action: "Gấp khớp gối, xoay trong cẳng chân và duỗi khớp háng.",
-        clinical: "Túi hoạt dịch giữa gân cơ bán màng và đầu trong cơ bụng chân khi bị ứ đọng dịch khớp gối sẽ phình to ra hố khoeo tạo thành Nang Baker (Baker's cyst).",
-        cameraOffset: { x: -0.12, y: 0.8, z: -2.2 },
-        pinPos: { x: -0.15, y: 0.7, z: -0.2 }
+        clinical: "Túi hoạt dịch gân bán màng khi viêm ứ dịch tạo Nang Baker (Baker's cyst) phình ra hõm khoeo sau gối.",
+        cameraOffset: { x: -0.15, y: 1.0, z: -2.2 },
+        pinPos: { x: -0.12, y: 0.95, z: -0.24 }
       },
       tibialis_anterior: {
         id: "tibialis_anterior",
@@ -996,14 +1088,14 @@
         functionalGroup: "dorsiflexor",
         badge: "Cơ cẳng chân trước",
         badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Khối cơ dày bám dọc ngay mặt ngoài mào trước xương chày, gân chạy chéo qua cổ chân xuống mu bàn chân.",
-        origin: "Lồi cầu ngoài và nửa trên mặt ngoài thân xương chày, màng gian cốt.",
-        insertion: "Mặt trong và dưới xương chêm trong và nền xương đốt bàn chân I.",
-        innervation: "Thần kinh mác sâu (Nervus fibularis profundus - L4, L5).",
-        action: "Gập mu bàn chân (Dorsiflexion) và nghiêng trong bàn chân (Inversion); nâng vòm dọc bàn chân.",
-        clinical: "Liệt thần kinh mác sâu làm liệt cơ chày trước dẫn đến mất khả năng gập mu bàn chân: bàn chân rũ cụp xuống đất khi đi, bệnh nhân phải nhấc cao đùi kiểu 'dáng đi ngựa' (Steppage gait) để ngón chân không quẹt đất.",
+        location: "Bám dọc mặt ngoài mào trước xương chày, gân chạy chéo qua cổ chân xuống mu bàn chân.",
+        origin: "Lồi cầu ngoài và nửa trên thân xương chày, màng gian cốt.",
+        insertion: "Mặt trong xương chêm trong và nền xương đốt bàn chân I.",
+        innervation: "Thần kinh mác sâu (L4, L5).",
+        action: "Gập mu bàn chân (Dorsiflexion) và nghiêng trong bàn chân; giữ vững vòm dọc bàn chân.",
+        clinical: "Liệt cơ chày trước gây Bàn chân rũ (Foot drop) với dáng đi ngựa (Steppage gait) do không nhấc được mũi bàn chân lên.",
         cameraOffset: { x: -0.05, y: -0.8, z: 2.0 },
-        pinPos: { x: -0.02, y: -0.7, z: 0.18 }
+        pinPos: { x: 0.04, y: -0.65, z: 0.16 }
       },
       gastrocnemius: {
         id: "gastrocnemius",
@@ -1015,70 +1107,89 @@
         functionalGroup: "plantarflexor",
         badge: "Cơ bắp chân",
         badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Khối cơ hai đầu nổi gồ lên tạo nên hình dáng bắp chuối ở mặt sau cẳng chân.",
+        location: "Hai đầu cơ nổi gồ lên tạo nên hình dáng bắp chuối ở mặt sau cẳng chân.",
         origin: "Đầu trong bám lồi cầu trong xương đùi; Đầu ngoài bám lồi cầu ngoài xương đùi.",
-        insertion: "Hợp cùng cơ dép tạo thành gân gót chân (Achilles tendon) bám vào lồi củ xương gót.",
-        innervation: "Thần kinh chày (Nervus tibialis - S1, S2).",
-        action: "Gập lòng bàn chân (nhón gót chân) mạnh mẽ; hỗ trợ gập khớp gối khi cẳng chân không chịu tải.",
-        clinical: "Hiện tượng 'chuột rút' bắp chân (Nocturnal leg cramps) thường xảy ra do co thắt đột ngột cơ bụng chân. Rách cơ bụng chân trong khi chơi quần vợt gọi là hội chứng 'Chân người chơi tennis' (Tennis leg).",
+        insertion: "Hợp cùng cơ dép tạo thành gân gót Achilles bám vào lồi củ xương gót.",
+        innervation: "Thần kinh chày (S1, S2).",
+        action: "Gập lòng bàn chân (nhón gót) mạnh mẽ; hỗ trợ gập khớp gối.",
+        clinical: "Chuột rút bắp chân ban đêm. Rách cơ bụng chân khi chơi quần vợt gọi là Tennis leg.",
         cameraOffset: { x: 0, y: -0.8, z: -2.3 },
-        pinPos: { x: -0.08, y: -0.65, z: -0.22 }
+        pinPos: { x: -0.1, y: -0.65, z: -0.22 }
       },
-      soleus: {
-        id: "soleus",
-        nameVi: "Cơ dép",
-        nameLatin: "Musculus Soleus",
-        nameEn: "Soleus Muscle",
+      soleus_deep_calves: {
+        id: "soleus_deep_calves",
+        nameVi: "Cơ dép & Các cơ cẳng chân sâu (Lớp cơ sâu)",
+        nameLatin: "Musculus Soleus, M. Tibialis Posterior & Flexores",
+        nameEn: "Soleus & Deep Posterior Leg Muscles",
         layer: "muscular",
         subCategory: "muscular_deep",
         functionalGroup: "plantarflexor",
-        badge: "Cơ cẳng chân sau",
+        badge: "Cơ cẳng chân sâu",
         badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Cơ dẹt phẳng rộng lớn nằm ngay bên dưới cơ bụng chân, bám vào cả xương chày và xương mác.",
-        origin: "Đường cơ dép mặt sau xương chày và chỏm, cổ sau xương mác.",
+        location: "Cơ dép phẳng rộng nằm dưới cơ bụng chân, bám vào đường cơ dép xương chày và mác.",
+        origin: "Đường cơ dép xương chày và chỏm xương mác.",
         insertion: "Hợp nhất vào gân gót Achilles bám vào lồi củ xương gót.",
-        innervation: "Thần kinh chày (Nervus tibialis - S1, S2).",
-        action: "Gập lòng bàn chân; giữ vững tư thế đứng thẳng chống lại trọng lực kéo người đổ ra trước.",
-        clinical: "Được ví như 'Trái tim thứ hai' (Peripheral heart) của hệ tuần hoàn: xoang tĩnh mạch cơ dép chứa lượng máu tĩnh mạch lớn, mỗi nhát co cơ dép khi bước đi sẽ bơm tống máu tĩnh mạch thắng trọng lực trở về tim, chống huyết khối tĩnh mạch sâu (DVT).",
+        innervation: "Thần kinh chày (S1, S2).",
+        action: "Gập lòng bàn chân; giữ vững tư thế đứng thẳng chống trọng lực kéo người đổ ra trước.",
+        clinical: "Được ví như Trái tim thứ hai (Peripheral heart) bơm máu tĩnh mạch thắng trọng lực về tim, chống huyết khối tĩnh mạch sâu (DVT).",
         cameraOffset: { x: 0, y: -1.0, z: -2.2 },
-        pinPos: { x: 0.08, y: -1.1, z: -0.16 }
+        pinPos: { x: 0.05, y: -1.05, z: -0.16 }
       },
       achilles_tendon: {
         id: "achilles_tendon",
         nameVi: "Gân gót chân (Gân Achilles)",
         nameLatin: "Tendo Calcaneus (Achillis)",
-        nameEn: "Achilles Tendon (Calcaneal Tendon)",
+        nameEn: "Achilles Tendon",
         layer: "muscular",
         subCategory: "muscular_superficial",
         functionalGroup: "plantarflexor",
-        badge: "Hệ Gân - Cơ",
+        badge: "Hệ Gân",
         badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
-        location: "Nằm ở 1/3 dưới cẳng chân sau, kéo dài xuống tận bờ sau xương gót.",
-        origin: "Hợp lưu của gân cơ bụng chân và gân cơ dép (Cơ tam đầu cẳng chân - Triceps surae).",
-        insertion: "Mặt sau củ xương gót (Tuber calcanei).",
+        location: "1/3 dưới cẳng chân sau, kéo dài xuống tận bờ sau xương gót.",
+        origin: "Hợp lưu của gân cơ bụng chân và gân cơ dép.",
+        insertion: "Mặt sau lồi củ xương gót (Tuber calcanei).",
         innervation: "Thần kinh chày (S1, S2).",
-        action: "Gân dày, khỏe và chịu tải lực kéo lớn nhất trong cơ thể người (chịu được lực kéo gấp 8-10 lần trọng lượng cơ thể khi chạy nhảy).",
-        clinical: "Đứt gân gót Achilles thường phát ra tiếng 'bốp' như bị đá từ sau khi bật nhảy. Thử nghiệm lâm sàng kinh điển là Test Thompson (bóp bắp chuối bệnh nhân nằm sấp: nếu bàn chân không gập lòng tự nhiên chứng tỏ đứt hoàn toàn gân gót). Vùng vô mạch cách điểm bám 2-6cm là vị trí hay bị đứt nhất.",
+        action: "Gân dày và chắc khỏe nhất cơ thể, chịu lực kéo gấp 8-10 lần trọng lượng cơ thể.",
+        clinical: "Đứt gân gót Achilles phát hiện bằng nghiệm pháp Thompson test (bóp bắp chuối bệnh nhân nằm sấp: bàn chân không gập lòng tự nhiên chứng tỏ đứt gân).",
         cameraOffset: { x: 0, y: -1.7, z: -1.8 },
-        pinPos: { x: 0, y: -1.7, z: -0.14 }
+        pinPos: { x: 0.0, y: -1.7, z: -0.15 }
+      },
+      foot_muscles: {
+        id: "foot_muscles",
+        nameVi: "Các cơ nội tại bàn chân (Mu chân & 4 lớp cơ gan chân)",
+        nameLatin: "Musculi Dorsales et Plantares Pedis",
+        nameEn: "Intrinsic Muscles of the Foot",
+        layer: "muscular",
+        subCategory: "muscular_foot",
+        functionalGroup: "plantarflexor",
+        badge: "Cơ bàn chân",
+        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-400/30",
+        location: "Phân bố ở mu chân (Cơ duỗi ngón ngắn) và gan chân (Cơ giạng ngón cái, cơ gấp ngón ngắn, cơ vuông gan chân, các cơ gian cốt).",
+        origin: "Xương gót, xương sên và nền các xương đốt bàn chân.",
+        insertion: "Gân duỗi và gân gấp các ngón chân I đến V.",
+        innervation: "Thần kinh gan chân trong, thần kinh gan chân ngoài và thần kinh mác sâu.",
+        action: "Duy trì và chủ động điều chỉnh độ cong của các vòm bàn chân khi bước đi, chạy và tiếp đất trên các bề mặt không phẳng.",
+        clinical: "Co rút cân cơ bàn chân tạo biến dạng bàn chân lõm (Pes cavus) hoặc bàn chân bẹt (Pes planus). Hội chứng ống cổ chân (Tarsal tunnel syndrome) gây tê bì châm chích các cơ gan chân do chèn ép thần kinh chày sau mắt cá trong.",
+        cameraOffset: { x: 0, y: -2.1, z: 1.6 },
+        pinPos: { x: -0.05, y: -2.1, z: 0.38 }
       },
 
       // ==================== HỆ TUẦN HOÀN (CARDIOVASCULAR SYSTEM) ====================
       femoral_artery: {
         id: "femoral_artery",
-        nameVi: "Động mạch đùi (Đoạn đùi chung, Đùi nông & Đùi sâu)",
+        nameVi: "Động mạch đùi (Đoạn chung, Nông & Đùi sâu)",
         nameLatin: "Arteria Femoralis",
         nameEn: "Femoral Artery",
         layer: "cardiovascular",
         subCategory: "artery",
         badge: "Động mạch",
         badgeColor: "bg-red-500/20 text-red-300 border-red-400/30",
-        location: "Tiếp nối động mạch chậu ngoài tại điểm giữa nếp bẹn, chạy qua Tam giác đùi, vào Ống cơ khép (Ống Hunter) rồi đổi tên thành Động mạch khoeo.",
-        origin: "Động mạch chậu ngoài (A. iliaca externa) sau khi chui qua dây chằng bẹn.",
-        insertion: "Phân nhánh: ĐM thượng vị nông, ĐM mũ chậu nông, ĐM thẹn ngoài, ĐM đùi sâu (cung cấp máu chính cho các cơ đùi), ĐM gối xuống.",
-        innervation: "Các sợi giao cảm quanh mạch từ đám rối động mạch đùi.",
-        action: "Cung cấp máu giàu oxy và dưỡng chất nuôi dưỡng toàn bộ chi dưới.",
-        clinical: "Bắt mạch bẹn tại điểm giữa nếp bẹn là thủ thuật cấp cứu tối khẩn để kiểm tra tuần hoàn; đây cũng là vị trí chọc kim luồn catheter can thiệp tim mạch qua đường ống thông (Coronary Angiography). Vết thương đâm thủng động mạch đùi có thể làm nạn nhân tử vong vì sốc mất máu chỉ trong vòng 3-5 phút.",
+        location: "Tiếp nối ĐM chậu ngoài tại nếp bẹn, qua Tam giác đùi vào Ống cơ khép đến khoeo.",
+        origin: "Động mạch chậu ngoài.",
+        insertion: "Phân nhánh ĐM đùi sâu, các nhánh xuyên và tiếp nối thành ĐM khoeo.",
+        innervation: "Đám rối giao cảm quanh mạch.",
+        action: "Cung cấp máu giàu oxy nuôi toàn bộ chi dưới.",
+        clinical: "Bắt mạch bẹn cấp cứu; đường vào chọc catheter can thiệp tim mạch. Vết thương đứt ĐM đùi gây sốc mất máu tử vong trong 3-5 phút.",
         cameraOffset: { x: 0, y: 1.5, z: 1.8 },
         pinPos: { x: -0.06, y: 1.6, z: 0.16 }
       },
@@ -1091,48 +1202,48 @@
         subCategory: "artery",
         badge: "Động mạch",
         badgeColor: "bg-red-500/20 text-red-300 border-red-400/30",
-        location: "Chạy sâu nhất sát bao khớp ở đáy Hố khoeo (sau khớp gối), từ lỗ gân cơ khép đến bờ dưới cơ khoeo.",
-        origin: "Là phần tiếp nối trực tiếp của Động mạch đùi.",
-        insertion: "Chia đôi ở bờ dưới cơ khoeo thành: Động mạch chày trước (A. tibialis anterior) và Thân động mạch chày-mác.",
+        location: "Chạy sâu nhất ở đáy Hố khoeo (sau khớp gối), từ lỗ gân cơ khép đến bờ dưới cơ khoeo.",
+        origin: "Tiếp nối trực tiếp của Động mạch đùi.",
+        insertion: "Chia thành Động mạch chày trước và Thân chày-mác.",
         innervation: "Nhánh giao cảm từ thần kinh chày.",
-        action: "Cung cấp máu nuôi khớp gối qua mạng mạch quanh khớp gối và chuyển tiếp máu xuống cẳng chân, bàn chân.",
-        clinical: "Bắt mạch khoeo bằng hai bàn tay móc vào hõm khoeo khi bệnh nhân gập gối 45°. Phình động mạch khoeo (Popliteal aneurysm) là loại phình động mạch ngoại biên thường gặp nhất, có nguy cơ tắc mạch gây hoại tử chi.",
+        action: "Cấp máu cho mạng mạch quanh khớp gối và chuyển tiếp máu xuống cẳng chân, bàn chân.",
+        clinical: "Bắt mạch khoeo bằng hai tay móc vào hõm khoeo khi gối gập 45°. Phình động mạch khoeo (Popliteal aneurysm) là loại phình mạch ngoại vi thường gặp nhất.",
         cameraOffset: { x: 0, y: 0.1, z: -1.8 },
         pinPos: { x: -0.02, y: 0.12, z: -0.1 }
       },
       dorsalis_pedis: {
         id: "dorsalis_pedis",
-        nameVi: "Động mạch mu chân",
-        nameLatin: "Arteria Dorsalis Pedis",
-        nameEn: "Dorsalis Pedis Artery",
+        nameVi: "Động mạch mu chân & Mạch máu bàn chân",
+        nameLatin: "Arteria Dorsalis Pedis & Arcus Plantaris",
+        nameEn: "Dorsalis Pedis Artery & Plantar Arch",
         layer: "cardiovascular",
         subCategory: "artery",
         badge: "Động mạch",
         badgeColor: "bg-red-500/20 text-red-300 border-red-400/30",
-        location: "Nằm nông ở mu bàn chân, giữa gân cơ duỗi ngón cái dài và gân cơ duỗi các ngón dài.",
-        origin: "Tiếp nối liên tục từ Động mạch chày trước sau khi vượt qua bờ dưới hãm gân duỗi cổ chân.",
-        insertion: "Chui qua khoang gian cốt bàn chân I nối với cung gan chân sâu.",
+        location: "Nằm nông ở mu bàn chân giữa gân cơ duỗi ngón cái dài và duỗi các ngón dài; cấp máu cho cung gan chân sâu.",
+        origin: "Tiếp nối liên tục từ Động mạch chày trước.",
+        insertion: "Phân nhánh cho các động mạch mu đốt bàn và nối với cung gan chân sâu.",
         innervation: "Nhánh quanh mạch từ thần kinh mác sâu.",
         action: "Cấp máu chính cho mu bàn chân và các ngón chân.",
-        clinical: "Vị trí bắt mạch ngoại vi bắt buộc phải kiểm tra trong khám tim mạch, chấn thương chỉnh hình và nội tiết: Mất mạch mu chân là dấu hiệu cảnh báo bệnh viêm tắc động mạch chi dưới (PAD), xơ vữa động mạch hoặc bàn chân đái tháo đường.",
+        clinical: "Vị trí bắt mạch ngoại vi bắt buộc phải kiểm tra trong khám tim mạch, đái tháo đường và chấn thương: Mất mạch mu chân là dấu hiệu cảnh báo bệnh động mạch ngoại biên (PAD) hoặc tắc mạch cấp tính.",
         cameraOffset: { x: 0, y: -2.0, z: 1.4 },
         pinPos: { x: -0.04, y: -2.05, z: 0.35 }
       },
       great_saphenous_vein: {
         id: "great_saphenous_vein",
-        nameVi: "Tĩnh mạch hiển lớn",
+        nameVi: "Tĩnh mạch hiển lớn & Hệ tĩnh mạch nông",
         nameLatin: "Vena Saphena Magna",
         nameEn: "Great Saphenous Vein",
         layer: "cardiovascular",
         subCategory: "vein",
         badge: "Tĩnh mạch",
         badgeColor: "bg-blue-500/20 text-blue-300 border-blue-400/30",
-        location: "Tĩnh mạch nông dài nhất cơ thể người, chạy dưới da từ mắt cá trong, men theo mặt trong cẳng chân và đùi đổ vào tĩnh mạch đùi tại Quai tĩnh mạch hiển (Saphenous opening).",
-        origin: "Cung tĩnh mạch mu chân ở bờ trong bàn chân.",
-        insertion: "Đổ vào tĩnh mạch đùi ở vùng bẹn (ngay dưới dây chằng bẹn 3-4cm).",
-        innervation: "Đi kèm với Thần kinh hiển (N. saphenus).",
-        action: "Dẫn lưu máu tĩnh mạch nông từ mu chân, cẳng chân trong và đùi trở về tĩnh mạch đùi sâu.",
-        clinical: "Bệnh suy van tĩnh mạch hiển lớn gây 'Giãn tĩnh mạch chi dưới' (Varicose veins) với mạng tĩnh mạch nổi ngoằn ngoèo dưới da. Đoạn tĩnh mạch này là nguồn mạch ghép tự thân phổ biến nhất trong phẫu thuật bắc cầu nối chủ-vành (CABG).",
+        location: "Tĩnh mạch nông dài nhất cơ thể, chạy từ mắt cá trong men theo mặt trong cẳng chân và đùi đổ vào TM đùi.",
+        origin: "Cung tĩnh mạch mu chân.",
+        insertion: "Đổ vào tĩnh mạch đùi tại lỗ tĩnh mạch hiển ở vùng bẹn.",
+        innervation: "Đi kèm thần kinh hiển.",
+        action: "Dẫn lưu máu tĩnh mạch nông từ mu chân, cẳng chân và đùi về tuần hoàn tĩnh mạch sâu.",
+        clinical: "Suy van tĩnh mạch hiển lớn gây Giãn tĩnh mạch chi dưới (Varicose veins). Đoạn tĩnh mạch này là nguồn mạch ghép tự thân phổ biến nhất trong mổ bắc cầu vành tim (CABG).",
         cameraOffset: { x: -0.3, y: 0.5, z: 2.2 },
         pinPos: { x: -0.22, y: 0.8, z: 0.14 }
       },
@@ -1147,48 +1258,48 @@
         subCategory: "nerve",
         badge: "Hệ Thần Kinh",
         badgeColor: "bg-yellow-500/20 text-yellow-300 border-yellow-400/30",
-        location: "Dây thần kinh đơn lẻ dày và dài nhất trong cơ thể người (đường kính to bằng ngón tay trỏ), xuất phát từ đám rối cùng chui qua khuyết ngồi lớn ở bờ dưới cơ hình lê xuống mặt sau đùi.",
-        origin: "Các rễ thần kinh thắt lưng và cùng: L4, L5, S1, S2, S3.",
-        insertion: "Chia đôi ở đỉnh trám khoeo thành: Thần kinh chày (N. tibialis) và Thần kinh mác chung (N. fibularis communis).",
-        innervation: "Vận động cho toàn bộ nhóm cơ đùi sau (Hamstrings) và tất cả các cơ cẳng chân, bàn chân; cảm giác phần lớn chi dưới.",
+        location: "Dây thần kinh đơn lẻ lớn nhất cơ thể (đường kính to bằng ngón tay), từ đám rối cùng chui dưới cơ hình lê xuống mặt sau đùi.",
+        origin: "Các rễ thắt lưng và cùng: L4, L5, S1, S2, S3.",
+        insertion: "Chia đôi ở đỉnh trám khoeo thành Thần kinh chày và Thần kinh mác chung.",
+        innervation: "Vận động cho toàn bộ nhóm Hamstrings và tất cả các cơ cẳng chân, bàn chân; cảm giác phần lớn chi dưới.",
         action: "Dẫn truyền vận động và cảm giác chính cho toàn bộ chi dưới từ khớp háng trở xuống.",
-        clinical: "Hội chứng đau thần kinh tọa (Sciatica): đau buốt lan dọc từ thắt lưng qua mông xuống mặt sau đùi và bàn chân, hay gặp nhất do thoát vị đĩa đệm cột sống thắt lưng L4-L5 hoặc L5-S1 chèn ép rễ thần kinh, hoặc do co thắt chèn ép của cơ hình lê (Hội chứng cơ hình lê / Piriformis syndrome).",
+        clinical: "Đau thần kinh tọa (Sciatica): đau buốt lan từ thắt lưng qua mông xuống mặt sau đùi và bàn chân, hay gặp do thoát vị đĩa đệm L4-L5 hoặc L5-S1 chèn ép rễ, hoặc do co thắt cơ hình lê (Hội chứng cơ hình lê / Piriformis syndrome).",
         cameraOffset: { x: 0, y: 1.5, z: -2.3 },
         pinPos: { x: 0.05, y: 1.5, z: -0.18 }
       },
       common_fibular_nerve: {
         id: "common_fibular_nerve",
-        nameVi: "Thần kinh mác chung",
+        nameVi: "Thần kinh mác chung (Vòng quanh cổ xương mác)",
         nameLatin: "Nervus Fibularis Communis (Peroneal)",
         nameEn: "Common Fibular (Peroneal) Nerve",
         layer: "nervous",
         subCategory: "nerve",
         badge: "Hệ Thần Kinh",
         badgeColor: "bg-yellow-500/20 text-yellow-300 border-yellow-400/30",
-        location: "Tách ra từ thần kinh tọa ở đỉnh trám khoeo, chạy men theo bờ trong gân cơ nhị đầu đùi, vòng quanh cổ xương mác ra trước.",
+        location: "Tách từ thần kinh tọa ở đỉnh trám khoeo, men gân nhị đầu đùi, vòng quanh cổ xương mác ra trước.",
         origin: "Nhánh chia ngoài của thần kinh tọa (rễ L4, L5, S1, S2).",
-        insertion: "Tại cổ xương mác chia thành 2 nhánh tận: Thần kinh mác nông (vận động cơ mác dài, ngắn) và Thần kinh mác sâu (vận động nhóm cơ cẳng chân trước).",
-        innervation: "Chi phối nhóm cơ mác, cơ cẳng chân trước và cảm giác mu chân.",
+        insertion: "Chia thành Thần kinh mác nông (vận động cơ mác) và Thần kinh mác sâu (vận động nhóm cẳng chân trước).",
+        innervation: "Nhóm cơ cẳng chân trước, ngoài và cảm giác mu chân.",
         action: "Gập mu bàn chân và nghiêng ngoài bàn chân.",
-        clinical: "Dây thần kinh dễ bị tổn thương do sang chấn nhất ở chi dưới vì nằm nông ngay sát màng xương ở cổ xương mác. Chấn thương gãy cổ xương mác, bó bột chặt hay nằm tì đè lâu ngày gây liệt thần kinh mác dẫn đến hội chứng 'Bàn chân rũ' (Foot drop).",
+        clinical: "Dây thần kinh dễ bị tổn thương nhất ở chi dưới vì nằm nông sát màng xương ở cổ xương mác. Chấn thương gãy cổ xương mác hoặc bó bột chặt gây liệt dẫn đến Bàn chân rũ (Foot drop).",
         cameraOffset: { x: 0.35, y: 0.0, z: 1.5 },
-        pinPos: { x: 0.32, y: -0.05, z: 0.08 }
+        pinPos: { x: 0.25, y: -0.04, z: 0.04 }
       },
       femoral_nerve: {
         id: "femoral_nerve",
-        nameVi: "Dây thần kinh đùi",
-        nameLatin: "Nervus Femoralis",
-        nameEn: "Femoral Nerve",
+        nameVi: "Dây thần kinh đùi & Thần kinh hiển",
+        nameLatin: "Nervus Femoralis & N. Saphenus",
+        nameEn: "Femoral Nerve & Saphenous Nerve",
         layer: "nervous",
         subCategory: "nerve",
         badge: "Hệ Thần Kinh",
         badgeColor: "bg-yellow-500/20 text-yellow-300 border-yellow-400/30",
-        location: "Nhánh lớn nhất của đám rối thắt lưng, chui dưới dây chằng bẹn ở phía ngoài động mạch đùi vào tam giác đùi.",
-        origin: "Các ngành sau của nhánh trước thần kinh thắt lưng: L2, L3, L4.",
-        insertion: "Phân chùm nhánh vận động cho cơ thắt lưng chậu, cơ lược, cơ may, cơ tứ đầu đùi và nhánh cảm giác dài nhất là Thần kinh hiển (N. saphenus).",
-        innervation: "Chi phối toàn bộ nhóm cơ duỗi khớp gối và cảm giác mặt trước đùi, mặt trong cẳng chân.",
+        location: "Nhánh lớn nhất của đám rối thắt lưng, chui dưới dây chằng bẹn ở ngoài động mạch đùi vào tam giác đùi.",
+        origin: "Rễ thắt lưng L2, L3, L4.",
+        insertion: "Vận động cho cơ tứ đầu đùi, cơ may, cơ lược và nhánh cảm giác dài nhất là Thần kinh hiển đi xuống cẳng chân trong.",
+        innervation: "Vận động nhóm cơ duỗi khớp gối và cảm giác mặt trước đùi, mặt trong cẳng chân.",
         action: "Gấp khớp háng và duỗi khớp gối.",
-        clinical: "Gây tê thần kinh đùi (Femoral nerve block) dưới hướng dẫn của siêu âm là phương pháp giảm đau ngoại vi tuyệt vời cho các phẫu thuật thay khớp gối nhân tạo hoặc mổ gãy thân xương đùi.",
+        clinical: "Gây tê thần kinh đùi (Femoral nerve block) dưới hướng dẫn siêu âm là phương pháp giảm đau ngoại vi tuyệt vời cho phẫu thuật thay khớp gối nhân tạo.",
         cameraOffset: { x: -0.05, y: 1.8, z: 1.8 },
         pinPos: { x: -0.08, y: 1.9, z: 0.18 }
       },
@@ -1203,12 +1314,12 @@
         subCategory: "lymph",
         badge: "Bạch Huyết",
         badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-400/30",
-        location: "Tập trung thành cụm hình chữ T ở vùng nếp gấp bẹn (nhóm ngang dưới dây chằng bẹn, nhóm dọc quanh đầu trên tĩnh mạch hiển lớn).",
-        origin: "Nhận mạch bạch huyết từ toàn bộ chi dưới, tầng sinh môn, cơ quan sinh dục ngoài và thành bụng dưới rốn.",
-        insertion: "Dẫn lưu dịch bạch huyết lên các hạch chậu ngoài (External iliac nodes).",
-        innervation: "Nhánh thần kinh tự chủ giao cảm vận mạch.",
-        action: "Lọc sạch các tế bào lạ, mảnh vỡ tế bào, vi khuẩn, virus và sản sinh tế bào lympho miễn dịch bảo vệ cơ thể.",
-        clinical: "Sưng đau hạch bẹn (Inguinal lymphadenopathy) là phản ứng thường gặp khi có nhiễm trùng ở bàn chân hoặc cẳng chân. Là trạm di căn hạch quan trọng của các ung thư vùng chi dưới, ung thư biểu mô hậu môn và cơ quan sinh dục ngoài.",
+        location: "Tập trung thành cụm hình chữ T ở vùng nếp gấp bẹn (nhóm ngang dưới dây chằng bẹn, nhóm dọc quanh đầu trên TM hiển).",
+        origin: "Nhận mạch bạch huyết từ toàn bộ chi dưới, tầng sinh môn và thành bụng dưới rốn.",
+        insertion: "Dẫn lưu dịch bạch huyết lên các hạch chậu ngoài.",
+        innervation: "Nhánh thần kinh tự chủ giao cảm.",
+        action: "Lọc sạch tế bào lạ, vi khuẩn, virus và sản sinh tế bào miễn dịch bảo vệ cơ thể.",
+        clinical: "Sưng đau hạch bẹn là phản ứng thường gặp khi có nhiễm trùng ở bàn chân hoặc cẳng chân. Là trạm di căn hạch quan trọng của các khối u ác tính chi dưới và tầng sinh môn.",
         cameraOffset: { x: 0, y: 2.1, z: 1.8 },
         pinPos: { x: -0.15, y: 2.15, z: 0.22 }
       }
@@ -1238,18 +1349,19 @@
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.25;
+    renderer.localClippingEnabled = true; // Kích hoạt tính năng cắt lát y khoa
     container.appendChild(renderer.domElement);
 
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.maxDistance = 8.5;
-    controls.minDistance = 0.8;
+    controls.minDistance = 0.6;
     controls.target.copy(DEFAULT_CAMERA_TARGET);
     controls.autoRotate = false;
     controls.autoRotateSpeed = 0.8;
 
-    // Medical Lighting System
+    // Medical Lighting
     const ambientLight = new THREE.AmbientLight(0xdbeafe, 0.9);
     scene.add(ambientLight);
 
@@ -1302,6 +1414,39 @@
 
     const interactiveObjects = [];
 
+    // Mặt cắt ngang giải phẫu CT/MRI (Clipping Plane)
+    const clipPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 2.8);
+    let isClippingEnabled = false;
+
+    function toggleClippingPlane(enabled) {
+      isClippingEnabled = enabled;
+      updateClippingPlanes();
+    }
+
+    function setClipPlaneHeight(val) {
+      clipPlane.constant = parseFloat(val);
+      if (!isClippingEnabled) {
+        document.getElementById('toggle-clipping').checked = true;
+        toggleClippingPlane(true);
+      }
+    }
+
+    function setQuickSlice(heightVal) {
+      document.getElementById('clip-height-slider').value = heightVal;
+      setClipPlaneHeight(heightVal);
+    }
+
+    function updateClippingPlanes() {
+      const planes = isClippingEnabled ? [clipPlane] : [];
+      Object.values(Materials).forEach(mat => {
+        if (mat !== Materials.skin) {
+          mat.clippingPlanes = planes;
+          mat.clipShadows = true;
+          mat.needsUpdate = true;
+        }
+      });
+    }
+
 
     /* =========================================================================
      * PROCEDURAL TEXTURE GENERATORS (MÔ PHỎNG VẬT LIỆU GIẢI PHẪU Y KHOA)
@@ -1312,7 +1457,6 @@
       canvas.height = 512;
       const ctx = canvas.getContext('2d');
 
-      // Nền cơ vân đỏ mận
       const grad = ctx.createLinearGradient(0, 0, 0, 512);
       grad.addColorStop(0, '#9e2222');
       grad.addColorStop(0.5, '#b91c1c');
@@ -1320,13 +1464,11 @@
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 512, 512);
 
-      // Vẽ các sợi tơ cơ (Myofibrils) chạy dọc song song
       ctx.fillStyle = 'rgba(255, 140, 140, 0.18)';
       for (let x = 0; x < 512; x += 3 + Math.random() * 3) {
         ctx.fillRect(x, 0, 1.2, 512);
       }
 
-      // Vẽ các vân sáng tối ngang (A-band, I-band striations)
       for (let y = 0; y < 512; y += 8 + Math.random() * 4) {
         ctx.fillStyle = (y % 16 === 0) ? 'rgba(40, 0, 0, 0.25)' : 'rgba(255, 200, 200, 0.12)';
         ctx.fillRect(0, y, 512, 2.5);
@@ -1345,11 +1487,9 @@
       canvas.height = 512;
       const ctx = canvas.getContext('2d');
 
-      // Màu ngà xương tự nhiên (Natural Ivory bone)
       ctx.fillStyle = '#efebe2';
       ctx.fillRect(0, 0, 512, 512);
 
-      // Mô phỏng các hệ thống ống Havers và vi rãnh xương (Haversian canals & osteons)
       for (let i = 0; i < 4000; i++) {
         const x = Math.random() * 512;
         const y = Math.random() * 512;
@@ -1361,7 +1501,6 @@
         ctx.fill();
       }
 
-      // Các thớ dọc của vỏ xương đặc (Cortical bone grain)
       ctx.fillStyle = 'rgba(195, 180, 160, 0.08)';
       for (let x = 0; x < 512; x += 4 + Math.random() * 6) {
         ctx.fillRect(x, 0, 1.5, 512);
@@ -1383,7 +1522,6 @@
       ctx.fillStyle = '#f8fafc';
       ctx.fillRect(0, 0, 256, 256);
 
-      // Các bó sợi collagen định hướng dọc (Longitudinal Collagen Bundles)
       for (let x = 0; x < 256; x += 2 + Math.random() * 3) {
         ctx.fillStyle = (Math.random() > 0.5) ? 'rgba(203, 213, 225, 0.45)' : 'rgba(255, 255, 255, 0.8)';
         ctx.fillRect(x, 0, 1.2, 256);
@@ -1413,13 +1551,13 @@
         bumpScale: 0.015
       }),
       cartilage: new THREE.MeshPhysicalMaterial({
-        color: 0x67e8f9,
-        roughness: 0.18,
-        metalness: 0.05,
-        transmission: 0.72,
+        color: 0x38bdf8,
+        roughness: 0.16,
+        metalness: 0.04,
+        transmission: 0.75,
         transparent: true,
-        opacity: 0.88,
-        ior: 1.38,
+        opacity: 0.9,
+        ior: 1.4,
         depthWrite: true
       }),
       muscleSuperficial: new THREE.MeshStandardMaterial({
@@ -1431,7 +1569,7 @@
         bumpScale: 0.02
       }),
       muscleDeep: new THREE.MeshStandardMaterial({
-        color: 0x881717,
+        color: 0x7c1515,
         map: striatedTexture,
         roughness: 0.48,
         metalness: 0.06,
@@ -1499,10 +1637,6 @@
       })
     };
 
-    /* =========================================================================
-     * HELPER FUNCTIONS DỰNG HÌNH GIẢI PHẪU HỮU CƠ (ORGANIC MESH HELPERS)
-     * ========================================================================= */
-    // Tạo ống/dây cơ có bán kính thay đổi mềm mại theo đường cong spline
     function createVariableTubeGeometry(curvePoints, radiusFunc, tubularSegments = 32, radialSegments = 16) {
       const curve = new THREE.CatmullRomCurve3(curvePoints);
       const frames = curve.computeFrenetFrames(tubularSegments, false);
@@ -1557,25 +1691,23 @@
       return geometry;
     }
 
-    // Tạo bắp cơ vân chuẩn: Gân nguyên ủy thon nhỏ -> Bụng cơ phình to ở giữa -> Gân bám tận thon
-    function createMuscleBellyMesh(curvePoints, maxRadius, minRadius = 0.035, material = Materials.muscleSuperficial, partId = "", layerName = "muscular") {
+    function createMuscleBellyMesh(curvePoints, maxRadius, minRadius = 0.035, material = Materials.muscleSuperficial, partId = "", layerName = "muscular", isDeep = false) {
       const radiusFunc = (u) => {
-        // Đường cong hình sin nâng cao tạo độ phồng tự nhiên của bắp cơ
         const swell = Math.sin(u * Math.PI);
         return minRadius + (maxRadius - minRadius) * Math.pow(swell, 0.85);
       };
       const geo = createVariableTubeGeometry(curvePoints, radiusFunc, 36, 18);
       const mesh = new THREE.Mesh(geo, material);
-      if (partId) registerInteractiveMesh(mesh, partId, layerName);
+      if (partId) registerInteractiveMesh(mesh, partId, layerName, isDeep);
       return mesh;
     }
 
-    // Đăng ký Mesh tương tác Raycast
-    function registerInteractiveMesh(mesh, partId, layerName) {
+    function registerInteractiveMesh(mesh, partId, layerName, isDeep = false) {
       mesh.userData = {
         isInteractive: true,
         partId: partId,
         layer: layerName,
+        isDeep: isDeep,
         originalMaterial: mesh.material
       };
       mesh.castShadow = true;
@@ -1594,7 +1726,6 @@
       // --- 1.1 Xương chậu (Pelvis / Hemipelvis) ---
       const pelvisGroup = new THREE.Group();
       
-      // Cánh chậu (Ilium wing) uốn cong chữ S tự nhiên
       const iliumShape = new THREE.Shape();
       iliumShape.moveTo(-0.45, 2.3);
       iliumShape.bezierCurveTo(-0.55, 2.65, -0.2, 2.85, 0.15, 2.75); // Mào chậu (Iliac crest)
@@ -1614,7 +1745,7 @@
       iliumMesh.rotation.y = 0.25;
       pelvisGroup.add(iliumMesh);
 
-      // Ổ cối (Acetabulum) & Ụ ngồi (Ischial tuberosity)
+      // Ổ cối (Acetabulum) & Sụn viền (Labrum)
       const acetabulumMesh = new THREE.Mesh(
         new THREE.TorusGeometry(0.14, 0.06, 16, 24, Math.PI * 1.5),
         Materials.bone
@@ -1622,7 +1753,6 @@
       acetabulumMesh.position.set(-0.08, 2.12, 0.02);
       acetabulumMesh.rotation.set(0.2, -0.3, 0.4);
 
-      // Sụn viền ổ cối (Acetabular labrum)
       const labrumMesh = new THREE.Mesh(
         new THREE.TorusGeometry(0.13, 0.025, 12, 24),
         Materials.cartilage
@@ -1631,18 +1761,12 @@
       labrumMesh.rotation.copy(acetabulumMesh.rotation);
 
       // Ụ ngồi (Ischial tuberosity)
-      const ischiumMesh = new THREE.Mesh(
-        new THREE.SphereGeometry(0.12, 16, 16),
-        Materials.bone
-      );
+      const ischiumMesh = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), Materials.bone);
       ischiumMesh.scale.set(0.9, 1.2, 1.1);
       ischiumMesh.position.set(-0.02, 1.95, -0.18);
 
       // Ngành mu & Lỗ bịt (Pubic ramus & Obturator ring)
-      const obturatorRing = new THREE.Mesh(
-        new THREE.TorusGeometry(0.11, 0.04, 12, 20),
-        Materials.bone
-      );
+      const obturatorRing = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.04, 12, 20), Materials.bone);
       obturatorRing.position.set(-0.25, 1.98, 0.08);
       obturatorRing.rotation.set(0.3, 0.5, -0.2);
 
@@ -1655,15 +1779,12 @@
       // --- 1.2 Xương đùi (Femur) ---
       const femurGroup = new THREE.Group();
 
-      // Chỏm xương đùi (Caput femoris)
       const femurHead = new THREE.Mesh(new THREE.SphereGeometry(0.155, 24, 24), Materials.bone);
       femurHead.position.set(-0.08, 2.12, 0.02);
 
-      // Hõm chỏm (Fovea capitis)
       const fovea = new THREE.Mesh(new THREE.SphereGeometry(0.04, 12, 12), Materials.cartilage);
       fovea.position.set(-0.16, 2.13, 0.03);
 
-      // Cổ xương đùi (Collum femoris) - Nghiêng 127 độ
       const neckCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.08, 2.12, 0.02),
         new THREE.Vector3(0.05, 2.05, 0.01),
@@ -1672,54 +1793,50 @@
       const neckGeo = new THREE.TubeGeometry(neckCurve, 16, 0.075, 16, false);
       const neckMesh = new THREE.Mesh(neckGeo, Materials.bone);
 
-      // Mấu chuyển lớn (Trochanter major)
       const greaterTrochanter = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.22, 0.18), Materials.bone);
       greaterTrochanter.position.set(0.24, 1.98, 0.0);
       greaterTrochanter.rotation.z = -0.15;
 
-      // Mấu chuyển bé (Trochanter minor)
       const lesserTrochanter = new THREE.Mesh(new THREE.ConeGeometry(0.065, 0.12, 14), Materials.bone);
-      lessterTrochanter = lesserTrochanter;
       lesserTrochanter.position.set(0.08, 1.86, -0.09);
       lesserTrochanter.rotation.set(-1.2, 0.2, 0.4);
 
-      // Thân xương đùi (Shaft) - Uốn cong nhẹ lồi ra trước (Anterior bow)
       const femurShaftCurve = [
         new THREE.Vector3(0.16, 1.98, 0.0),
-        new THREE.Vector3(0.12, 1.5, 0.06),  // Đỉnh cong trước
-        new THREE.Vector3(0.07, 1.0, 0.07),  // Giữa thân
-        new THREE.Vector3(0.04, 0.55, 0.04),
-        new THREE.Vector3(0.03, 0.28, 0.0)   // Trên lồi cầu
+        new THREE.Vector3(0.12, 1.5, 0.06),
+        new THREE.Vector3(0.07, 1.0, 0.07),
+        new THREE.Vector3(0.04, 0.58, 0.04),
+        new THREE.Vector3(0.03, 0.32, 0.0)
       ];
       const femurShaft = new THREE.Mesh(
-        createVariableTubeGeometry(
-          femurShaftCurve,
-          (u) => 0.095 - 0.02 * Math.sin(u * Math.PI) + 0.035 * Math.pow(u, 2),
-          32, 18
-        ),
+        createVariableTubeGeometry(femurShaftCurve, (u) => 0.095 - 0.02 * Math.sin(u * Math.PI) + 0.035 * Math.pow(u, 2), 32, 18),
         Materials.bone
       );
 
-      // Lồi cầu trong & Lồi cầu ngoài (Medial & Lateral Condyles)
+      // Lồi cầu xương đùi (Condyles) & Sụn khớp lồi cầu
       const condyleGroup = new THREE.Group();
       
       const medialCondyle = new THREE.Mesh(new THREE.SphereGeometry(0.13, 20, 20), Materials.bone);
       medialCondyle.scale.set(0.85, 1.25, 1.4);
-      medialCondyle.position.set(-0.08, 0.22, -0.02); // Lồi cầu trong chúc sâu hơn
+      medialCondyle.position.set(-0.08, 0.25, -0.02);
+
+      const medialCondyleCartilage = new THREE.Mesh(new THREE.SphereGeometry(0.134, 16, 16), Materials.cartilage);
+      medialCondyleCartilage.scale.set(0.86, 0.6, 1.42);
+      medialCondyleCartilage.position.set(-0.08, 0.17, -0.02);
 
       const lateralCondyle = new THREE.Mesh(new THREE.SphereGeometry(0.125, 20, 20), Materials.bone);
       lateralCondyle.scale.set(0.85, 1.2, 1.35);
-      lateralCondyle.position.set(0.14, 0.23, -0.02);
+      lateralCondyle.position.set(0.14, 0.26, -0.02);
 
-      // Diện khớp bánh chè (Patellar groove surface)
-      const patellarGroove = new THREE.Mesh(
-        new THREE.BoxGeometry(0.24, 0.16, 0.08),
-        Materials.cartilage
-      );
-      patellarGroove.position.set(0.03, 0.24, 0.09);
+      const lateralCondyleCartilage = new THREE.Mesh(new THREE.SphereGeometry(0.129, 16, 16), Materials.cartilage);
+      lateralCondyleCartilage.scale.set(0.86, 0.6, 1.37);
+      lateralCondyleCartilage.position.set(0.14, 0.18, -0.02);
+
+      const patellarGroove = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.16, 0.08), Materials.cartilage);
+      patellarGroove.position.set(0.03, 0.26, 0.09);
       patellarGroove.rotation.x = 0.25;
 
-      condyleGroup.add(medialCondyle, lateralCondyle, patellarGroove);
+      condyleGroup.add(medialCondyle, medialCondyleCartilage, lateralCondyle, lateralCondyleCartilage, patellarGroove);
 
       femurGroup.add(femurHead, fovea, neckMesh, greaterTrochanter, lesserTrochanter, femurShaft, condyleGroup);
       registerInteractiveMesh(femurHead, "femur", "skeletal");
@@ -1732,8 +1849,8 @@
       // --- 1.3 Xương bánh chè (Patella) ---
       const patellaShape = new THREE.Shape();
       patellaShape.moveTo(-0.09, 0.08);
-      patellaShape.quadraticCurveTo(0, 0.12, 0.09, 0.08);   // Đáy ở trên
-      patellaShape.quadraticCurveTo(0.11, -0.02, 0, -0.11); // Đỉnh nhọn ở dưới
+      patellaShape.quadraticCurveTo(0, 0.12, 0.09, 0.08);
+      patellaShape.quadraticCurveTo(0.11, -0.02, 0, -0.11);
       patellaShape.quadraticCurveTo(-0.11, -0.02, -0.09, 0.08);
 
       const patellaGeo = new THREE.ExtrudeGeometry(patellaShape, {
@@ -1745,7 +1862,7 @@
         bevelThickness: 0.03
       });
       const patellaMesh = new THREE.Mesh(patellaGeo, Materials.bone);
-      patellaMesh.position.set(0.02, 0.22, 0.21);
+      patellaMesh.position.set(0.03, 0.22, 0.22);
       patellaMesh.rotation.x = 0.18;
       registerInteractiveMesh(patellaMesh, "patella", "skeletal");
       skeletalGroup.add(patellaMesh);
@@ -1753,43 +1870,39 @@
       // --- 1.4 Xương chày (Tibia) ---
       const tibiaGroup = new THREE.Group();
 
-      // Mâm chày (Tibial plateau)
-      const plateauMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.21, 0.12, 22), Materials.bone);
+      const plateauMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.22, 0.1, 24), Materials.bone);
       plateauMesh.scale.set(1.1, 1, 0.9);
-      plateauMesh.position.set(0.02, 0.1, 0.0);
+      plateauMesh.position.set(0.02, 0.08, 0.0);
 
-      // Lồi củ chày (Tibial tuberosity)
+      // Sụn khớp mâm chày (Tibial Plateau Cartilage)
+      const plateauCartilage = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.02, 24), Materials.cartilage);
+      plateauCartilage.scale.set(1.1, 1, 0.9);
+      plateauCartilage.position.set(0.02, 0.135, 0.0);
+
       const tuberosityMesh = new THREE.Mesh(new THREE.ConeGeometry(0.085, 0.15, 16), Materials.bone);
-      tuberosityMesh.position.set(0.02, -0.05, 0.18);
+      tuberosityMesh.position.set(0.02, -0.06, 0.18);
       tuberosityMesh.rotation.x = 1.3;
 
-      // Củ Gerdy (Gerdy's tubercle) ở mặt ngoài
       const gerdyMesh = new THREE.Mesh(new THREE.SphereGeometry(0.045, 12, 12), Materials.bone);
-      gerdyMesh.position.set(0.16, 0.06, 0.1);
+      gerdyMesh.position.set(0.16, 0.05, 0.1);
 
-      // Thân xương chày với mào trước sắc nét (Shinbone anterior crest)
       const tibiaShaftCurve = [
-        new THREE.Vector3(0.02, 0.05, 0.0),
+        new THREE.Vector3(0.02, 0.04, 0.0),
         new THREE.Vector3(0.01, -0.5, 0.02),
         new THREE.Vector3(-0.01, -1.1, 0.01),
         new THREE.Vector3(-0.03, -1.6, -0.01),
         new THREE.Vector3(-0.04, -1.82, -0.02)
       ];
       const tibiaShaft = new THREE.Mesh(
-        createVariableTubeGeometry(
-          tibiaShaftCurve,
-          (u) => 0.11 - 0.04 * u + 0.02 * Math.pow(u, 2),
-          32, 16
-        ),
+        createVariableTubeGeometry(tibiaShaftCurve, (u) => 0.11 - 0.04 * u + 0.02 * Math.pow(u, 2), 32, 16),
         Materials.bone
       );
 
-      // Mắt cá trong (Medial malleolus)
       const medialMalleolus = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.18, 0.14), Materials.bone);
       medialMalleolus.position.set(-0.11, -1.88, 0.0);
       medialMalleolus.rotation.z = 0.2;
 
-      tibiaGroup.add(plateauMesh, tuberosityMesh, gerdyMesh, tibiaShaft, medialMalleolus);
+      tibiaGroup.add(plateauMesh, plateauCartilage, tuberosityMesh, gerdyMesh, tibiaShaft, medialMalleolus);
       registerInteractiveMesh(plateauMesh, "tibia", "skeletal");
       registerInteractiveMesh(tuberosityMesh, "tibia", "skeletal");
       registerInteractiveMesh(tibiaShaft, "tibia", "skeletal");
@@ -1799,14 +1912,12 @@
       // --- 1.5 Xương mác (Fibula) ---
       const fibulaGroup = new THREE.Group();
 
-      // Chỏm mác có mỏm đỉnh nhọn (Apex / Styloid process)
       const fibulaHead = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 16), Materials.bone);
       fibulaHead.scale.set(0.9, 1.25, 0.95);
-      fibulaHead.position.set(0.24, 0.05, -0.04);
+      fibulaHead.position.set(0.24, 0.04, -0.04);
 
-      // Cổ mác & Thân xương mác mảnh khảnh
       const fibulaShaftCurve = [
-        new THREE.Vector3(0.24, 0.02, -0.04),
+        new THREE.Vector3(0.24, 0.01, -0.04),
         new THREE.Vector3(0.22, -0.6, -0.04),
         new THREE.Vector3(0.2, -1.2, -0.03),
         new THREE.Vector3(0.19, -1.75, -0.02),
@@ -1817,7 +1928,6 @@
         Materials.bone
       );
 
-      // Mắt cá ngoài (Lateral malleolus) - Thấp hơn mắt cá trong ~1cm
       const lateralMalleolus = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.2, 0.12), Materials.bone);
       lateralMalleolus.position.set(0.18, -1.95, 0.0);
       lateralMalleolus.rotation.z = -0.15;
@@ -1828,384 +1938,501 @@
       registerInteractiveMesh(lateralMalleolus, "fibula", "skeletal");
       skeletalGroup.add(fibulaGroup);
 
-      // --- 1.6 Khối xương cổ chân & Bàn chân (Tarsals, Metatarsals, Phalanges) ---
+      // --- 1.6 GIẢI PHẪU BÀN CHÂN CHI TIẾT (FULL ANATOMICAL FOOT) ---
       const footGroup = new THREE.Group();
 
-      // Xương sên (Talus) với ròng rọc sên khớp mộng chày mác
-      const talusMesh = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.13, 0.22), Materials.bone);
-      talusMesh.position.set(-0.01, -1.92, 0.06);
+      // 1.6.1 Xương sên (Talus) với ròng rọc sên (Trochlea) nhẵn
+      const talusBody = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.12, 0.2), Materials.bone);
+      talusBody.position.set(-0.01, -1.91, 0.06);
 
-      // Xương gót (Calcaneus) với lồi củ gót sau nhô lớn
-      const calcaneusMesh = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.18, 0.44), Materials.bone);
-      calcaneusMesh.position.set(0.01, -2.06, -0.12);
+      const talusTrochlea = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.14, 16), Materials.cartilage);
+      talusTrochlea.rotation.z = Math.PI / 2;
+      talusTrochlea.position.set(-0.01, -1.86, 0.06);
 
-      // Khối xương cổ chân trước (Navicular, Cuboid, Cuneiforms)
-      const midfootMesh = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.12, 0.22), Materials.bone);
-      midfootMesh.position.set(-0.02, -2.05, 0.25);
+      const talusHead = new THREE.Mesh(new THREE.SphereGeometry(0.065, 14, 14), Materials.bone);
+      talusHead.position.set(-0.04, -1.93, 0.17);
 
-      // 5 Xương đốt bàn chân (Metatarsals I-V) tạo vòm chân
+      const talusGroup = new THREE.Group();
+      talusGroup.add(talusBody, talusTrochlea, talusHead);
+      registerInteractiveMesh(talusBody, "talus", "skeletal");
+      registerInteractiveMesh(talusTrochlea, "talus", "skeletal");
+      footGroup.add(talusGroup);
+
+      // 1.6.2 Xương gót (Calcaneus) với lồi củ gót sau và mỏm nâng sên
+      const calcaneusBody = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.16, 0.38), Materials.bone);
+      calcaneusBody.position.set(0.01, -2.05, -0.08);
+
+      const calcaneusTuberosity = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), Materials.bone);
+      calcaneusTuberosity.scale.set(0.9, 1.1, 1.2);
+      calcaneusTuberosity.position.set(0.01, -2.04, -0.22); // Chịu lực dồn gót
+
+      const sustentaculumTali = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.05, 0.1), Materials.bone);
+      sustentaculumTali.position.set(-0.09, -1.99, -0.02); // Mỏm nâng sên đỡ bờ trong xương sên
+
+      const calcaneusGroup = new THREE.Group();
+      calcaneusGroup.add(calcaneusBody, calcaneusTuberosity, sustentaculumTali);
+      registerInteractiveMesh(calcaneusBody, "calcaneus", "skeletal");
+      registerInteractiveMesh(calcaneusTuberosity, "calcaneus", "skeletal");
+      footGroup.add(calcaneusGroup);
+
+      // 1.6.3 Khối xương cổ chân trước: Xương ghe (Navicular), Xương hộp (Cuboid), 3 Xương chêm
+      const midfootGroup = new THREE.Group();
+
+      // Xương ghe (Navicular) - hình chiếc thuyền ở mé trong
+      const navicularMesh = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.09, 0.08), Materials.bone);
+      navicularMesh.position.set(-0.06, -1.96, 0.22);
+      navicularMesh.rotation.y = 0.2;
+
+      // Xương hộp (Cuboid) - ở mé ngoài
+      const cuboidMesh = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.09, 0.12), Materials.bone);
+      cuboidMesh.position.set(0.09, -2.04, 0.18);
+
+      // 3 Xương chêm (Cuneiforms: Trong, Giữa, Ngoài)
+      const cuneiform1 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.08, 0.09), Materials.bone);
+      cuneiform1.position.set(-0.08, -1.98, 0.31); // Chêm trong (lớn nhất)
+
+      const cuneiform2 = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.07, 0.08), Materials.bone);
+      cuneiform2.position.set(-0.025, -2.0, 0.3);  // Chêm giữa
+
+      const cuneiform3 = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.07, 0.085), Materials.bone);
+      cuneiform3.position.set(0.03, -2.01, 0.29);   // Chêm ngoài
+
+      midfootGroup.add(navicularMesh, cuboidMesh, cuneiform1, cuneiform2, cuneiform3);
+      registerInteractiveMesh(navicularMesh, "navicular_cuboid_cuneiforms", "skeletal");
+      registerInteractiveMesh(cuboidMesh, "navicular_cuboid_cuneiforms", "skeletal");
+      registerInteractiveMesh(cuneiform1, "navicular_cuboid_cuneiforms", "skeletal");
+      footGroup.add(midfootGroup);
+
+      // 1.6.4 5 Xương đốt bàn chân (Metatarsals I - V) uốn vòm chân
       const metatarsalGroup = new THREE.Group();
-      const xOffsets = [-0.09, -0.04, 0.01, 0.06, 0.1];
-      xOffsets.forEach((x, idx) => {
-        const meta = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.022, 0.026, 0.35, 10),
-          Materials.bone
-        );
-        meta.position.set(x, -2.1, 0.48);
-        meta.rotation.x = Math.PI / 2 - 0.15 + idx * 0.02;
+      const metaPositions = [
+        { x: -0.09, y: -2.06, z: 0.44, len: 0.28, r: 0.028 }, // Xương bàn I (To chắc nhất)
+        { x: -0.04, y: -2.07, z: 0.46, len: 0.32, r: 0.021 }, // Xương bàn II (Dài nhất)
+        { x: 0.01,  y: -2.08, z: 0.45, len: 0.30, r: 0.02 },  // Xương bàn III
+        { x: 0.06,  y: -2.09, z: 0.43, len: 0.28, r: 0.019 }, // Xương bàn IV
+        { x: 0.11,  y: -2.11, z: 0.40, len: 0.26, r: 0.022 }  // Xương bàn V (Có lồi củ nền)
+      ];
+
+      metaPositions.forEach((pos, idx) => {
+        const meta = new THREE.Mesh(new THREE.CylinderGeometry(pos.r * 0.9, pos.r, pos.len, 12), Materials.bone);
+        meta.position.set(pos.x, pos.y, pos.z);
+        meta.rotation.x = Math.PI / 2 - 0.2 + idx * 0.03;
+        meta.rotation.y = (idx - 2) * -0.06;
         metatarsalGroup.add(meta);
+        registerInteractiveMesh(meta, "metatarsals_phalanges", "skeletal");
       });
 
-      // Các xương đốt ngón chân (Phalanges)
+      // 2 Xương vừng ở chỏm xương bàn I (Sesamoid bones)
+      const sesamoid1 = new THREE.Mesh(new THREE.SphereGeometry(0.016, 8, 8), Materials.bone);
+      sesamoid1.position.set(-0.1, -2.14, 0.56);
+      const sesamoid2 = new THREE.Mesh(new THREE.SphereGeometry(0.016, 8, 8), Materials.bone);
+      sesamoid2.position.set(-0.075, -2.14, 0.56);
+      metatarsalGroup.add(sesamoid1, sesamoid2);
+
+      // 1.6.5 14 Đốt ngón chân (Phalanges)
       const phalangesGroup = new THREE.Group();
-      xOffsets.forEach((x, idx) => {
-        const toe = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.018, 0.02, (idx === 0 ? 0.18 : 0.22), 8),
-          Materials.bone
-        );
-        toe.position.set(x, -2.14, 0.72);
-        toe.rotation.x = Math.PI / 2;
-        phalangesGroup.add(toe);
+      const toeRoots = [-0.095, -0.045, 0.01, 0.065, 0.115];
+      toeRoots.forEach((x, idx) => {
+        // Ngón cái (2 đốt), ngón II-V (3 đốt)
+        const numJoints = (idx === 0 ? 2 : 3);
+        for (let j = 0; j < numJoints; j++) {
+          const jointLen = (idx === 0 ? 0.1 : 0.075 - j * 0.015);
+          const jointRadius = (idx === 0 ? 0.02 : 0.015 - j * 0.002);
+          const phalanx = new THREE.Mesh(new THREE.CylinderGeometry(jointRadius * 0.85, jointRadius, jointLen, 10), Materials.bone);
+          phalanx.position.set(x + (idx - 2) * 0.008 * j, -2.13 - j * 0.008, 0.62 + j * 0.075);
+          phalanx.rotation.x = Math.PI / 2;
+          phalangesGroup.add(phalanx);
+          registerInteractiveMesh(phalanx, "metatarsals_phalanges", "skeletal");
+        }
       });
 
-      footGroup.add(talusMesh, calcaneusMesh, midfootMesh, metatarsalGroup, phalangesGroup);
-      registerInteractiveMesh(talusMesh, "tarsals_foot", "skeletal");
-      registerInteractiveMesh(calcaneusMesh, "tarsals_foot", "skeletal");
-      registerInteractiveMesh(midfootMesh, "tarsals_foot", "skeletal");
+      footGroup.add(metatarsalGroup, phalangesGroup);
       skeletalGroup.add(footGroup);
 
       // =======================================================================
-      // (2) HỆ DÂY CHẰNG & SỤN KHỚP GỐI (LIGAMENTS & MENISCI)
+      // (2) HỆ DÂY CHẰNG & SỤN KHỚP (LIGAMENTS & MENISCI - KHỚP GỐI & CỔ CHÂN)
       // =======================================================================
       const ligGroup = layerGroups.ligaments;
 
-      // Sụn chêm trong (Medial Meniscus) - Hình chữ C rộng
+      // 2.1 Sụn chêm khớp gối (Menisci) - Dày ở chu vi, mỏng ở trung tâm
       const medialMeniscus = new THREE.Mesh(
-        new THREE.TorusGeometry(0.12, 0.038, 12, 24, Math.PI * 1.3),
+        new THREE.TorusGeometry(0.125, 0.04, 14, 28, Math.PI * 1.35),
         Materials.cartilage
       );
-      medialMeniscus.rotation.set(Math.PI / 2, 0, 0.4);
-      medialMeniscus.position.set(-0.06, 0.155, 0.01);
+      medialMeniscus.rotation.set(Math.PI / 2, 0, 0.35);
+      medialMeniscus.position.set(-0.06, 0.165, 0.01);
 
-      // Sụn chêm ngoài (Lateral Meniscus) - Hình chữ O tròn hơn
       const lateralMeniscus = new THREE.Mesh(
-        new THREE.TorusGeometry(0.095, 0.036, 12, 24, Math.PI * 1.6),
+        new THREE.TorusGeometry(0.1, 0.038, 14, 28, Math.PI * 1.65),
         Materials.cartilage
       );
-      lateralMeniscus.rotation.set(Math.PI / 2, 0, -0.6);
-      lateralMeniscus.position.set(0.12, 0.155, 0.01);
+      lateralMeniscus.rotation.set(Math.PI / 2, 0, -0.55);
+      lateralMeniscus.position.set(0.12, 0.165, 0.01);
 
-      registerInteractiveMesh(medialMeniscus, "meniscus", "ligament");
-      registerInteractiveMesh(lateralMeniscus, "meniscus", "ligament");
+      registerInteractiveMesh(medialMeniscus, "meniscus", "ligaments");
+      registerInteractiveMesh(lateralMeniscus, "meniscus", "ligaments");
       ligGroup.add(medialMeniscus, lateralMeniscus);
 
-      // Dây chằng chéo trước (ACL)
+      // 2.2 Dây chằng chéo trước (ACL)
       const aclCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.01, 0.12, 0.07), // Mâm chày trước
-        new THREE.Vector3(0.03, 0.16, 0.03),
-        new THREE.Vector3(0.07, 0.22, -0.03)  // Mặt trong lồi cầu ngoài đùi
+        new THREE.Vector3(-0.01, 0.13, 0.07),
+        new THREE.Vector3(0.03, 0.18, 0.03),
+        new THREE.Vector3(0.08, 0.24, -0.03)
       ]);
-      const aclMesh = new THREE.Mesh(new THREE.TubeGeometry(aclCurve, 18, 0.032, 10, false), Materials.tendon);
-      registerInteractiveMesh(aclMesh, "acl", "ligament");
+      const aclMesh = new THREE.Mesh(new THREE.TubeGeometry(aclCurve, 20, 0.034, 12, false), Materials.tendon);
+      registerInteractiveMesh(aclMesh, "acl", "ligaments");
       ligGroup.add(aclMesh);
 
-      // Dây chằng chéo sau (PCL)
+      // 2.3 Dây chằng chéo sau (PCL)
       const pclCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0.01, 0.12, -0.06),  // Mâm chày sau
-        new THREE.Vector3(-0.01, 0.17, -0.02),
-        new THREE.Vector3(-0.05, 0.22, 0.02)   // Mặt ngoài lồi cầu trong đùi
+        new THREE.Vector3(0.01, 0.13, -0.06),
+        new THREE.Vector3(-0.01, 0.19, -0.02),
+        new THREE.Vector3(-0.05, 0.24, 0.02)
       ]);
-      const pclMesh = new THREE.Mesh(new THREE.TubeGeometry(pclCurve, 18, 0.036, 10, false), Materials.tendon);
-      registerInteractiveMesh(pclMesh, "pcl", "ligament");
+      const pclMesh = new THREE.Mesh(new THREE.TubeGeometry(pclCurve, 20, 0.038, 12, false), Materials.tendon);
+      registerInteractiveMesh(pclMesh, "pcl", "ligaments");
       ligGroup.add(pclMesh);
 
-      // Dây chằng bên chày (MCL) - Dải dẹt rộng
+      // 2.4 Dây chằng bên chày (MCL)
       const mclCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.16, 0.25, 0.0),
-        new THREE.Vector3(-0.17, 0.14, 0.01),
-        new THREE.Vector3(-0.15, -0.05, 0.02)
+        new THREE.Vector3(-0.16, 0.27, 0.0),
+        new THREE.Vector3(-0.17, 0.15, 0.01),
+        new THREE.Vector3(-0.15, -0.06, 0.02)
       ]);
-      const mclMesh = new THREE.Mesh(new THREE.TubeGeometry(mclCurve, 18, 0.028, 8, false), Materials.tendon);
-      mclMesh.scale.set(0.5, 1, 1.8);
-      registerInteractiveMesh(mclMesh, "mcl", "ligament");
+      const mclMesh = new THREE.Mesh(new THREE.TubeGeometry(mclCurve, 20, 0.03, 8, false), Materials.tendon);
+      mclMesh.scale.set(0.5, 1, 1.9);
+      registerInteractiveMesh(mclMesh, "mcl", "ligaments");
       ligGroup.add(mclMesh);
 
-      // Dây chằng bên mác (LCL) - Dây tròn chắc
+      // 2.5 Dây chằng bên mác (LCL)
       const lclCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0.2, 0.24, 0.0),
-        new THREE.Vector3(0.23, 0.14, -0.02),
-        new THREE.Vector3(0.24, 0.05, -0.04)
+        new THREE.Vector3(0.2, 0.26, 0.0),
+        new THREE.Vector3(0.23, 0.15, -0.02),
+        new THREE.Vector3(0.24, 0.04, -0.04)
       ]);
-      const lclMesh = new THREE.Mesh(new THREE.TubeGeometry(lclCurve, 18, 0.022, 10, false), Materials.tendon);
-      registerInteractiveMesh(lclMesh, "lcl", "ligament");
+      const lclMesh = new THREE.Mesh(new THREE.TubeGeometry(lclCurve, 20, 0.022, 10, false), Materials.tendon);
+      registerInteractiveMesh(lclMesh, "lcl", "ligaments");
       ligGroup.add(lclMesh);
 
-      // Dây chằng bánh chè (Patellar Ligament)
+      // 2.6 Dây chằng bánh chè (Patellar Ligament)
       const patellarLigCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0.02, 0.12, 0.22),
-        new THREE.Vector3(0.02, 0.03, 0.22),
-        new THREE.Vector3(0.02, -0.05, 0.18)
+        new THREE.Vector3(0.03, 0.12, 0.22),
+        new THREE.Vector3(0.025, 0.03, 0.21),
+        new THREE.Vector3(0.02, -0.06, 0.18)
       ]);
-      const patellarLigMesh = new THREE.Mesh(
-        new THREE.TubeGeometry(patellarLigCurve, 16, 0.04, 10, false),
-        Materials.tendon
-      );
+      const patellarLigMesh = new THREE.Mesh(new THREE.TubeGeometry(patellarLigCurve, 18, 0.042, 10, false), Materials.tendon);
       patellarLigMesh.scale.set(1.6, 1, 0.6);
-      registerInteractiveMesh(patellarLigMesh, "patellar_ligament", "ligament");
+      registerInteractiveMesh(patellarLigMesh, "patellar_ligament", "ligaments");
       ligGroup.add(patellarLigMesh);
 
+      // 2.7 Dây chằng cổ chân ngoài: ATFL, CFL, PTFL
+      // ATFL (Anterior Talofibular) - Đi từ mắt cá ngoài đến cổ xương sên
+      const atflCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0.18, -1.94, 0.02),
+        new THREE.Vector3(0.12, -1.93, 0.1),
+        new THREE.Vector3(0.06, -1.92, 0.14)
+      ]);
+      const atflMesh = new THREE.Mesh(new THREE.TubeGeometry(atflCurve, 14, 0.022, 8, false), Materials.tendon);
+      registerInteractiveMesh(atflMesh, "atfl_ankle_ligaments", "ligaments");
+
+      // CFL (Calcaneofibular) - Từ mắt cá ngoài xuống xương gót
+      const cflCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0.18, -1.96, 0.0),
+        new THREE.Vector3(0.15, -2.03, -0.04),
+        new THREE.Vector3(0.1, -2.08, -0.06)
+      ]);
+      const cflMesh = new THREE.Mesh(new THREE.TubeGeometry(cflCurve, 14, 0.02, 8, false), Materials.tendon);
+
+      // Dây chằng Delta mắt cá trong (Deltoid Ligament) - Hình quạt dày
+      const deltoidCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.11, -1.88, 0.0),
+        new THREE.Vector3(-0.08, -1.96, 0.06),
+        new THREE.Vector3(-0.06, -2.0, 0.15)
+      ]);
+      const deltoidMesh = new THREE.Mesh(new THREE.TubeGeometry(deltoidCurve, 16, 0.035, 8, false), Materials.tendon);
+      deltoidMesh.scale.set(0.6, 1, 1.8);
+      registerInteractiveMesh(deltoidMesh, "atfl_ankle_ligaments", "ligaments");
+
+      ligGroup.add(atflMesh, cflMesh, deltoidMesh);
+
+      // 2.8 Cân gan chân (Plantar Fascia / Aponeurosis)
+      const plantarFasciaShape = new THREE.Shape();
+      plantarFasciaShape.moveTo(-0.05, -0.18); // Gốc tại củ xương gót
+      plantarFasciaShape.lineTo(0.05, -0.18);
+      plantarFasciaShape.lineTo(0.12, 0.52);   // Xòe rộng tới nền các ngón
+      plantarFasciaShape.lineTo(-0.11, 0.52);
+      plantarFasciaShape.closePath();
+
+      const plantarFasciaGeo = new THREE.ExtrudeGeometry(plantarFasciaShape, {
+        depth: 0.022,
+        bevelEnabled: true,
+        bevelSize: 0.01,
+        bevelThickness: 0.01
+      });
+      const plantarFasciaMesh = new THREE.Mesh(plantarFasciaGeo, Materials.tendon);
+      plantarFasciaMesh.rotation.x = -Math.PI / 2 + 0.12;
+      plantarFasciaMesh.position.set(0.01, -2.16, -0.02);
+      registerInteractiveMesh(plantarFasciaMesh, "plantar_fascia", "ligaments");
+      ligGroup.add(plantarFasciaMesh);
+
       // =======================================================================
-      // (3) HỆ CƠ CHUYÊN SÂU TỪNG VÙNG (COMPREHENSIVE MUSCULAR SYSTEM)
+      // (3) HỆ CƠ (MUSCULAR SYSTEM: NÔNG & SÂU RÕ RỆT)
       // =======================================================================
       const musGroup = layerGroups.muscular;
 
-      // --- 3.1 VÙNG ĐÙI TRƯỚC (ANTERIOR THIGH) ---
-      // Cơ may (Sartorius) - Dải cơ lụa chữ S dài nhất
+      // --- 3.1 CƠ NÔNG (SUPERFICIAL MUSCLES) ---
+      // Cơ may (Sartorius)
       const sartoriusCurve = [
-        new THREE.Vector3(-0.35, 2.45, 0.32), // Gai chậu trước trên (ASIS)
+        new THREE.Vector3(-0.35, 2.45, 0.32),
         new THREE.Vector3(-0.18, 2.0, 0.28),
-        new THREE.Vector3(-0.02, 1.45, 0.26), // Bắt chéo mặt trước đùi
+        new THREE.Vector3(-0.02, 1.45, 0.26),
         new THREE.Vector3(-0.08, 0.8, 0.22),
-        new THREE.Vector3(-0.16, 0.25, 0.14), // Vòng qua mặt trong gối
-        new THREE.Vector3(-0.16, -0.08, 0.08) // Bám chân ngỗng xương chày
+        new THREE.Vector3(-0.16, 0.25, 0.14),
+        new THREE.Vector3(-0.16, -0.08, 0.08)
       ];
-      const sartoriusMesh = createMuscleBellyMesh(sartoriusCurve, 0.055, 0.022, Materials.muscleSuperficial, "sartorius", "muscular");
-      sartoriusMesh.scale.set(1.4, 1, 0.5); // Dạng dải ruy-băng dẹt
+      const sartoriusMesh = createMuscleBellyMesh(sartoriusCurve, 0.055, 0.022, Materials.muscleSuperficial, "sartorius", "muscular", false);
+      sartoriusMesh.scale.set(1.4, 1, 0.5);
       musGroup.add(sartoriusMesh);
 
-      // Cơ thẳng đùi (Rectus femoris) - Chính giữa mặt trước
+      // Cơ thẳng đùi (Rectus femoris)
       const rectusCurve = [
-        new THREE.Vector3(-0.04, 2.2, 0.28),  // Gai chậu trước dưới (AIIS)
+        new THREE.Vector3(-0.04, 2.2, 0.28),
         new THREE.Vector3(0.02, 1.8, 0.27),
-        new THREE.Vector3(0.03, 1.35, 0.28),  // Bụng cơ phình to
+        new THREE.Vector3(0.03, 1.35, 0.28),
         new THREE.Vector3(0.03, 0.9, 0.25),
-        new THREE.Vector3(0.02, 0.45, 0.24),  // Gân hội tụ trên bánh chè
+        new THREE.Vector3(0.02, 0.45, 0.24),
         new THREE.Vector3(0.02, 0.28, 0.22)
       ];
-      const rectusMesh = createMuscleBellyMesh(rectusCurve, 0.13, 0.035, Materials.muscleSuperficial, "rectus_femoris", "muscular");
+      const rectusMesh = createMuscleBellyMesh(rectusCurve, 0.13, 0.035, Materials.muscleSuperficial, "rectus_femoris", "muscular", false);
       musGroup.add(rectusMesh);
 
-      // Cơ rộng ngoài (Vastus lateralis) - Khối cơ đồ sộ mặt ngoài
+      // Cơ rộng ngoài (Vastus lateralis)
       const vastusLatCurve = [
-        new THREE.Vector3(0.24, 1.95, 0.02), // Mấu chuyển lớn
+        new THREE.Vector3(0.24, 1.95, 0.02),
         new THREE.Vector3(0.32, 1.55, 0.1),
-        new THREE.Vector3(0.33, 1.15, 0.14), // Phình to nhất
+        new THREE.Vector3(0.33, 1.15, 0.14),
         new THREE.Vector3(0.26, 0.7, 0.16),
-        new THREE.Vector3(0.14, 0.35, 0.2)   // Bám bờ ngoài bánh chè
+        new THREE.Vector3(0.14, 0.35, 0.2)
       ];
-      const vastusLatMesh = createMuscleBellyMesh(vastusLatCurve, 0.155, 0.04, Materials.muscleSuperficial, "vastus_lateralis", "muscular");
+      const vastusLatMesh = createMuscleBellyMesh(vastusLatCurve, 0.155, 0.04, Materials.muscleSuperficial, "vastus_lateralis", "muscular", false);
       vastusLatMesh.scale.set(1, 1, 1.25);
       musGroup.add(vastusLatMesh);
 
-      // Cơ rộng trong (Vastus medialis) - Hình giọt nước (Teardrop) ở trong gối
+      // Cơ rộng trong (Vastus medialis / VMO)
       const vastusMedCurve = [
         new THREE.Vector3(0.04, 1.8, 0.05),
         new THREE.Vector3(-0.08, 1.35, 0.14),
         new THREE.Vector3(-0.16, 0.95, 0.18),
-        new THREE.Vector3(-0.18, 0.55, 0.22), // Giọt nước phồng căng (VMO)
-        new THREE.Vector3(-0.06, 0.3, 0.21)   // Bám bờ trong bánh chè
+        new THREE.Vector3(-0.18, 0.55, 0.22),
+        new THREE.Vector3(-0.06, 0.3, 0.21)
       ];
-      const vastusMedMesh = createMuscleBellyMesh(vastusMedCurve, 0.145, 0.035, Materials.muscleSuperficial, "vastus_medialis", "muscular");
+      const vastusMedMesh = createMuscleBellyMesh(vastusMedCurve, 0.145, 0.035, Materials.muscleSuperficial, "vastus_medialis", "muscular", false);
       musGroup.add(vastusMedMesh);
 
-      // Cơ rộng giữa (Vastus intermedius) - Lớp sâu ôm sát xương đùi
-      const vastusIntCurve = [
-        new THREE.Vector3(0.08, 1.75, 0.08),
-        new THREE.Vector3(0.06, 1.3, 0.12),
-        new THREE.Vector3(0.04, 0.85, 0.12),
-        new THREE.Vector3(0.02, 0.4, 0.15)
-      ];
-      const vastusIntMesh = createMuscleBellyMesh(vastusIntCurve, 0.11, 0.035, Materials.muscleDeep, "vastus_intermedius", "muscular");
-      musGroup.add(vastusIntMesh);
-
-      // Gân cơ tứ đầu đùi (Quadriceps Tendon)
-      const quadTendonCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0.02, 0.45, 0.23),
-        new THREE.Vector3(0.02, 0.32, 0.22),
-        new THREE.Vector3(0.02, 0.25, 0.21)
-      ]);
-      const quadTendonMesh = new THREE.Mesh(new THREE.TubeGeometry(quadTendonCurve, 12, 0.055, 12, false), Materials.tendon);
-      quadTendonMesh.scale.set(1.8, 1, 0.5);
-      musGroup.add(quadTendonMesh);
-
-      // --- 3.2 VÙNG ĐÙI NGOÀI & MÔNG ---
-      // Cơ căng mạc đùi (TFL)
+      // Cơ căng mạc đùi (TFL) & Dải chậu chày (IT Band)
       const tflCurve = [
-        new THREE.Vector3(-0.32, 2.4, 0.28), // Mào chậu trước
+        new THREE.Vector3(-0.32, 2.4, 0.28),
         new THREE.Vector3(-0.25, 2.15, 0.24),
-        new THREE.Vector3(-0.15, 1.85, 0.2)  // Nối tiếp vào IT Band
+        new THREE.Vector3(-0.15, 1.85, 0.2)
       ];
-      const tflMesh = createMuscleBellyMesh(tflCurve, 0.065, 0.03, Materials.muscleSuperficial, "tensor_fasciae_latae", "muscular");
+      const tflMesh = createMuscleBellyMesh(tflCurve, 0.065, 0.03, Materials.muscleSuperficial, "tensor_fasciae_latae", "muscular", false);
       musGroup.add(tflMesh);
 
-      // Dải chậu chày (Iliotibial Tract / IT Band)
       const itBandCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(0.28, 2.1, 0.1),
         new THREE.Vector3(0.33, 1.5, 0.12),
         new THREE.Vector3(0.31, 0.8, 0.12),
         new THREE.Vector3(0.24, 0.25, 0.12),
-        new THREE.Vector3(0.16, 0.06, 0.1) // Bám củ Gerdy xương chày
+        new THREE.Vector3(0.16, 0.05, 0.1)
       ]);
       const itBandMesh = new THREE.Mesh(new THREE.TubeGeometry(itBandCurve, 24, 0.045, 8, false), Materials.itBand);
       itBandMesh.scale.set(0.35, 1, 1.8);
-      registerInteractiveMesh(itBandMesh, "tensor_fasciae_latae", "muscular");
+      registerInteractiveMesh(itBandMesh, "tensor_fasciae_latae", "muscular", false);
       musGroup.add(itBandMesh);
 
-      // Cơ mông lớn (Gluteus maximus) - Thớ cơ xếp xiên 45 độ
+      // Cơ mông lớn (Gluteus maximus)
       const gluteusCurve = [
         new THREE.Vector3(-0.2, 2.45, -0.15),
         new THREE.Vector3(0.05, 2.25, -0.25),
         new THREE.Vector3(0.22, 1.95, -0.22),
         new THREE.Vector3(0.26, 1.65, -0.1)
       ];
-      const gluteusMesh = createMuscleBellyMesh(gluteusCurve, 0.18, 0.06, Materials.muscleSuperficial, "gluteus_maximus", "muscular");
+      const gluteusMesh = createMuscleBellyMesh(gluteusCurve, 0.18, 0.06, Materials.muscleSuperficial, "gluteus_maximus", "muscular", false);
       gluteusMesh.scale.set(1.3, 1, 1.2);
       musGroup.add(gluteusMesh);
 
-      // --- 3.3 VÙNG ĐÙI TRONG (ADDUCTOR GROUP) ---
-      // Cơ thon (Gracilis)
+      // Cơ thon (Gracilis) & Cơ khép dài (Adductor longus)
       const gracilisCurve = [
-        new THREE.Vector3(-0.24, 1.95, 0.06), // Ngành mu
+        new THREE.Vector3(-0.24, 1.95, 0.06),
         new THREE.Vector3(-0.22, 1.45, 0.07),
         new THREE.Vector3(-0.19, 0.8, 0.08),
         new THREE.Vector3(-0.17, 0.2, 0.08),
-        new THREE.Vector3(-0.16, -0.1, 0.07)  // Bám chân ngỗng
+        new THREE.Vector3(-0.16, -0.1, 0.07)
       ];
-      const gracilisMesh = createMuscleBellyMesh(gracilisCurve, 0.048, 0.02, Materials.muscleSuperficial, "gracilis", "muscular");
+      const gracilisMesh = createMuscleBellyMesh(gracilisCurve, 0.048, 0.02, Materials.muscleSuperficial, "gracilis", "muscular", false);
       gracilisMesh.scale.set(0.8, 1, 1.3);
       musGroup.add(gracilisMesh);
 
-      // Cơ khép dài (Adductor longus)
       const addLongCurve = [
-        new THREE.Vector3(-0.18, 1.98, 0.12), // Củ mu
+        new THREE.Vector3(-0.18, 1.98, 0.12),
         new THREE.Vector3(-0.12, 1.6, 0.13),
         new THREE.Vector3(-0.04, 1.25, 0.06),
-        new THREE.Vector3(0.04, 1.05, 0.02)   // Đường ráp xương đùi
+        new THREE.Vector3(0.04, 1.05, 0.02)
       ];
-      const addLongMesh = createMuscleBellyMesh(addLongCurve, 0.07, 0.025, Materials.muscleSuperficial, "adductor_longus", "muscular");
+      const addLongMesh = createMuscleBellyMesh(addLongCurve, 0.07, 0.025, Materials.muscleSuperficial, "adductor_longus", "muscular", false);
       musGroup.add(addLongMesh);
 
-      // Cơ khép lớn (Adductor magnus) - Khối cơ sâu khổng lồ
+      // Cơ nhị đầu đùi (Biceps femoris) & Cơ bán gân (Semitendinosus)
+      const bicepsCurve = [
+        new THREE.Vector3(-0.02, 1.92, -0.18),
+        new THREE.Vector3(0.12, 1.45, -0.19),
+        new THREE.Vector3(0.2, 0.95, -0.18),
+        new THREE.Vector3(0.23, 0.45, -0.12),
+        new THREE.Vector3(0.24, 0.05, -0.04)
+      ];
+      const bicepsMesh = createMuscleBellyMesh(bicepsCurve, 0.095, 0.03, Materials.muscleSuperficial, "biceps_femoris", "muscular", false);
+      musGroup.add(bicepsMesh);
+
+      const semitendCurve = [
+        new THREE.Vector3(-0.04, 1.92, -0.18),
+        new THREE.Vector3(-0.08, 1.45, -0.2),
+        new THREE.Vector3(-0.12, 0.95, -0.18),
+        new THREE.Vector3(-0.14, 0.4, -0.12),
+        new THREE.Vector3(-0.16, -0.11, 0.06)
+      ];
+      const semitendMesh = createMuscleBellyMesh(semitendCurve, 0.075, 0.02, Materials.muscleSuperficial, "semitendinosus_semimembranosus", "muscular", false);
+      musGroup.add(semitendMesh);
+
+      // Cơ chày trước (Tibialis anterior)
+      const tibAntCurve = [
+        new THREE.Vector3(0.08, 0.02, 0.14),
+        new THREE.Vector3(0.06, -0.45, 0.16),
+        new THREE.Vector3(0.02, -1.0, 0.15),
+        new THREE.Vector3(-0.02, -1.5, 0.12),
+        new THREE.Vector3(-0.08, -1.9, 0.18),
+        new THREE.Vector3(-0.1, -2.1, 0.42)
+      ];
+      const tibAntMesh = createMuscleBellyMesh(tibAntCurve, 0.08, 0.022, Materials.muscleSuperficial, "tibialis_anterior", "muscular", false);
+      musGroup.add(tibAntMesh);
+
+      // Cơ bụng chân (Gastrocnemius) & Gân gót Achilles
+      const gastroMedCurve = [
+        new THREE.Vector3(-0.08, 0.24, -0.04),
+        new THREE.Vector3(-0.12, 0.02, -0.16),
+        new THREE.Vector3(-0.12, -0.5, -0.22),
+        new THREE.Vector3(-0.06, -1.05, -0.18),
+        new THREE.Vector3(0.0, -1.35, -0.16)
+      ];
+      const gastroMedMesh = createMuscleBellyMesh(gastroMedCurve, 0.115, 0.035, Materials.muscleSuperficial, "gastrocnemius", "muscular", false);
+
+      const gastroLatCurve = [
+        new THREE.Vector3(0.14, 0.24, -0.04),
+        new THREE.Vector3(0.14, 0.02, -0.15),
+        new THREE.Vector3(0.13, -0.5, -0.21),
+        new THREE.Vector3(0.08, -1.05, -0.18),
+        new THREE.Vector3(0.0, -1.35, -0.16)
+      ];
+      const gastroLatMesh = createMuscleBellyMesh(gastroLatCurve, 0.11, 0.035, Materials.muscleSuperficial, "gastrocnemius", "muscular", false);
+      musGroup.add(gastroMedMesh, gastroLatMesh);
+
+      const achillesCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0.0, -1.3, -0.16),
+        new THREE.Vector3(0.0, -1.65, -0.15),
+        new THREE.Vector3(0.01, -1.95, -0.14),
+        new THREE.Vector3(0.01, -2.06, -0.12)
+      ]);
+      const achillesMesh = new THREE.Mesh(new THREE.TubeGeometry(achillesCurve, 20, 0.048, 12, false), Materials.tendon);
+      achillesMesh.scale.set(1.1, 1, 0.8);
+      registerInteractiveMesh(achillesMesh, "achilles_tendon", "muscular", false);
+      musGroup.add(achillesMesh);
+
+      // --- 3.2 CƠ SÂU (DEEP MUSCLES: LỘ RÕ KHI BÓC TÁCH) ---
+      // Cơ rộng giữa (Vastus intermedius) - Sát xương đùi
+      const vastusIntCurve = [
+        new THREE.Vector3(0.08, 1.75, 0.08),
+        new THREE.Vector3(0.06, 1.3, 0.12),
+        new THREE.Vector3(0.04, 0.85, 0.12),
+        new THREE.Vector3(0.02, 0.4, 0.15)
+      ];
+      const vastusIntMesh = createMuscleBellyMesh(vastusIntCurve, 0.11, 0.035, Materials.muscleDeep, "vastus_intermedius", "muscular", true);
+      musGroup.add(vastusIntMesh);
+
+      // Cơ khép lớn (Adductor magnus) - Sâu ở đùi trong
       const addMagCurve = [
         new THREE.Vector3(-0.12, 1.88, -0.05),
         new THREE.Vector3(-0.1, 1.4, -0.06),
         new THREE.Vector3(-0.06, 0.95, -0.04),
-        new THREE.Vector3(-0.06, 0.45, 0.0) // Củ cơ khép
+        new THREE.Vector3(-0.06, 0.45, 0.0)
       ];
-      const addMagMesh = createMuscleBellyMesh(addMagCurve, 0.12, 0.045, Materials.muscleDeep, "adductor_magnus", "muscular");
+      const addMagMesh = createMuscleBellyMesh(addMagCurve, 0.12, 0.045, Materials.muscleDeep, "adductor_magnus", "muscular", true);
       musGroup.add(addMagMesh);
 
-      // --- 3.4 VÙNG ĐÙI SAU (HAMSTRINGS) ---
-      // Cơ nhị đầu đùi (Biceps femoris) - Mặt sau ngoài
-      const bicepsCurve = [
-        new THREE.Vector3(-0.02, 1.92, -0.18), // Ụ ngồi
-        new THREE.Vector3(0.12, 1.45, -0.19),
-        new THREE.Vector3(0.2, 0.95, -0.18),   // Bụng cơ
-        new THREE.Vector3(0.23, 0.45, -0.12),  // Gân hội tụ
-        new THREE.Vector3(0.24, 0.06, -0.04)   // Bám chỏm xương mác
-      ];
-      const bicepsMesh = createMuscleBellyMesh(bicepsCurve, 0.095, 0.03, Materials.muscleSuperficial, "biceps_femoris", "muscular");
-      musGroup.add(bicepsMesh);
-
-      // Cơ bán gân (Semitendinosus) - Mặt sau trong
-      const semitendCurve = [
-        new THREE.Vector3(-0.04, 1.92, -0.18), // Ụ ngồi
-        new THREE.Vector3(-0.08, 1.45, -0.2),
-        new THREE.Vector3(-0.12, 0.95, -0.18), // Bụng cơ
-        new THREE.Vector3(-0.14, 0.4, -0.12),  // Bắt đầu thành gân tròn dài
-        new THREE.Vector3(-0.16, -0.11, 0.06)  // Bám chân ngỗng xương chày
-      ];
-      const semitendMesh = createMuscleBellyMesh(semitendCurve, 0.075, 0.02, Materials.muscleSuperficial, "semitendinosus", "muscular");
-      musGroup.add(semitendMesh);
-
-      // Cơ bán màng (Semimembranosus) - Lớp sâu dưới bán gân
+      // Cơ bán màng (Semimembranosus) - Sâu dưới bán gân
       const semimembCurve = [
         new THREE.Vector3(-0.06, 1.92, -0.16),
         new THREE.Vector3(-0.1, 1.35, -0.17),
         new THREE.Vector3(-0.11, 0.85, -0.15),
-        new THREE.Vector3(-0.09, 0.28, -0.08) // Bám sau lồi cầu trong chày
+        new THREE.Vector3(-0.09, 0.28, -0.08)
       ];
-      const semimembMesh = createMuscleBellyMesh(semimembCurve, 0.09, 0.035, Materials.muscleDeep, "semimembranosus", "muscular");
+      const semimembMesh = createMuscleBellyMesh(semimembCurve, 0.09, 0.035, Materials.muscleDeep, "semitendinosus_semimembranosus", "muscular", true);
       semimembMesh.scale.set(1.4, 1, 0.7);
       musGroup.add(semimembMesh);
 
-      // --- 3.5 VÙNG CẲNG CHÂN TRƯỚC & NGOÀI ---
-      // Cơ chày trước (Tibialis anterior) - Áp sát mào chày
-      const tibAntCurve = [
-        new THREE.Vector3(0.08, 0.02, 0.14),   // Lồi cầu ngoài chày
-        new THREE.Vector3(0.06, -0.45, 0.16),  // Bụng cơ dày nổi rõ
-        new THREE.Vector3(0.02, -1.0, 0.15),
-        new THREE.Vector3(-0.02, -1.5, 0.12),  // Chuyển thành gân bắt chéo
-        new THREE.Vector3(-0.08, -1.9, 0.18),  // Qua trước cổ chân
-        new THREE.Vector3(-0.1, -2.1, 0.42)    // Bám xương chêm trong
-      ];
-      const tibAntMesh = createMuscleBellyMesh(tibAntCurve, 0.08, 0.022, Materials.muscleSuperficial, "tibialis_anterior", "muscular");
-      musGroup.add(tibAntMesh);
-
-      // --- 3.6 VÙNG CẲNG CHÂN SAU (TRICEPS SURAE) ---
-      // Cơ bụng chân (Gastrocnemius) - Hai đầu bắp chuối
-      // Đầu trong (Medial Head) - To và dài hơn
-      const gastroMedCurve = [
-        new THREE.Vector3(-0.08, 0.24, -0.04), // Lồi cầu trong đùi
-        new THREE.Vector3(-0.12, 0.02, -0.16),
-        new THREE.Vector3(-0.12, -0.5, -0.22), // Phình to nhất
-        new THREE.Vector3(-0.06, -1.05, -0.18),
-        new THREE.Vector3(0.0, -1.35, -0.16)   // Nhập vào gân Achilles
-      ];
-      const gastroMedMesh = createMuscleBellyMesh(gastroMedCurve, 0.115, 0.035, Materials.muscleSuperficial, "gastrocnemius", "muscular");
-
-      // Đầu ngoài (Lateral Head)
-      const gastroLatCurve = [
-        new THREE.Vector3(0.14, 0.24, -0.04), // Lồi cầu ngoài đùi
-        new THREE.Vector3(0.14, 0.02, -0.15),
-        new THREE.Vector3(0.13, -0.5, -0.21), // Phình to
-        new THREE.Vector3(0.08, -1.05, -0.18),
-        new THREE.Vector3(0.0, -1.35, -0.16)  // Nhập vào gân Achilles
-      ];
-      const gastroLatMesh = createMuscleBellyMesh(gastroLatCurve, 0.11, 0.035, Materials.muscleSuperficial, "gastrocnemius", "muscular");
-      musGroup.add(gastroMedMesh, gastroLatMesh);
-
-      // Cơ dép (Soleus) - Lớp cơ phẳng rộng dưới cơ bụng chân
+      // Cơ dép (Soleus) - Sâu dưới cơ bụng chân
       const soleusCurve = [
         new THREE.Vector3(0.08, -0.05, -0.1),
         new THREE.Vector3(0.04, -0.55, -0.16),
         new THREE.Vector3(0.02, -1.05, -0.16),
         new THREE.Vector3(0.0, -1.45, -0.15)
       ];
-      const soleusMesh = createMuscleBellyMesh(soleusCurve, 0.135, 0.045, Materials.muscleDeep, "soleus", "muscular");
-      soleusMesh.scale.set(1.5, 1, 0.6); // Dạng lá dẹt rộng
+      const soleusMesh = createMuscleBellyMesh(soleusCurve, 0.135, 0.045, Materials.muscleDeep, "soleus_deep_calves", "muscular", true);
+      soleusMesh.scale.set(1.5, 1, 0.6);
       musGroup.add(soleusMesh);
 
-      // Gân gót chân (Achilles tendon)
-      const achillesCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0.0, -1.3, -0.16),
-        new THREE.Vector3(0.0, -1.65, -0.15),
-        new THREE.Vector3(0.01, -1.95, -0.14),
-        new THREE.Vector3(0.01, -2.06, -0.12) // Bám củ xương gót
-      ]);
-      const achillesMesh = new THREE.Mesh(new THREE.TubeGeometry(achillesCurve, 20, 0.048, 12, false), Materials.tendon);
-      achillesMesh.scale.set(1.1, 1, 0.8);
-      registerInteractiveMesh(achillesMesh, "achilles_tendon", "muscular");
-      musGroup.add(achillesMesh);
+      // --- 3.3 HỆ CƠ NỘI TẠI BÀN CHÂN (FOOT INTRINSIC MUSCLES) ---
+      // Cơ duỗi ngón ngắn (Extensor digitorum brevis) ở mu chân
+      const edbCurve = [
+        new THREE.Vector3(0.06, -2.06, 0.22),
+        new THREE.Vector3(0.04, -2.08, 0.36),
+        new THREE.Vector3(0.0, -2.1, 0.48)
+      ];
+      const edbMesh = createMuscleBellyMesh(edbCurve, 0.045, 0.015, Materials.muscleSuperficial, "foot_muscles", "muscular", false);
+      musGroup.add(edbMesh);
+
+      // Cơ giạng ngón cái (Abductor hallucis) ở mé trong gan chân
+      const abdHallCurve = [
+        new THREE.Vector3(-0.04, -2.14, -0.08),
+        new THREE.Vector3(-0.08, -2.13, 0.22),
+        new THREE.Vector3(-0.1, -2.14, 0.52)
+      ];
+      const abdHallMesh = createMuscleBellyMesh(abdHallCurve, 0.035, 0.018, Materials.muscleDeep, "foot_muscles", "muscular", true);
+      musGroup.add(abdHallMesh);
+
+      // Cơ gấp các ngón ngắn (Flexor digitorum brevis) ở giữa gan chân
+      const fdbCurve = [
+        new THREE.Vector3(0.01, -2.14, -0.08),
+        new THREE.Vector3(0.0, -2.13, 0.2),
+        new THREE.Vector3(0.0, -2.13, 0.5)
+      ];
+      const fdbMesh = createMuscleBellyMesh(fdbCurve, 0.04, 0.018, Materials.muscleDeep, "foot_muscles", "muscular", true);
+      musGroup.add(fdbMesh);
 
       // =======================================================================
       // (4) HỆ TUẦN HOÀN (CARDIOVASCULAR SYSTEM)
       // =======================================================================
       const cardGroup = layerGroups.cardiovascular;
 
-      // Động mạch đùi (Femoral Artery) & Phân nhánh
       const femArtCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.08, 2.35, 0.16), // Dưới nếp bẹn
-        new THREE.Vector3(-0.06, 1.8, 0.16),  // Tam giác đùi
-        new THREE.Vector3(-0.04, 1.25, 0.12), // Ống cơ khép
-        new THREE.Vector3(-0.03, 0.65, 0.05), // Chui qua lỗ gân cơ khép
-        new THREE.Vector3(-0.02, 0.25, -0.06) // Ra khoeo
+        new THREE.Vector3(-0.08, 2.35, 0.16),
+        new THREE.Vector3(-0.06, 1.8, 0.16),
+        new THREE.Vector3(-0.04, 1.25, 0.12),
+        new THREE.Vector3(-0.03, 0.65, 0.05),
+        new THREE.Vector3(-0.02, 0.25, -0.06)
       ]);
       const femArtMesh = new THREE.Mesh(new THREE.TubeGeometry(femArtCurve, 32, 0.032, 10, false), Materials.artery);
       registerInteractiveMesh(femArtMesh, "femoral_artery", "cardiovascular");
       cardGroup.add(femArtMesh);
 
-      // Nhánh Động mạch đùi sâu (Profunda femoris)
       const profArtCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.06, 1.75, 0.15),
         new THREE.Vector3(-0.01, 1.45, 0.08),
@@ -2215,7 +2442,6 @@
       const profArtMesh = new THREE.Mesh(new THREE.TubeGeometry(profArtCurve, 24, 0.024, 8, false), Materials.artery);
       cardGroup.add(profArtMesh);
 
-      // Động mạch khoeo (Popliteal Artery)
       const popArtCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.02, 0.25, -0.06),
         new THREE.Vector3(-0.01, 0.1, -0.08),
@@ -2225,20 +2451,21 @@
       registerInteractiveMesh(popArtMesh, "popliteal_artery", "cardiovascular");
       cardGroup.add(popArtMesh);
 
-      // Động mạch chày trước -> Động mạch mu chân (Dorsalis pedis)
+      // Động mạch chày trước -> Động mạch mu chân (Dorsalis pedis) & Cung mu chân
       const antTibArtCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(0.0, -0.15, -0.08),
-        new THREE.Vector3(0.04, -0.25, 0.02),  // Xuyên màng gian cốt ra trước
+        new THREE.Vector3(0.04, -0.25, 0.02),
         new THREE.Vector3(0.02, -0.8, 0.1),
         new THREE.Vector3(-0.01, -1.4, 0.08),
-        new THREE.Vector3(-0.03, -1.85, 0.14), // Trước cổ chân
-        new THREE.Vector3(-0.04, -2.05, 0.35)  // Mu chân (Dorsalis pedis)
+        new THREE.Vector3(-0.03, -1.85, 0.14),
+        new THREE.Vector3(-0.04, -2.05, 0.35),
+        new THREE.Vector3(-0.02, -2.1, 0.5)
       ]);
       const antTibArtMesh = new THREE.Mesh(new THREE.TubeGeometry(antTibArtCurve, 36, 0.022, 8, false), Materials.artery);
       registerInteractiveMesh(antTibArtMesh, "dorsalis_pedis", "cardiovascular");
       cardGroup.add(antTibArtMesh);
 
-      // Tĩnh mạch đùi (Femoral Vein) - Xanh dương
+      // Tĩnh mạch đùi & Tĩnh mạch hiển lớn
       const femVeinCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.12, 2.35, 0.15),
         new THREE.Vector3(-0.09, 1.8, 0.14),
@@ -2248,16 +2475,15 @@
       const femVeinMesh = new THREE.Mesh(new THREE.TubeGeometry(femVeinCurve, 28, 0.034, 10, false), Materials.vein);
       cardGroup.add(femVeinMesh);
 
-      // Tĩnh mạch hiển lớn (Great Saphenous Vein) - Tĩnh mạch nông dài nhất
       const saphenousCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.08, -2.08, 0.28), // Mu chân trong
-        new THREE.Vector3(-0.12, -1.85, 0.02), // Trước mắt cá trong
-        new THREE.Vector3(-0.16, -1.2, 0.04),  // Dọc mặt trong cẳng chân
+        new THREE.Vector3(-0.08, -2.08, 0.28),
+        new THREE.Vector3(-0.12, -1.85, 0.02),
+        new THREE.Vector3(-0.16, -1.2, 0.04),
         new THREE.Vector3(-0.18, -0.4, 0.06),
-        new THREE.Vector3(-0.19, 0.2, 0.12),   // Sau lồi cầu trong xương đùi
-        new THREE.Vector3(-0.21, 1.0, 0.14),   // Dọc mặt trong đùi
+        new THREE.Vector3(-0.19, 0.2, 0.12),
+        new THREE.Vector3(-0.21, 1.0, 0.14),
         new THREE.Vector3(-0.16, 1.7, 0.16),
-        new THREE.Vector3(-0.1, 2.15, 0.16)    // Quai tĩnh mạch hiển đổ vào TM đùi
+        new THREE.Vector3(-0.1, 2.15, 0.16)
       ]);
       const saphenousMesh = new THREE.Mesh(new THREE.TubeGeometry(saphenousCurve, 42, 0.022, 8, false), Materials.vein);
       registerInteractiveMesh(saphenousMesh, "great_saphenous_vein", "cardiovascular");
@@ -2268,44 +2494,42 @@
       // =======================================================================
       const nervGroup = layerGroups.nervous;
 
-      // Thần kinh tọa (Sciatic Nerve) - Dày nhất cơ thể người
       const sciaticCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0.04, 2.25, -0.16), // Chui dưới cơ hình lê
-        new THREE.Vector3(0.06, 1.7, -0.18),  // Giữa mặt sau đùi
+        new THREE.Vector3(0.04, 2.25, -0.16),
+        new THREE.Vector3(0.06, 1.7, -0.18),
         new THREE.Vector3(0.05, 1.15, -0.16),
-        new THREE.Vector3(0.04, 0.65, -0.14), // Đỉnh trám khoeo
-        new THREE.Vector3(0.02, 0.35, -0.12)  // Vị trí phân chia
+        new THREE.Vector3(0.04, 0.65, -0.14),
+        new THREE.Vector3(0.02, 0.35, -0.12)
       ]);
       const sciaticMesh = new THREE.Mesh(new THREE.TubeGeometry(sciaticCurve, 28, 0.038, 10, false), Materials.nerve);
       registerInteractiveMesh(sciaticMesh, "sciatic_nerve", "nervous");
       nervGroup.add(sciaticMesh);
 
-      // Thần kinh chày (Tibial Nerve) - Đi thẳng xuống sau cẳng chân
       const tibialCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(0.02, 0.35, -0.12),
         new THREE.Vector3(0.01, 0.05, -0.11),
         new THREE.Vector3(0.0, -0.6, -0.12),
         new THREE.Vector3(-0.04, -1.3, -0.09),
-        new THREE.Vector3(-0.09, -1.88, -0.02) // Sau mắt cá trong vào gan chân
+        new THREE.Vector3(-0.09, -1.88, -0.02),
+        new THREE.Vector3(-0.06, -2.05, 0.15) // Thần kinh gan chân
       ]);
       const tibialMesh = new THREE.Mesh(new THREE.TubeGeometry(tibialCurve, 28, 0.024, 8, false), Materials.nerve);
       nervGroup.add(tibialMesh);
 
-      // Thần kinh mác chung (Common Fibular Nerve) - Vòng quanh cổ xương mác
       const fibularCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(0.02, 0.35, -0.12),
         new THREE.Vector3(0.12, 0.18, -0.1),
-        new THREE.Vector3(0.22, 0.05, -0.06), // Men bờ trong gân nhị đầu đùi
-        new THREE.Vector3(0.25, -0.04, 0.02), // VÒNG QUANH CỔ XƯƠNG MÁC (LÂM SÀNG!)
-        new THREE.Vector3(0.2, -0.22, 0.08),  // Chia nhánh mác sâu & mác nông
+        new THREE.Vector3(0.22, 0.05, -0.06),
+        new THREE.Vector3(0.25, -0.04, 0.02), // VÒNG QUANH CỔ XƯƠNG MÁC
+        new THREE.Vector3(0.2, -0.22, 0.08),
         new THREE.Vector3(0.12, -0.8, 0.12),
-        new THREE.Vector3(0.04, -1.6, 0.15)
+        new THREE.Vector3(0.04, -1.6, 0.15),
+        new THREE.Vector3(-0.02, -2.05, 0.38)
       ]);
-      const fibularMesh = new THREE.Mesh(new THREE.TubeGeometry(fibularCurve, 32, 0.022, 8, false), Materials.nerve);
+      const fibularMesh = new THREE.Mesh(new THREE.TubeGeometry(fibularCurve, 36, 0.022, 8, false), Materials.nerve);
       registerInteractiveMesh(fibularMesh, "common_fibular_nerve", "nervous");
       nervGroup.add(fibularMesh);
 
-      // Thần kinh đùi (Femoral Nerve)
       const femNerveCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.04, 2.35, 0.18),
         new THREE.Vector3(-0.03, 1.9, 0.2),
@@ -2321,13 +2545,12 @@
       // =======================================================================
       const lymphGroup = layerGroups.lymphatic;
 
-      // Chuỗi hạch bẹn nông & sâu (Inguinal lymph nodes - T-shape cluster)
       const inguinalPositions = [
-        [-0.04, 2.32, 0.2],   // Nhóm ngang dưới dây chằng bẹn
+        [-0.04, 2.32, 0.2],
         [-0.12, 2.34, 0.19],
         [-0.2, 2.36, 0.18],
         [-0.28, 2.38, 0.17],
-        [-0.08, 2.18, 0.2],   // Nhóm dọc quanh đầu TM hiển
+        [-0.08, 2.18, 0.2],
         [-0.1, 2.05, 0.19],
         [-0.12, 1.92, 0.18]
       ];
@@ -2339,7 +2562,6 @@
       });
       registerInteractiveMesh(lymphGroup, "inguinal_lymph_nodes", "lymphatic");
 
-      // Các mạch bạch huyết mảnh kết nối (Lymphatic vessels)
       const lymphVesselCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.16, -1.2, 0.05),
         new THREE.Vector3(-0.18, -0.4, 0.08),
@@ -2353,16 +2575,16 @@
       // (7) HỆ DA / TỔ CHỨC DƯỚI DA (INTEGUMENTARY SYSTEM)
       // =======================================================================
       const skinCurvePoints = [
-        new THREE.Vector2(0.58, 2.5),   // Háng / Mào chậu
+        new THREE.Vector2(0.58, 2.5),
         new THREE.Vector2(0.52, 2.0),
-        new THREE.Vector2(0.46, 1.4),   // Giữa đùi
+        new THREE.Vector2(0.46, 1.4),
         new THREE.Vector2(0.39, 0.7),
-        new THREE.Vector2(0.36, 0.22),  // Khớp gối
-        new THREE.Vector2(0.44, -0.55), // Bắp chuối phình to
+        new THREE.Vector2(0.36, 0.22),
+        new THREE.Vector2(0.44, -0.55),
         new THREE.Vector2(0.32, -1.2),
-        new THREE.Vector2(0.24, -1.75), // Cổ chân
-        new THREE.Vector2(0.28, -2.12), // Gót và bàn chân
-        new THREE.Vector2(0.04, -2.18)  // Đáy bàn chân
+        new THREE.Vector2(0.24, -1.75),
+        new THREE.Vector2(0.28, -2.12),
+        new THREE.Vector2(0.04, -2.18)
       ];
       const skinGeo = new THREE.LatheGeometry(skinCurvePoints, 48);
       const skinMesh = new THREE.Mesh(skinGeo, Materials.skin);
@@ -2443,15 +2665,15 @@
     }
 
     /* =========================================================================
-     * DISSECTION DEPTH SLIDER (BÓC TÁCH GIẢI PHẪU ĐA TẦNG)
+     * BÓC TÁCH ĐA TẦNG (DISSECTION DEPTH SLIDER - NÔNG & SÂU RÕ RỆT)
      * ========================================================================= */
     const DISSECTION_LABELS = [
       "Lớp 0: Toàn bộ (Khung hoàn chỉnh)",
       "Lớp 1: Cân mạc & Dải chậu chày",
-      "Lớp 2: Hệ cơ nông bề mặt",
-      "Lớp 3: Hệ cơ sâu bên dưới",
+      "Lớp 2: Chỉ nhóm cơ nông (Ẩn cơ sâu)",
+      "Lớp 3: Bóc cơ nông lộ cơ sâu",
       "Lớp 4: Mạch máu & Thần kinh",
-      "Lớp 5: Dây chằng & Sụn khớp",
+      "Lớp 5: Dây chằng, Khớp & Sụn",
       "Lớp 6: Khung xương trọn vẹn"
     ];
 
@@ -2459,50 +2681,70 @@
       const level = parseInt(val);
       document.getElementById('dissection-level-label').textContent = DISSECTION_LABELS[level];
 
+      // Đặt lại các cơ về mặc định
+      interactiveObjects.forEach(obj => {
+        if (obj.userData.layer === 'muscular') {
+          obj.visible = true;
+        }
+      });
+
       switch (level) {
         case 0:
-          setPreset('all');
+          syncAllLayers(true, true, true, true, true, true, true);
           Materials.skin.opacity = 0.22;
           break;
         case 1:
-          toggleLayer('integumentary', false);
-          toggleLayer('muscular', true);
-          toggleLayer('ligaments', true);
-          toggleLayer('skeletal', true);
-          toggleLayer('cardiovascular', true);
-          toggleLayer('nervous', true);
+          syncAllLayers(true, true, true, true, true, true, false);
           break;
         case 2:
-          toggleLayer('integumentary', false);
-          toggleLayer('muscular', true);
-          toggleLayer('ligaments', true);
-          toggleLayer('skeletal', true);
-          toggleLayer('cardiovascular', false);
-          toggleLayer('nervous', false);
-          toggleLayer('lymphatic', false);
+          // Hiện cơ nông, ẩn hoàn toàn cơ sâu
+          syncAllLayers(true, true, true, false, false, false, false);
+          interactiveObjects.forEach(obj => {
+            if (obj.userData.layer === 'muscular' && obj.userData.isDeep) {
+              obj.visible = false;
+            }
+          });
           break;
         case 3:
-          toggleLayer('integumentary', false);
-          toggleLayer('muscular', true);
-          toggleLayer('ligaments', true);
-          toggleLayer('skeletal', true);
+          // Ẩn cơ nông để lộ trọn vẹn các cơ sâu
+          syncAllLayers(true, true, true, false, false, false, false);
+          interactiveObjects.forEach(obj => {
+            if (obj.userData.layer === 'muscular' && !obj.userData.isDeep) {
+              obj.visible = false;
+            }
+          });
           break;
         case 4:
-          setPreset('neurovascular');
+          // Mạch máu & Thần kinh
+          syncAllLayers(true, true, false, true, true, false, false);
           break;
         case 5:
-          toggleLayer('integumentary', false);
-          toggleLayer('muscular', false);
-          toggleLayer('cardiovascular', false);
-          toggleLayer('nervous', false);
-          toggleLayer('lymphatic', false);
-          toggleLayer('ligaments', true);
-          toggleLayer('skeletal', true);
+          // Dây chằng và sụn khớp (Ẩn cơ)
+          syncAllLayers(true, true, false, false, false, false, false);
           break;
         case 6:
-          setPreset('skeleton');
+          // Chỉ riêng hệ xương
+          syncAllLayers(true, false, false, false, false, false, false);
           break;
       }
+    }
+
+    function syncAllLayers(skeletal, ligaments, muscular, cardio, nervous, lymph, skin) {
+      const state = {
+        skeletal: skeletal,
+        ligaments: ligaments,
+        muscular: muscular,
+        cardiovascular: cardio,
+        nervous: nervous,
+        lymphatic: lymph,
+        integumentary: skin
+      };
+
+      Object.entries(state).forEach(([sys, enabled]) => {
+        toggleLayer(sys, enabled);
+        const cb = document.getElementById(`layer-${sys}`);
+        if (cb) cb.checked = enabled;
+      });
     }
 
     /* =========================================================================
@@ -2516,44 +2758,56 @@
         explanation: "Chính xác! Dây chằng chéo trước (ACL) giữ mâm chày không bị trượt ra trước. Khi đứt ACL thường kèm rách sụn chêm trong và đứt MCL (Tam chứng bất hạnh O'Donoghue)."
       },
       {
+        targetId: "atfl_ankle_ligaments",
+        question: "2. Hãy chỉ ra Dây chằng sên-mác trước (ATFL) - cấu trúc hay bị rách nhất khi bị lật sơ mi cổ chân?",
+        hint: "Dây chằng màu trắng ngà đi từ mắt cá ngoài đến cổ xương sên ở mặt ngoài cổ chân.",
+        explanation: "Chính xác! Dây chằng sên-mác trước (ATFL) là dây chằng chịu lực kéo căng và đứt nhiều nhất trong các ca bong gân cổ chân do chấn thương lật nghiêng trong."
+      },
+      {
+        targetId: "plantar_fascia",
+        question: "3. Hãy chỉ ra Cân gan chân (Plantar Fascia) - dải cân dày giúp giữ vững vòm dọc bàn chân?",
+        hint: "Tấm cân sợi màu trắng bạc trải rộng dưới toàn bộ lòng bàn chân từ xương gót đến nền các ngón chân.",
+        explanation: "Chính xác! Cân gan chân hoạt động theo cơ chế Windlass mechanism giúp bàn chân nhún đàn hồi. Viêm cân gan chân gây đau nhói gót chân bước đi đầu tiên vào buổi sáng."
+      },
+      {
         targetId: "sartorius",
-        question: "2. Hãy chỉ ra Cơ may (M. sartorius) - cơ dài nhất cơ thể đi chéo từ gai chậu trước trên xuống chân ngỗng?",
+        question: "4. Hãy chỉ ra Cơ may (M. sartorius) - cơ dài nhất cơ thể đi chéo từ gai chậu trước trên xuống chân ngỗng?",
         hint: "Dải cơ dài uốn lượn hình chữ S băng chéo từ ngoài vào trong ở mặt trước đùi.",
         explanation: "Chính xác! Cơ may (Sartorius) là cạnh ngoài của Tam giác đùi Scarpa, giúp tạo tư thế ngồi xếp bằng của người thợ may."
       },
       {
         targetId: "common_fibular_nerve",
-        question: "3. Hãy chỉ ra Thần kinh mác chung - vị trí dễ bị chèn ép gây hội chứng 'Bàn chân rũ' (Foot drop)?",
+        question: "5. Hãy chỉ ra Thần kinh mác chung - vị trí dễ bị chèn ép gây hội chứng 'Bàn chân rũ' (Foot drop)?",
         hint: "Nhánh thần kinh màu vàng chạy vòng quanh cổ xương mác ở mặt ngoài cẳng chân.",
         explanation: "Chính xác! Thần kinh mác chung đi sát màng xương ở cổ xương mác, rất dễ bị tổn thương do gãy xương hoặc bó bột chặt."
       },
       {
         targetId: "dorsalis_pedis",
-        question: "4. Hãy chỉ ra Động mạch mu chân (A. dorsalis pedis) - vị trí bắt mạch ngoại biên cực kỳ quan trọng?",
+        question: "6. Hãy chỉ ra Động mạch mu chân (A. dorsalis pedis) - vị trí bắt mạch ngoại biên cực kỳ quan trọng?",
         hint: "Đoạn mạch máu màu đỏ tươi nằm nông ở mặt mu bàn chân giữa các gân duỗi ngón.",
         explanation: "Chính xác! Bắt mạch mu chân là thủ thuật bắt buộc để đánh giá tuần hoàn chi dưới trong bệnh đái tháo đường và tắc hẹp động mạch ngoại biên."
       },
       {
         targetId: "achilles_tendon",
-        question: "5. Hãy nhấp vào Gân gót chân (Gân Achilles) - gân dày và chắc khỏe nhất cơ thể người?",
+        question: "7. Hãy nhấp vào Gân gót chân (Gân Achilles) - gân dày và chắc khỏe nhất cơ thể người?",
         hint: "Dải gân màu trắng xà cừ lớn ở 1/3 dưới bắp chân bám vào lồi củ xương gót.",
         explanation: "Chính xác! Gân gót Achilles truyền lực co bóp của cơ bụng chân và cơ dép. Nghiệm pháp Thompson dùng để chẩn đoán đứt gân gót."
       },
       {
-        targetId: "patella",
-        question: "6. Hãy nhấp vào Xương bánh chè (Patella) - xương vừng lớn nhất cơ thể?",
-        hint: "Xương hình tam giác hạt vừng nằm ở mặt trước khớp gối.",
-        explanation: "Chính xác! Xương bánh chè lồng trong gân cơ tứ đầu đùi, giúp tăng 30% cánh tay đòn cơ học duỗi gối."
+        targetId: "talus",
+        question: "8. Hãy chỉ ra Xương sên (Talus) - xương cổ chân tiếp khớp trực tiếp với gọng chày mác?",
+        hint: "Xương nằm ngay dưới đầu dưới xương chày và trên xương gót, có ròng rọc sên nhẵn bóng.",
+        explanation: "Chính xác! Xương sên phân phối trọng tải toàn bộ thân trên xuống bàn chân. 60% bề mặt xương sên có sụn khớp và không có cơ bám trực tiếp."
       },
       {
-        targetId: "femoral_artery",
-        question: "7. Hãy chỉ ra Động mạch đùi (A. femoralis) - mạch máu chính nuôi toàn bộ chi dưới?",
-        hint: "Mạch máu đỏ lớn chạy từ nếp bẹn qua tam giác đùi xuống ống cơ khép.",
-        explanation: "Chính xác! Động mạch đùi là vị trí then chốt để bắt mạch bẹn cấp cứu và chọc catheter can thiệp tim mạch."
+        targetId: "meniscus",
+        question: "9. Hãy chỉ ra Sụn chêm khớp gối (Meniscus) - đệm giảm chấn nằm giữa lồi cầu đùi và mâm chày?",
+        hint: "Tấm sụn màu xanh ngọc bán trong suốt hình bán nguyệt ở khe khớp gối.",
+        explanation: "Chính xác! Sụn chêm trong hình chữ C rộng, sụn chêm ngoài hình chữ O. Rách sụn chêm quai vali gây kẹt khớp gối đột ngột."
       },
       {
         targetId: "vastus_medialis",
-        question: "8. Hãy chỉ ra Cơ rộng trong (Vastus medialis) - cơ có hình giọt nước đặc trưng ở mặt trong gối?",
+        question: "10. Hãy chỉ ra Cơ rộng trong (Vastus medialis) - cơ có hình giọt nước đặc trưng ở mặt trong gối?",
         hint: "Khối cơ đỏ phình to ở mặt trong ngay trên khớp gối.",
         explanation: "Chính xác! Cơ rộng trong (đặc biệt là các thớ cơ VMO) có vai trò sống còn kéo xương bánh chè vào trong, chống trật khớp bánh chè."
       }
@@ -2564,15 +2818,22 @@
     let isQuizActive = false;
 
     function switchMode(mode) {
-      document.getElementById('mode-explore').className = mode === 'explore' ? 'px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-sky-600 shadow-md transition flex items-center gap-1.5' : 'px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5';
-      document.getElementById('mode-dissection').className = mode === 'dissection' ? 'px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-sky-600 shadow-md transition flex items-center gap-1.5' : 'px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5';
-      document.getElementById('mode-quiz').className = mode === 'quiz' ? 'px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-sky-600 shadow-md transition flex items-center gap-1.5' : 'px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5';
+      ['explore', 'dissection', 'crosssection', 'quiz'].forEach(m => {
+        const btn = document.getElementById(`mode-${m}`);
+        if (btn) {
+          btn.className = m === mode ? 'px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-sky-600 shadow-md transition flex items-center gap-1.5' : 'px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5';
+        }
+      });
 
       if (mode === 'quiz') {
         startQuizMode();
       } else {
         closeQuizMode();
-        if (mode === 'dissection') {
+        if (mode === 'crosssection') {
+          document.getElementById('toggle-clipping').checked = true;
+          toggleClippingPlane(true);
+          document.getElementById('clip-height-slider').focus();
+        } else if (mode === 'dissection') {
           document.getElementById('dissection-slider').focus();
         }
       }
@@ -2595,11 +2856,11 @@
     function loadQuizQuestion(index) {
       if (index >= QUIZ_QUESTIONS.length) {
         document.getElementById('quiz-counter').textContent = 'Hoàn thành!';
-        document.getElementById('quiz-question').innerHTML = `🎉 <b>Chúc mừng! Bạn đã hoàn thành bài kiểm tra giải phẫu!</b><br>Tổng điểm: ${quizScore} / ${QUIZ_QUESTIONS.length}`;
-        document.getElementById('quiz-instruction').textContent = 'Bạn đã nắm vững các mốc giải phẫu then chốt chi dưới.';
+        document.getElementById('quiz-question').innerHTML = `🎉 <b>Chúc mừng! Bạn đã hoàn thành xuất sắc 10/10 bài kiểm tra giải phẫu!</b><br>Tổng điểm: ${quizScore} / ${QUIZ_QUESTIONS.length}`;
+        document.getElementById('quiz-instruction').textContent = 'Bạn đã nắm vững các mốc giải phẫu then chốt chi dưới và bàn chân.';
         document.getElementById('quiz-feedback').classList.add('hidden');
         document.getElementById('btn-next-question').classList.add('hidden');
-        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
         return;
       }
 
@@ -2749,7 +3010,6 @@
 
       selectedObject = targetMesh || interactiveObjects.find(obj => obj.userData.partId === partId);
 
-      // Cập nhật nội dung thẻ
       document.getElementById('info-name-vi').textContent = data.nameVi;
       document.getElementById('info-name-latin').textContent = data.nameLatin || data.nameEn;
       document.getElementById('info-name-en').textContent = data.nameEn;
@@ -2765,7 +3025,6 @@
       const infoCard = document.getElementById('info-card');
       infoCard.classList.remove('translate-y-8', 'opacity-0', 'pointer-events-none');
 
-      // Camera Animation
       let targetCenter = new THREE.Vector3();
       if (selectedObject) {
         const box = new THREE.Box3().setFromObject(selectedObject);
@@ -2837,33 +3096,52 @@
       });
     }
 
-    // Góc nhìn Camera cài sẵn
+    // Góc nhìn Camera cài sẵn chuyên dụng
     function setCameraAngle(angle) {
       const posMap = {
         anterior: { x: 0, y: 0.3, z: 4.6 },
         posterior: { x: 0, y: 0.3, z: -4.6 },
         medial: { x: -4.4, y: 0.3, z: 0.5 },
         lateral: { x: 4.4, y: 0.3, z: 0.5 },
-        knee: { x: 0.2, y: 0.15, z: 1.6 },
-        foot: { x: 0, y: -1.8, z: 1.6 }
+        knee: { x: 0.1, y: 0.22, z: 1.35 },
+        foot: { x: 0.05, y: -1.75, z: 1.45 }
       };
       const targetMap = {
         anterior: { x: 0, y: 0.1, z: 0 },
         posterior: { x: 0, y: 0.1, z: 0 },
         medial: { x: 0, y: 0.1, z: 0 },
         lateral: { x: 0, y: 0.1, z: 0 },
-        knee: { x: 0.02, y: 0.15, z: 0.1 },
-        foot: { x: 0, y: -2.0, z: 0.2 }
+        knee: { x: 0.02, y: 0.18, z: 0.08 },
+        foot: { x: 0.01, y: -2.05, z: 0.25 }
       };
 
       const pos = posMap[angle] || posMap.anterior;
       const target = targetMap[angle] || targetMap.anterior;
 
+      // Nếu chọn Khớp gối: làm mờ cơ phía trước để lộ rõ sụn chêm và dây chằng chéo!
+      if (angle === 'knee') {
+        Materials.muscleSuperficial.opacity = 0.15;
+        Materials.muscleSuperficial.transparent = true;
+        Materials.muscleDeep.opacity = 0.15;
+        Materials.muscleDeep.transparent = true;
+        toggleLayer('ligaments', true);
+        document.getElementById('layer-ligaments').checked = true;
+      } else if (angle === 'foot') {
+        toggleLayer('skeletal', true);
+        toggleLayer('ligaments', true);
+        document.getElementById('layer-ligaments').checked = true;
+      } else {
+        Materials.muscleSuperficial.opacity = 1.0;
+        Materials.muscleSuperficial.transparent = false;
+        Materials.muscleDeep.opacity = 1.0;
+        Materials.muscleDeep.transparent = false;
+      }
+
       gsap.to(camera.position, { x: pos.x, y: pos.y, z: pos.z, duration: 1.2, ease: "power2.inOut" });
       gsap.to(controls.target, { x: target.x, y: target.y, z: target.z, duration: 1.2, ease: "power2.inOut", onUpdate: () => controls.update() });
     }
 
-    // Cô lập đối tượng (Ghost Isolation Mode)
+    // Cô lập đối tượng
     let isIsolated = false;
     function isolateSelectedPart() {
       if (!selectedObject) return;
@@ -2899,7 +3177,7 @@
     }
 
     /* =========================================================================
-     * ĐIỀU KHIỂN HỆ CƠ QUAN & LỌC NHÓM CHỨC NĂNG
+     * ĐIỀU KHIỂN HỆ CƠ QUAN
      * ========================================================================= */
     function toggleLayer(layerName, isVisible) {
       if (layerGroups[layerName]) {
@@ -2921,25 +3199,6 @@
       document.getElementById('active-layers-count').textContent = `${activeCount}/7`;
     }
 
-    function setPreset(type) {
-      const allSystems = ['skeletal', 'ligaments', 'muscular', 'cardiovascular', 'nervous', 'lymphatic', 'integumentary'];
-      
-      allSystems.forEach(sys => {
-        let enable = false;
-        if (type === 'all') enable = true;
-        if (type === 'skeleton') enable = (sys === 'skeletal');
-        if (type === 'musculoskeletal') enable = (sys === 'skeletal' || sys === 'ligaments' || sys === 'muscular');
-        if (type === 'neurovascular') enable = (sys === 'cardiovascular' || sys === 'nervous' || sys === 'skeletal');
-
-        const checkbox = document.getElementById(`layer-${sys}`);
-        if (checkbox) {
-          checkbox.checked = enable;
-          toggleLayer(sys, enable);
-        }
-      });
-    }
-
-    // Lọc nhóm cơ theo chức năng vận động
     function filterFunctionalGroup(groupName) {
       if (groupName === 'all') {
         interactiveObjects.forEach(obj => {
@@ -2956,7 +3215,6 @@
       });
     }
 
-    // Mô phỏng động tác y học (Kinesiology Motion Demo)
     let isMotionPlaying = false;
     function playKinesiologyMotion(motion) {
       if (isMotionPlaying) return;
@@ -2992,7 +3250,7 @@
     }
 
     /* =========================================================================
-     * TÌM KIẾM TỨC THÌ (SEARCH ENGINE) & AUTOCOMPLETE
+     * TÌM KIẾM TỨC THÌ
      * ========================================================================= */
     const searchInput = document.getElementById('anatomy-search-input');
     searchInput.addEventListener('input', (e) => {
@@ -3016,7 +3274,6 @@
       }
     });
 
-    // Phím tắt bàn phím
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeInfoCard();
@@ -3026,7 +3283,6 @@
       }
     });
 
-    // Tự xoay
     let isAutoRotating = false;
     document.getElementById('btn-toggle-rotate').addEventListener('click', () => {
       isAutoRotating = !isAutoRotating;
@@ -3034,7 +3290,6 @@
       document.getElementById('btn-toggle-rotate').classList.toggle('text-sky-400');
     });
 
-    // Toàn màn hình
     document.getElementById('btn-fullscreen').addEventListener('click', () => {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen();
@@ -3043,7 +3298,6 @@
       }
     });
 
-    // Responsive resize
     window.addEventListener('resize', () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
@@ -3058,16 +3312,6 @@
       setTimeout(() => {
         loader.style.display = 'none';
       }, 500);
-    }
-
-    /* =========================================================================
-     * VÒNG LẶP RENDER CHÍNH (MAIN RENDER LOOP)
-     * ========================================================================= */
-    function animate() {
-      requestAnimationFrame(animate);
-      controls.update();
-      update3DPins();
-      renderer.render(scene, camera);
     }
 
     // Hỗ trợ nạp file mô hình 3D GLB / GLTF từ máy tính hoặc kéo thả trực tiếp
@@ -3099,7 +3343,6 @@
         const contents = e.target.result;
         const gltfLoader = new THREE.GLTFLoader();
         gltfLoader.parse(contents, '', (gltf) => {
-          // Xóa mô hình cũ
           while (legRoot.children.length > 0) {
             legRoot.remove(legRoot.children[0]);
           }
@@ -3129,6 +3372,16 @@
         if (name.includes(id)) return id;
       }
       return fallbackId;
+    }
+
+    /* =========================================================================
+     * VÒNG LẶP RENDER CHÍNH (MAIN RENDER LOOP)
+     * ========================================================================= */
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      update3DPins();
+      renderer.render(scene, camera);
     }
 
     // Khởi tạo hệ thống
