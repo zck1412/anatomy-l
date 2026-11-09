@@ -2196,6 +2196,14 @@ const ANATOMY_DATABASE = {
     const tendonTexture = createTendonTexture();
 
     const Materials = {
+      muscle: new THREE.MeshStandardMaterial({
+        color: 0xba1c1c,
+        map: striatedTexture,
+        roughness: 0.38,
+        metalness: 0.08,
+        bumpMap: striatedTexture,
+        bumpScale: 0.03
+      }),
       bone: new THREE.MeshStandardMaterial({
         color: 0xf2eee3,
         map: boneTexture,
@@ -2215,20 +2223,20 @@ const ANATOMY_DATABASE = {
         depthWrite: true
       }),
       muscleSuperficial: new THREE.MeshStandardMaterial({
-        color: 0xa82424,
+        color: 0xba1c1c,
         map: striatedTexture,
-        roughness: 0.44,
+        roughness: 0.38,
         metalness: 0.08,
         bumpMap: striatedTexture,
-        bumpScale: 0.02
+        bumpScale: 0.03
       }),
       muscleDeep: new THREE.MeshStandardMaterial({
-        color: 0x7c1515,
+        color: 0x831825,
         map: striatedTexture,
-        roughness: 0.48,
+        roughness: 0.44,
         metalness: 0.06,
         bumpMap: striatedTexture,
-        bumpScale: 0.02
+        bumpScale: 0.03
       }),
       tendon: new THREE.MeshStandardMaterial({
         color: 0xf1f5f9,
@@ -3265,36 +3273,39 @@ const ANATOMY_DATABASE = {
       }
 
       // =======================================================================
-      // 1. HỆ XƯƠNG CHI TRÊN (SKELETAL SYSTEM)
+      // 1. HỆ XƯƠNG CHI TRÊN CHUẨN GIẢI PHẪU (OSTEOLOGY)
       // =======================================================================
       const skGrp = armGroups.skeletal;
 
-      // --- 1.1 Xương đòn (Clavicle - Đường cong chữ S đặc trưng) ---
+      // --- 1.1 Xương đòn (Clavicle - S-curved strut) ---
       const clavicleCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.05, 1.84, 0.16),  // Đầu ức (Sternal end)
-        new THREE.Vector3(-0.16, 1.86, 0.22),  // Uốn lồi ra trước 2/3 trong
-        new THREE.Vector3(-0.28, 1.87, 0.18),  // Điểm chuyển tiếp
-        new THREE.Vector3(-0.38, 1.88, 0.08),  // Uốn lõm 1/3 ngoài
-        new THREE.Vector3(-0.44, 1.88, -0.02)  // Đầu cùng vai (Acromial end)
+        new THREE.Vector3(-0.06, 1.84, 0.16),  // Đầu ức (Sternal end) - tròn gồ ghề
+        new THREE.Vector3(-0.16, 1.86, 0.22),  // Uốn lồi ra trước ở 2/3 trong
+        new THREE.Vector3(-0.28, 1.87, 0.18),  // Vùng nối 1/3 ngoài (điểm gãy hay gặp nhất)
+        new THREE.Vector3(-0.38, 1.88, 0.08),  // Uốn lõm ra trước ở 1/3 ngoài
+        new THREE.Vector3(-0.44, 1.89, 0.02)   // Đầu cùng vai (Acromial end) - dẹt
       ]);
-      const clavicleGeo = new THREE.TubeGeometry(clavicleCurve, 32, 0.038, 16, false);
+      const clavicleGeo = createVariableTubeGeometry(clavicleCurve, (u) => {
+        // Đầu ức nở to (u=0), thân giữa thon, đầu cùng vai dẹt mở rộng (u=1)
+        return 0.038 - 0.012 * Math.sin(u * Math.PI) + 0.01 * Math.pow(u, 2);
+      }, 32, 16);
       const clavicleMesh = new THREE.Mesh(clavicleGeo, Materials.bone);
       registerInteractiveMesh(clavicleMesh, "clavicle", "skeletal");
       skGrp.add(clavicleMesh);
 
       // --- 1.2 Xương vai (Scapula - Bản dẹt, Gai vai, Mỏm cùng vai, Mỏm quạ, Ổ chảo) ---
       const scapulaGroup = new THREE.Group();
-      
-      // Bản xương vai (Body of Scapula)
+
+      // Thân xương vai (Bản hình tam giác có hố trên gai, hố dưới gai, hố dưới vai)
       const scapulaShape = new THREE.Shape();
       scapulaShape.moveTo(-0.18, 1.82); // Góc trên
-      scapulaShape.lineTo(-0.16, 1.48); // Bờ trong (vertebral border)
-      scapulaShape.lineTo(-0.24, 1.34); // Góc dưới (inferior angle)
-      scapulaShape.lineTo(-0.38, 1.68); // Bờ ngoài (axillary border)
-      scapulaShape.lineTo(-0.34, 1.80); // Bờ trên
+      scapulaShape.lineTo(-0.15, 1.50); // Bờ trong (Vertebral border)
+      scapulaShape.lineTo(-0.23, 1.32); // Góc dưới (Inferior angle)
+      scapulaShape.lineTo(-0.37, 1.66); // Bờ ngoài (Axillary border)
+      scapulaShape.lineTo(-0.34, 1.81); // Bờ trên có khuyết quạ
 
       const scapulaGeo = new THREE.ExtrudeGeometry(scapulaShape, {
-        depth: 0.035,
+        depth: 0.032,
         bevelEnabled: true,
         bevelSegments: 4,
         steps: 1,
@@ -3303,32 +3314,36 @@ const ANATOMY_DATABASE = {
       });
       const scapulaBody = new THREE.Mesh(scapulaGeo, Materials.bone);
       scapulaBody.position.set(0, 0, -0.16);
-      scapulaBody.rotation.y = 0.15;
+      scapulaBody.rotation.y = 0.16;
       scapulaGroup.add(scapulaBody);
 
-      // Gai vai & Mỏm cùng vai (Spine of Scapula & Acromion)
+      // Gai vai (Spina Scapulae) & Mỏm cùng vai (Acromion) - Tấm xương dẹt che chở trên chỏm cánh tay
       const spineCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.17, 1.76, -0.15),
-        new THREE.Vector3(-0.28, 1.82, -0.12),
-        new THREE.Vector3(-0.40, 1.87, -0.06),
-        new THREE.Vector3(-0.45, 1.88, 0.02) // Acromion
+        new THREE.Vector3(-0.16, 1.76, -0.15),
+        new THREE.Vector3(-0.27, 1.82, -0.12),
+        new THREE.Vector3(-0.38, 1.87, -0.06),
+        new THREE.Vector3(-0.45, 1.89, 0.02)  // Bản Mỏm cùng vai (Acromion)
       ]);
-      const spineMesh = new THREE.Mesh(new THREE.TubeGeometry(spineCurve, 20, 0.036, 12, false), Materials.bone);
+      const spineGeo = createVariableTubeGeometry(spineCurve, (u) => 0.028 + 0.025 * u, 24, 14);
+      const spineMesh = new THREE.Mesh(spineGeo, Materials.bone);
       scapulaGroup.add(spineMesh);
 
-      // Mỏm quạ (Coracoid process - nhô ra trước như mỏ chim)
+      // Mỏm quạ (Coracoid process - nhô ra trước giống ngón tay khum / mỏ quạ)
       const coracoidCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.36, 1.80, -0.05),
+        new THREE.Vector3(-0.36, 1.79, -0.05),
         new THREE.Vector3(-0.34, 1.83, 0.06),
-        new THREE.Vector3(-0.31, 1.81, 0.12)
+        new THREE.Vector3(-0.30, 1.80, 0.13)
       ]);
-      const coracoidMesh = new THREE.Mesh(new THREE.TubeGeometry(coracoidCurve, 16, 0.026, 10, false), Materials.bone);
+      const coracoidMesh = new THREE.Mesh(
+        createVariableTubeGeometry(coracoidCurve, (u) => 0.028 - 0.006 * u, 18, 12),
+        Materials.bone
+      );
       scapulaGroup.add(coracoidMesh);
 
-      // Ổ chảo (Glenoid Fossa)
-      const glenoidMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.04, 20), Materials.bone);
-      glenoidMesh.position.set(-0.39, 1.76, -0.04);
-      glenoidMesh.rotation.set(0, 0, 1.2);
+      // Ổ chảo (Glenoid Fossa) - Diện khớp hình quả lê nông tiếp xúc chỏm xương cánh tay
+      const glenoidMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.082, 0.082, 0.045, 24), Materials.bone);
+      glenoidMesh.position.set(-0.38, 1.76, -0.035);
+      glenoidMesh.rotation.set(0, 0, 1.25);
       scapulaGroup.add(glenoidMesh);
 
       registerInteractiveMesh(scapulaBody, "scapula", "skeletal");
@@ -3337,54 +3352,79 @@ const ANATOMY_DATABASE = {
       registerInteractiveMesh(glenoidMesh, "scapula", "skeletal");
       skGrp.add(scapulaGroup);
 
-      // --- 1.3 Xương cánh tay (Humerus) ---
+      // --- 1.3 Xương cánh tay (Humerus - Chỏm cầu, Cổ phẫu thuật, Củ lớn/bé, Rãnh gian củ, Lồi cầu) ---
       const humerusGroup = new THREE.Group();
 
-      // Chỏm xương cánh tay (Humeral Head - 1/3 hình cầu hướng vào trong)
-      const humerusHead = new THREE.Mesh(new THREE.SphereGeometry(0.125, 24, 24), Materials.bone);
-      humerusHead.position.set(-0.36, 1.75, -0.02);
+      // Chỏm xương cánh tay (Caput Humeri - 1/3 hình cầu nhẵn bóng hướng vào trong và lên trên)
+      const humerusHead = new THREE.Mesh(new THREE.SphereGeometry(0.126, 28, 28), Materials.bone);
+      humerusHead.position.set(-0.35, 1.75, -0.02);
       humerusGroup.add(humerusHead);
 
-      // Củ lớn & Củ bé (Greater & Lesser Tubercles, Rãnh gian củ)
-      const greaterTubercle = new THREE.Mesh(new THREE.SphereGeometry(0.065, 16, 16), Materials.bone);
-      greaterTubercle.position.set(-0.46, 1.76, 0.01);
-      const lesserTubercle = new THREE.Mesh(new THREE.SphereGeometry(0.05, 14, 14), Materials.bone);
-      lesserTubercle.position.set(-0.38, 1.72, 0.08);
-      humerusGroup.add(greaterTubercle, lesserTubercle);
+      // Sụn khớp chỏm cánh tay (Articular Cartilage)
+      const headCartilage = new THREE.Mesh(new THREE.SphereGeometry(0.128, 24, 24, 0, Math.PI * 1.5, 0, Math.PI * 0.7), Materials.cartilage);
+      headCartilage.position.copy(humerusHead.position);
+      headCartilage.rotation.set(0.2, 0.8, 0);
+      humerusGroup.add(headCartilage);
 
-      // Thân xương cánh tay (Shaft of Humerus)
+      // Củ lớn (Tuberculum Majus - ở phía ngoài, có 3 diện bám gân chóp xoay)
+      const greaterTubercle = new THREE.Mesh(new THREE.SphereGeometry(0.068, 18, 18), Materials.bone);
+      greaterTubercle.position.set(-0.46, 1.76, 0.01);
+      greaterTubercle.scale.set(1.1, 1.2, 0.9);
+
+      // Củ bé (Tuberculum Minus - ở phía trước cho cơ dưới vai)
+      const lesserTubercle = new THREE.Mesh(new THREE.SphereGeometry(0.052, 16, 16), Materials.bone);
+      lesserTubercle.position.set(-0.37, 1.72, 0.09);
+
+      // Cổ phẫu thuật (Collum Chirurgicum - thắt hẹp ngay dưới 2 củ, vị trí gãy kinh điển)
+      const surgicalNeck = new THREE.Mesh(new THREE.CylinderGeometry(0.066, 0.064, 0.08, 18), Materials.bone);
+      surgicalNeck.position.set(-0.41, 1.67, 0.01);
+
+      humerusGroup.add(greaterTubercle, lesserTubercle, surgicalNeck);
+
+      // Thân xương cánh tay (Corpus Humeri - có Lồi củ Delta và Rãnh xoắn thần kinh quay)
       const humerusShaftCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.41, 1.68, 0.0),
-        new THREE.Vector3(-0.40, 1.48, 0.01),
-        new THREE.Vector3(-0.38, 1.28, 0.0),
-        new THREE.Vector3(-0.35, 1.08, -0.01)
+        new THREE.Vector3(-0.41, 1.66, 0.01),
+        new THREE.Vector3(-0.40, 1.48, 0.01), // Lồi củ delta phồng nhẹ ở mặt ngoài
+        new THREE.Vector3(-0.38, 1.28, 0.00), // Rãnh xoắn TK quay ở mặt sau
+        new THREE.Vector3(-0.35, 1.08, -0.01) // Thân mở rộng hình tam giác ở đầu dưới
       ]);
-      const humerusShaftGeo = new THREE.TubeGeometry(humerusShaftCurve, 32, 0.062, 18, false);
+      const humerusShaftGeo = createVariableTubeGeometry(humerusShaftCurve, (u) => {
+        // Nở nhẹ ở lồi củ delta (u=0.35) và mở rộng bè ra ở đầu dưới (u=1)
+        return 0.064 + 0.012 * Math.sin(u * Math.PI) + 0.02 * Math.pow(u, 2);
+      }, 32, 18);
       const humerusShaft = new THREE.Mesh(humerusShaftGeo, Materials.bone);
       humerusGroup.add(humerusShaft);
 
-      // Đầu dưới: Lồi cầu (Capitulum), Ròng rọc (Trochlea), Mỏm trên lồi cầu trong & ngoài
+      // Đầu dưới xương cánh tay: Lồi cầu (Capitulum), Ròng rọc (Trochlea), Mỏm trên lồi cầu trong & ngoài
       const distalHumerus = new THREE.Group();
       distalHumerus.position.set(-0.35, 1.04, -0.01);
 
-      // Ròng rọc (Trochlea - hình ròng rọc khớp mỏm vẹt/khuỷu)
-      const trochleaMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.055, 0.08, 16), Materials.bone);
+      // Ròng rọc (Trochlea - hình ròng rọc lõm ở giữa khớp mỏm vẹt/khuỷu)
+      const trochleaMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.062, 0.054, 0.085, 20), Materials.bone);
       trochleaMesh.rotation.z = Math.PI / 2;
       trochleaMesh.position.set(0.04, 0, 0);
 
-      // Lồi cầu (Capitulum - hình bán cầu tròn khớp chỏm quay)
-      const capitulumMesh = new THREE.Mesh(new THREE.SphereGeometry(0.058, 16, 16), Materials.bone);
+      const trochleaCartilage = new THREE.Mesh(new THREE.CylinderGeometry(0.064, 0.056, 0.082, 18), Materials.cartilage);
+      trochleaCartilage.rotation.copy(trochleaMesh.rotation);
+      trochleaCartilage.position.copy(trochleaMesh.position);
+
+      // Lồi cầu (Capitulum - hình bán cầu tròn nhẵn tiếp xúc chỏm quay)
+      const capitulumMesh = new THREE.Mesh(new THREE.SphereGeometry(0.058, 20, 20), Materials.bone);
       capitulumMesh.position.set(-0.05, -0.01, 0.02);
 
-      // Mỏm trên lồi cầu trong (Medial Epicondyle - gờ nhô lớn có rãnh TK trụ phía sau)
-      const medialEpicondyle = new THREE.Mesh(new THREE.SphereGeometry(0.048, 12, 12), Materials.bone);
-      medialEpicondyle.position.set(0.11, 0.03, -0.02);
+      const capitulumCartilage = new THREE.Mesh(new THREE.SphereGeometry(0.060, 18, 18), Materials.cartilage);
+      capitulumCartilage.position.copy(capitulumMesh.position);
 
-      // Mỏm trên lồi cầu ngoài (Lateral Epicondyle)
-      const lateralEpicondyle = new THREE.Mesh(new THREE.SphereGeometry(0.042, 12, 12), Materials.bone);
-      lateralEpicondyle.position.set(-0.11, 0.02, 0);
+      // Mỏm trên lồi cầu trong (Medial Epicondyle - gờ nhô lớn điểm bám gân gấp chung, có rãnh TK trụ phía sau)
+      const medialEpicondyle = new THREE.Mesh(new THREE.SphereGeometry(0.052, 16, 16), Materials.bone);
+      medialEpicondyle.position.set(0.12, 0.03, -0.02);
+      medialEpicondyle.scale.set(1.2, 0.8, 1.0);
 
-      distalHumerus.add(trochleaMesh, capitulumMesh, medialEpicondyle, lateralEpicondyle);
+      // Mỏm trên lồi cầu ngoài (Lateral Epicondyle - điểm bám gân duỗi chung)
+      const lateralEpicondyle = new THREE.Mesh(new THREE.SphereGeometry(0.044, 14, 14), Materials.bone);
+      lateralEpicondyle.position.set(-0.11, 0.02, 0.0);
+
+      distalHumerus.add(trochleaMesh, trochleaCartilage, capitulumMesh, capitulumCartilage, medialEpicondyle, lateralEpicondyle);
       humerusGroup.add(distalHumerus);
 
       registerInteractiveMesh(humerusHead, "humerus", "skeletal");
@@ -3395,35 +3435,42 @@ const ANATOMY_DATABASE = {
       registerInteractiveMesh(medialEpicondyle, "humerus", "skeletal");
       skGrp.add(humerusGroup);
 
-      // --- 1.4 Xương quay (Radius - Nằm ngoài, xoay sấp ngửa) ---
+      // --- 1.4 Xương quay (Radius - Nằm ngoài, chỏm đĩa lõm, thân uốn cong tạo khoảng gian cốt) ---
       const radiusGroup = new THREE.Group();
 
-      // Chỏm quay (Radial Head - đĩa lõm tiếp xúc lồi cầu)
-      const radialHead = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.05, 0.045, 18), Materials.bone);
-      radialHead.position.set(-0.41, 0.99, 0.01);
-      radiusGroup.add(radialHead);
+      // Chỏm quay (Caput Radii - đĩa tròn lõm fovea tiếp xúc lồi cầu)
+      const radialHead = new THREE.Mesh(new THREE.CylinderGeometry(0.054, 0.050, 0.045, 20), Materials.bone);
+      radialHead.position.set(-0.41, 0.99, 0.015);
+      const radialHeadCart = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.051, 0.046, 18), Materials.cartilage);
+      radialHeadCart.position.copy(radialHead.position);
+      radiusGroup.add(radialHead, radialHeadCart);
 
-      // Củ quay (Radial tuberosity cho gân nhị đầu)
-      const radialTuberosity = new THREE.Mesh(new THREE.SphereGeometry(0.036, 12, 12), Materials.bone);
-      radialTuberosity.position.set(-0.38, 0.92, 0.03);
-      radiusGroup.add(radialTuberosity);
+      // Cổ quay (Collum Radii) & Củ quay (Tuberositas Radii cho gân nhị đầu)
+      const radialNeck = new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.044, 0.05, 16), Materials.bone);
+      radialNeck.position.set(-0.41, 0.94, 0.015);
+      const radialTuberosity = new THREE.Mesh(new THREE.SphereGeometry(0.038, 14, 14), Materials.bone);
+      radialTuberosity.position.set(-0.375, 0.91, 0.035);
+      radialTuberosity.scale.set(0.8, 1.2, 1.0);
+      radiusGroup.add(radialNeck, radialTuberosity);
 
-      // Thân xương quay (cong lồi ra ngoài)
+      // Thân xương quay (cong lồi ra ngoài tạo không gian cử động sấp/ngửa)
       const radiusShaftCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.41, 0.96, 0.01),
-        new THREE.Vector3(-0.43, 0.78, 0.02),
-        new THREE.Vector3(-0.45, 0.58, 0.03),
-        new THREE.Vector3(-0.44, 0.38, 0.03),
-        new THREE.Vector3(-0.43, 0.23, 0.03)  // Đầu dưới mở rộng
+        new THREE.Vector3(-0.41, 0.92, 0.015),
+        new THREE.Vector3(-0.44, 0.74, 0.025),
+        new THREE.Vector3(-0.46, 0.54, 0.032),
+        new THREE.Vector3(-0.45, 0.36, 0.030),
+        new THREE.Vector3(-0.43, 0.23, 0.025)  // Đầu dưới mở rộng hình lăng trụ
       ]);
-      const radiusShaftGeo = new THREE.TubeGeometry(radiusShaftCurve, 28, 0.046, 14, false);
+      const radiusShaftGeo = createVariableTubeGeometry(radiusShaftCurve, (u) => {
+        return 0.042 - 0.008 * Math.sin(u * Math.PI) + 0.028 * Math.pow(u, 2);
+      }, 32, 16);
       const radiusShaft = new THREE.Mesh(radiusShaftGeo, Materials.bone);
       radiusGroup.add(radiusShaft);
 
-      // Mỏm trâm quay (Styloid process of radius - nhô thấp hơn mỏm trâm trụ 1cm)
-      const radialStyloid = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.07, 12), Materials.bone);
-      radialStyloid.position.set(-0.47, 0.19, 0.03);
-      radialStyloid.rotation.z = 0.2;
+      // Mỏm trâm quay (Processus Styloideus Radii - nhô thấp hơn mỏm trâm trụ 1cm)
+      const radialStyloid = new THREE.Mesh(new THREE.ConeGeometry(0.036, 0.075, 14), Materials.bone);
+      radialStyloid.position.set(-0.47, 0.185, 0.03);
+      radialStyloid.rotation.z = 0.22;
       radiusGroup.add(radialStyloid);
 
       registerInteractiveMesh(radialHead, "radius", "skeletal");
@@ -3431,36 +3478,40 @@ const ANATOMY_DATABASE = {
       registerInteractiveMesh(radialStyloid, "radius", "skeletal");
       skGrp.add(radiusGroup);
 
-      // --- 1.5 Xương trụ (Ulna - Nằm trong, mỏm khuỷu ôm ròng rọc) ---
+      // --- 1.5 Xương trụ (Ulna - Nằm trong, mỏm khuỷu to khỏe ôm ròng rọc) ---
       const ulnaGroup = new THREE.Group();
 
-      // Mỏm khuỷu (Olecranon - mỏm dày khỏe phía sau)
-      const olecranonMesh = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.09, 0.08), Materials.bone);
-      olecranonMesh.position.set(-0.31, 1.04, -0.04);
+      // Mỏm khuỷu (Olecranon - mỏm dày khỏe phía sau bám tận cơ tam đầu)
+      const olecranonMesh = new THREE.Mesh(new THREE.BoxGeometry(0.082, 0.10, 0.085), Materials.bone);
+      olecranonMesh.position.set(-0.31, 1.05, -0.045);
       ulnaGroup.add(olecranonMesh);
 
-      // Mỏm vẹt (Coronoid process phía trước)
-      const coronoidMesh = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.06, 12), Materials.bone);
-      coronoidMesh.position.set(-0.31, 0.98, 0.02);
+      // Mỏm vẹt (Coronoid process phía trước cho cơ cánh tay bám) & Khuyết ròng rọc
+      const coronoidMesh = new THREE.Mesh(new THREE.ConeGeometry(0.045, 0.07, 14), Materials.bone);
+      coronoidMesh.position.set(-0.31, 0.98, 0.022);
       coronoidMesh.rotation.x = -Math.PI / 4;
       ulnaGroup.add(coronoidMesh);
 
-      // Thân xương trụ
+      // Thân xương trụ (Corpus Ulnae - thon dần từ trên xuống dưới)
       const ulnaShaftCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.31, 0.98, -0.02),
         new THREE.Vector3(-0.31, 0.78, -0.01),
-        new THREE.Vector3(-0.32, 0.58, 0.0),
+        new THREE.Vector3(-0.32, 0.58, 0.00),
         new THREE.Vector3(-0.33, 0.38, 0.01),
-        new THREE.Vector3(-0.34, 0.24, 0.01)
+        new THREE.Vector3(-0.34, 0.23, 0.01)
       ]);
-      const ulnaShaftGeo = new THREE.TubeGeometry(ulnaShaftCurve, 28, 0.044, 14, false);
+      const ulnaShaftGeo = createVariableTubeGeometry(ulnaShaftCurve, (u) => {
+        return 0.052 - 0.018 * u; // Vuốt thon dần về đầu dưới
+      }, 30, 16);
       const ulnaShaft = new THREE.Mesh(ulnaShaftGeo, Materials.bone);
       ulnaGroup.add(ulnaShaft);
 
-      // Mỏm trâm trụ (Styloid process of ulna)
-      const ulnarStyloid = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.05, 10), Materials.bone);
-      ulnarStyloid.position.set(-0.34, 0.21, -0.01);
-      ulnaGroup.add(ulnarStyloid);
+      // Chỏm xương trụ & Mỏm trâm trụ (Processus Styloideus Ulnae)
+      const ulnarHead = new THREE.Mesh(new THREE.SphereGeometry(0.034, 14, 14), Materials.bone);
+      ulnarHead.position.set(-0.34, 0.23, 0.01);
+      const ulnarStyloid = new THREE.Mesh(new THREE.ConeGeometry(0.022, 0.05, 12), Materials.bone);
+      ulnarStyloid.position.set(-0.335, 0.20, -0.01);
+      ulnaGroup.add(ulnarHead, ulnarStyloid);
 
       registerInteractiveMesh(olecranonMesh, "ulna", "skeletal");
       registerInteractiveMesh(coronoidMesh, "ulna", "skeletal");
@@ -3470,48 +3521,55 @@ const ANATOMY_DATABASE = {
 
       // --- 1.6 Màng gian cốt cẳng tay (Interosseous Membrane) ---
       const membraneShape = new THREE.Shape();
-      membraneShape.moveTo(-0.39, 0.90);
-      membraneShape.lineTo(-0.33, 0.90);
-      membraneShape.lineTo(-0.34, 0.28);
-      membraneShape.lineTo(-0.41, 0.28);
+      membraneShape.moveTo(-0.385, 0.90);
+      membraneShape.lineTo(-0.325, 0.90);
+      membraneShape.lineTo(-0.335, 0.27);
+      membraneShape.lineTo(-0.415, 0.27);
       const membraneGeo = new THREE.ShapeGeometry(membraneShape);
       const interosseousMesh = new THREE.Mesh(membraneGeo, Materials.fascia);
-      interosseousMesh.position.z = 0.01;
+      interosseousMesh.position.z = 0.012;
       registerInteractiveMesh(interosseousMesh, "interosseous_membrane_arm", "ligaments");
       armGroups.ligaments.add(interosseousMesh);
 
-      // --- 1.7 Khối 8 xương cổ tay (8 Carpal Bones - Vòm cổ tay) ---
+      // --- 1.7 Khối 8 xương cổ tay (8 Carpal Bones - Tạo thành Vòm Cổ Tay hoàn chỉnh) ---
       const carpalGroup = new THREE.Group();
 
       // Hàng gần: Thuyền (Scaphoid), Nguyệt (Lunate), Tháp (Triquetrum), Đậu (Pisiform)
-      const scaphoidMesh = new THREE.Mesh(new THREE.SphereGeometry(0.038, 14, 14), Materials.bone);
-      scaphoidMesh.position.set(-0.42, 0.18, 0.03); // Nằm dưới mỏm trâm quay, đáy hõm lào
-      scaphoidMesh.scale.set(1.2, 0.8, 0.9);
+      // 1. Xương thuyền: hình thuyền có eo thắt, nằm dưới mỏm trâm quay ở đáy hõm lào
+      const scaphoidMesh = new THREE.Mesh(new THREE.SphereGeometry(0.040, 16, 16), Materials.bone);
+      scaphoidMesh.position.set(-0.42, 0.18, 0.035);
+      scaphoidMesh.scale.set(1.3, 0.85, 0.95);
 
-      const lunateMesh = new THREE.Mesh(new THREE.SphereGeometry(0.035, 14, 14), Materials.bone);
-      lunateMesh.position.set(-0.37, 0.19, 0.02); // Trung tâm hàng gần
+      // 2. Xương nguyệt: hình bán nguyệt ở trung tâm hàng gần khớp với diện nguyệt xương quay
+      const lunateMesh = new THREE.Mesh(new THREE.SphereGeometry(0.036, 14, 14), Materials.bone);
+      lunateMesh.position.set(-0.365, 0.19, 0.02);
 
-      const triquetrumMesh = new THREE.Mesh(new THREE.SphereGeometry(0.032, 12, 12), Materials.bone);
-      triquetrumMesh.position.set(-0.32, 0.18, 0.0);
+      // 3. Xương tháp: hình tháp 3 mặt
+      const triquetrumMesh = new THREE.Mesh(new THREE.SphereGeometry(0.032, 14, 14), Materials.bone);
+      triquetrumMesh.position.set(-0.315, 0.18, 0.005);
 
-      const pisiformMesh = new THREE.Mesh(new THREE.SphereGeometry(0.022, 10, 10), Materials.bone);
-      pisiformMesh.position.set(-0.31, 0.16, 0.05); // Nổi phía trước
+      // 4. Xương đậu: xương vừng tròn nhỏ nằm nổi phía trước xương tháp
+      const pisiformMesh = new THREE.Mesh(new THREE.SphereGeometry(0.024, 12, 12), Materials.bone);
+      pisiformMesh.position.set(-0.305, 0.16, 0.055);
 
       // Hàng xa: Thang (Trapezium), Thê (Trapezoid), Cả (Capitate), Móc (Hamate)
-      const trapeziumMesh = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.04, 0.04), Materials.bone);
-      trapeziumMesh.position.set(-0.45, 0.12, 0.04); // Khớp yên ngựa ngón I
+      // 5. Xương thang: có diện khớp yên ngựa đặc trưng với xương đốt bàn ngón I
+      const trapeziumMesh = new THREE.Mesh(new THREE.BoxGeometry(0.046, 0.042, 0.042), Materials.bone);
+      trapeziumMesh.position.set(-0.45, 0.12, 0.045);
 
-      const trapezoidMesh = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.038, 0.035), Materials.bone);
-      trapezoidMesh.position.set(-0.40, 0.13, 0.025);
+      // 6. Xương thê: hình nêm kẹp giữa thang và cả
+      const trapezoidMesh = new THREE.Mesh(new THREE.BoxGeometry(0.036, 0.038, 0.036), Materials.bone);
+      trapezoidMesh.position.set(-0.40, 0.13, 0.028);
 
-      const capitateMesh = new THREE.Mesh(new THREE.SphereGeometry(0.042, 14, 14), Materials.bone);
-      capitateMesh.position.set(-0.36, 0.12, 0.015); // Xương lớn nhất ở trung tâm
+      // 7. Xương cả: xương cổ tay lớn nhất, đầu tròn lồi khớp hố xương thuyền và nguyệt
+      const capitateMesh = new THREE.Mesh(new THREE.SphereGeometry(0.044, 16, 16), Materials.bone);
+      capitateMesh.position.set(-0.355, 0.12, 0.018);
 
-      const hamateMesh = new THREE.Mesh(new THREE.BoxGeometry(0.042, 0.042, 0.04), Materials.bone);
-      hamateMesh.position.set(-0.32, 0.12, 0.01);
-      // Mỏm móc (Hook of hamate)
-      const hookMesh = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.03, 10), Materials.bone);
-      hookMesh.position.set(-0.32, 0.11, 0.04);
+      // 8. Xương móc: có mỏm móc (hamulus) nhô cao phía trước tạo thành trụ trong của ống cổ tay
+      const hamateMesh = new THREE.Mesh(new THREE.BoxGeometry(0.044, 0.044, 0.040), Materials.bone);
+      hamateMesh.position.set(-0.315, 0.12, 0.012);
+      const hookMesh = new THREE.Mesh(new THREE.ConeGeometry(0.020, 0.035, 12), Materials.bone);
+      hookMesh.position.set(-0.315, 0.105, 0.048);
       hookMesh.rotation.x = -Math.PI / 3;
 
       carpalGroup.add(scaphoidMesh, lunateMesh, triquetrumMesh, pisiformMesh, trapeziumMesh, trapezoidMesh, capitateMesh, hamateMesh, hookMesh);
@@ -3521,41 +3579,48 @@ const ANATOMY_DATABASE = {
       registerInteractiveMesh(hamateMesh, "carpal_bones", "skeletal");
       skGrp.add(carpalGroup);
 
-      // --- 1.8 5 Xương đốt bàn tay (Metacarpals I - V) & 14 Đốt ngón tay (Phalanges) ---
+      // --- 1.8 5 Xương đốt bàn (Metacarpals) & 14 Đốt ngón (Phalanges) ở tư thế giải phẫu tự nhiên ---
       const metacarpalsGroup = new THREE.Group();
       const phalangesGroup = new THREE.Group();
 
-      // Cấu hình vị trí các tia xương bàn tay
+      // Cấu hình vị trí các tia xương bàn tay (Ngón cái hơi đối chiếu, các ngón cong nhẹ tự nhiên)
       const fingerConfigs = [
-        { id: 1, angle: -0.42, base: new THREE.Vector3(-0.46, 0.10, 0.05), len: 0.12, name: 'Thumb' },
-        { id: 2, angle: -0.15, base: new THREE.Vector3(-0.41, 0.09, 0.03), len: 0.16, name: 'Index' },
-        { id: 3, angle: 0.0,   base: new THREE.Vector3(-0.36, 0.09, 0.02), len: 0.17, name: 'Middle' },
-        { id: 4, angle: 0.12,  base: new THREE.Vector3(-0.32, 0.09, 0.015), len: 0.15, name: 'Ring' },
-        { id: 5, angle: 0.28,  base: new THREE.Vector3(-0.28, 0.09, 0.01), len: 0.13, name: 'Little' }
+        { id: 1, angle: -0.44, base: new THREE.Vector3(-0.46, 0.10, 0.05), len: 0.125, isThumb: true },
+        { id: 2, angle: -0.16, base: new THREE.Vector3(-0.41, 0.09, 0.03), len: 0.165, isThumb: false },
+        { id: 3, angle: 0.00,  base: new THREE.Vector3(-0.36, 0.09, 0.02), len: 0.175, isThumb: false },
+        { id: 4, angle: 0.13,  base: new THREE.Vector3(-0.315, 0.09, 0.015), len: 0.155, isThumb: false },
+        { id: 5, angle: 0.28,  base: new THREE.Vector3(-0.275, 0.09, 0.01), len: 0.135, isThumb: false }
       ];
 
       fingerConfigs.forEach(f => {
-        // Xương đốt bàn (Metacarpal)
-        const mcDir = new THREE.Vector3(Math.sin(f.angle), -Math.cos(f.angle), (f.id === 1 ? 0.25 : 0.0)).normalize();
+        // Hướng tia xương đốt bàn
+        const mcDir = new THREE.Vector3(Math.sin(f.angle), -Math.cos(f.angle), (f.isThumb ? 0.28 : 0.0)).normalize();
         const mcEnd = f.base.clone().add(mcDir.clone().multiplyScalar(f.len));
         
+        // Thân xương đốt bàn
         const mcCurve = new THREE.LineCurve3(f.base, mcEnd);
-        const mcMesh = new THREE.Mesh(new THREE.TubeGeometry(mcCurve, 10, (f.id === 1 ? 0.026 : 0.021), 10, false), Materials.bone);
-        // Chỏm đốt bàn (Knuckle head)
-        const mcHead = new THREE.Mesh(new THREE.SphereGeometry(0.028, 12, 12), Materials.bone);
+        const mcGeo = createVariableTubeGeometry(mcCurve, (u) => (f.isThumb ? 0.026 : 0.021) - 0.004 * Math.sin(u * Math.PI), 10, 10);
+        const mcMesh = new THREE.Mesh(mcGeo, Materials.bone);
+        // Chỏm xương đốt bàn (Knuckle head)
+        const mcHead = new THREE.Mesh(new THREE.SphereGeometry(f.isThumb ? 0.032 : 0.027, 14, 14), Materials.bone);
         mcHead.position.copy(mcEnd);
         metacarpalsGroup.add(mcMesh, mcHead);
 
         // Các đốt ngón tay (Phalanges)
         let curPos = mcEnd.clone();
-        const phCount = (f.id === 1 ? 2 : 3); // Ngón cái 2 đốt, các ngón khác 3 đốt
-        const phLens = (f.id === 1 ? [0.08, 0.065] : [0.085, 0.065, 0.045]);
+        const phCount = (f.isThumb ? 2 : 3);
+        const phLens = (f.isThumb ? [0.082, 0.068] : [0.088, 0.066, 0.048]);
 
         for (let p = 0; p < phCount; p++) {
-          const phNext = curPos.clone().add(mcDir.clone().multiplyScalar(phLens[p]));
+          // Các đốt hơi khum nhẹ tự nhiên (flexion nhẹ 5-8 độ)
+          const bendDir = mcDir.clone().add(new THREE.Vector3(0, -0.05 * p, 0.08 * p)).normalize();
+          const phNext = curPos.clone().add(bendDir.multiplyScalar(phLens[p]));
+          
           const phCurve = new THREE.LineCurve3(curPos, phNext);
-          const phMesh = new THREE.Mesh(new THREE.TubeGeometry(phCurve, 8, 0.018 - p * 0.003, 10, false), Materials.bone);
-          const phJoint = new THREE.Mesh(new THREE.SphereGeometry(0.022 - p * 0.003, 10, 10), Materials.bone);
+          const phGeo = createVariableTubeGeometry(phCurve, (u) => (0.019 - p * 0.003) - 0.003 * Math.sin(u * Math.PI), 8, 10);
+          const phMesh = new THREE.Mesh(phGeo, Materials.bone);
+          
+          const phJoint = new THREE.Mesh(new THREE.SphereGeometry(0.022 - p * 0.003, 12, 12), Materials.bone);
           phJoint.position.copy(phNext);
           
           phalangesGroup.add(phMesh, phJoint);
@@ -3568,18 +3633,18 @@ const ANATOMY_DATABASE = {
       skGrp.add(metacarpalsGroup, phalangesGroup);
 
       // =======================================================================
-      // 2. KHỚP & DÂY CHẰNG (LIGAMENTS & JOINTS)
+      // 2. KHỚP & DÂY CHẰNG (ARTHROLOGY & LIGAMENTS)
       // =======================================================================
       const ligGrp = armGroups.ligaments;
 
-      // --- 2.1 Khớp vai & Sụn viền ổ chảo (Glenohumeral Joint & Labrum) ---
-      const labrumMesh = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.022, 12, 24), Materials.cartilage);
-      labrumMesh.position.set(-0.39, 1.76, -0.04);
-      labrumMesh.rotation.set(0, 0, 1.2);
+      // --- 2.1 Khớp vai & Sụn viền ổ chảo (Glenoid Labrum & Capsule) ---
+      const labrumMesh = new THREE.Mesh(new THREE.TorusGeometry(0.092, 0.024, 14, 28), Materials.cartilage);
+      labrumMesh.position.set(-0.38, 1.76, -0.035);
+      labrumMesh.rotation.set(0, 0, 1.25);
       
-      const shoulderCapsule = new THREE.Mesh(new THREE.SphereGeometry(0.14, 20, 20), Materials.ligament);
-      shoulderCapsule.position.set(-0.38, 1.75, -0.03);
-      shoulderCapsule.scale.set(1.0, 1.1, 0.85);
+      const shoulderCapsule = new THREE.Mesh(new THREE.SphereGeometry(0.145, 22, 22), Materials.ligament);
+      shoulderCapsule.position.set(-0.37, 1.75, -0.02);
+      shoulderCapsule.scale.set(1.0, 1.1, 0.88);
 
       registerInteractiveMesh(labrumMesh, "glenohumeral_joint", "ligaments");
       registerInteractiveMesh(shoulderCapsule, "glenohumeral_joint", "ligaments");
@@ -3587,13 +3652,13 @@ const ANATOMY_DATABASE = {
 
       // --- 2.2 Vòm quạ - cùng vai & Dây chằng quạ - đòn (Coracoacromial Arch) ---
       const caLigCurve = new THREE.LineCurve3(
-        new THREE.Vector3(-0.33, 1.81, 0.10), // Mỏm quạ
-        new THREE.Vector3(-0.43, 1.88, 0.02)  // Mỏm cùng vai
+        new THREE.Vector3(-0.32, 1.80, 0.11), // Mỏm quạ
+        new THREE.Vector3(-0.43, 1.89, 0.02)  // Mỏm cùng vai
       );
       const caLigMesh = new THREE.Mesh(new THREE.TubeGeometry(caLigCurve, 10, 0.022, 8, false), Materials.tendon);
       
       const ccLigCurve = new THREE.LineCurve3(
-        new THREE.Vector3(-0.34, 1.82, 0.06), // Mỏm quạ
+        new THREE.Vector3(-0.33, 1.82, 0.07), // Mỏm quạ
         new THREE.Vector3(-0.36, 1.87, 0.10)  // Xương đòn
       );
       const ccLigMesh = new THREE.Mesh(new THREE.TubeGeometry(ccLigCurve, 8, 0.024, 8, false), Materials.tendon);
@@ -3601,241 +3666,327 @@ const ANATOMY_DATABASE = {
       registerInteractiveMesh(caLigMesh, "coracoacromial_arch", "ligaments");
       ligGrp.add(caLigMesh, ccLigMesh);
 
-      // --- 2.3 Khớp khuỷu: Dây chằng vòng quay & Dây chằng bên (Annular, UCL, RCL) ---
-      // Dây chằng vòng quay (Annular ligament - đai ôm quanh chỏm quay)
-      const annularMesh = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.018, 12, 24, Math.PI * 1.6), Materials.ligament);
-      annularMesh.position.set(-0.39, 0.98, 0.01);
+      // --- 2.3 Khớp khuỷu: Dây chằng vòng quay (Annular Ligament) & Dây chằng bên (UCL & RCL) ---
+      // Dây chằng vòng quay (Annular ligament - vòng cổ ôm chặt quanh chỏm và cổ xương quay)
+      const annularMesh = new THREE.Mesh(new THREE.TorusGeometry(0.062, 0.019, 14, 28, Math.PI * 1.7), Materials.ligament);
+      annularMesh.position.set(-0.41, 0.98, 0.015);
       annularMesh.rotation.x = Math.PI / 2;
 
-      // Dây chằng bên trụ (UCL - Tommy John)
+      // Dây chằng bên trụ (UCL - Tommy John) hình quạt tỏa từ mỏm trên lồi cầu trong xuống mỏm vẹt/khuỷu
       const uclCurve = new THREE.LineCurve3(
-        new THREE.Vector3(-0.25, 1.05, -0.02), // Mỏm trên lồi cầu trong
-        new THREE.Vector3(-0.30, 0.97, -0.01)  // Mỏm vẹt/khuỷu
+        new THREE.Vector3(-0.24, 1.05, -0.02), // Mỏm trên lồi cầu trong
+        new THREE.Vector3(-0.30, 0.97, -0.01)  // Mỏm vẹt
       );
-      const uclMesh = new THREE.Mesh(new THREE.TubeGeometry(uclCurve, 10, 0.022, 8, false), Materials.tendon);
+      const uclMesh = new THREE.Mesh(new THREE.TubeGeometry(uclCurve, 10, 0.024, 8, false), Materials.tendon);
 
-      // Dây chằng bên quay (RCL)
+      // Dây chằng bên quay (RCL) từ mỏm trên lồi cầu ngoài hòa vào dây chằng vòng
       const rclCurve = new THREE.LineCurve3(
-        new THREE.Vector3(-0.45, 1.05, 0.0), // Mỏm trên lồi cầu ngoài
-        new THREE.Vector3(-0.42, 0.98, 0.01) // Hòa vào dây chằng vòng
+        new THREE.Vector3(-0.46, 1.05, 0.00),  // Mỏm trên lồi cầu ngoài
+        new THREE.Vector3(-0.42, 0.98, 0.015) // Dây chằng vòng
       );
-      const rclMesh = new THREE.Mesh(new THREE.TubeGeometry(rclCurve, 10, 0.020, 8, false), Materials.tendon);
+      const rclMesh = new THREE.Mesh(new THREE.TubeGeometry(rclCurve, 10, 0.022, 8, false), Materials.tendon);
 
       registerInteractiveMesh(annularMesh, "elbow_ligaments", "ligaments");
       registerInteractiveMesh(uclMesh, "elbow_ligaments", "ligaments");
       ligGrp.add(annularMesh, uclMesh, rclMesh);
 
-      // --- 2.4 Mạc giữ gân gấp (Flexor Retinaculum / Ống Cổ Tay) ---
-      const carpalTunnelMesh = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.055, 0.025), Materials.tendon);
-      carpalTunnelMesh.position.set(-0.37, 0.16, 0.06);
+      // --- 2.4 Mạc giữ gân gấp (Flexor Retinaculum / Mái vòm Ống Cổ Tay) ---
+      const carpalTunnelMesh = new THREE.Mesh(new THREE.BoxGeometry(0.145, 0.058, 0.026), Materials.tendon);
+      carpalTunnelMesh.position.set(-0.365, 0.16, 0.062);
       carpalTunnelMesh.rotation.set(0.1, -0.15, 0.12);
 
       registerInteractiveMesh(carpalTunnelMesh, "carpal_tunnel_retinaculum", "ligaments");
       ligGrp.add(carpalTunnelMesh);
 
-      // --- 2.5 Cân gan tay (Palmar Aponeurosis) ---
+      // --- 2.5 Cân gan tay (Palmar Aponeurosis - Dày chắc bảo vệ lòng bàn tay) ---
       const palmarShape = new THREE.Shape();
-      palmarShape.moveTo(-0.37, 0.15); // Đỉnh tiếp nối gân gan tay dài
-      palmarShape.lineTo(-0.44, 0.03); // Tỏa sang mô cái
-      palmarShape.lineTo(-0.29, 0.03); // Tỏa sang mô út
+      palmarShape.moveTo(-0.365, 0.15); // Đỉnh tiếp nối gân gan tay dài
+      palmarShape.lineTo(-0.445, 0.025); // Tỏa sang mô cái
+      palmarShape.lineTo(-0.285, 0.025); // Tỏa sang mô út
       const palmarGeo = new THREE.ShapeGeometry(palmarShape);
       const palmarMesh = new THREE.Mesh(palmarGeo, Materials.fascia);
-      palmarMesh.position.z = 0.055;
+      palmarMesh.position.z = 0.058;
       registerInteractiveMesh(palmarMesh, "palmar_aponeurosis", "ligaments");
       ligGrp.add(palmarMesh);
 
       // =======================================================================
-      // 3. HỆ CƠ NÔNG & SÂU (MUSCULAR SYSTEM)
+      // 3. HỆ THỐNG CƠ BẮP CHUẨN SÁCH GIẢI PHẪU Y KHOA (MYOLOGY)
+      // Sử dụng createMuscleBellyMesh để cơ phồng to ở giữa, thon ở 2 đầu gân
+      // Màu đỏ cơ vân y khoa (Materials.muscleSuperficial / Materials.muscleDeep)
       // =======================================================================
       const musGrp = armGroups.muscular;
 
-      // --- 3.1 Cơ Delta (Deltoid - Nông) ---
-      const deltoidCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.46, 1.88, 0.02), // Acromion
-        new THREE.Vector3(-0.56, 1.72, 0.04), // Bụng cơ phồng ngoài
-        new THREE.Vector3(-0.48, 1.54, 0.02),
-        new THREE.Vector3(-0.42, 1.45, 0.01)  // Bám tận lồi củ delta
-      ]);
-      const deltoidGeo = new THREE.TubeGeometry(deltoidCurve, 24, 0.095, 16, false);
-      const deltoidMesh = new THREE.Mesh(deltoidGeo, Materials.muscle);
-      registerInteractiveMesh(deltoidMesh, "deltoid", "muscular", false);
-      musGrp.add(deltoidMesh);
+      // --- 3.1 Cơ Delta (Musculus Deltoideus - 3 Bó: Trước, Giữa, Sau) ---
+      const deltoidGroup = new THREE.Group();
 
-      // --- 3.2 Nhóm cơ Chóp Xoay SITS (Rotator Cuff - Sâu) ---
-      // Supraspinatus (Cơ trên gai)
-      const supraspinatusCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.25, 1.82, -0.12),
-        new THREE.Vector3(-0.35, 1.84, -0.06),
-        new THREE.Vector3(-0.45, 1.78, 0.0) // Luồn dưới acromion tới củ lớn
-      ]);
-      const supraMesh = new THREE.Mesh(new THREE.TubeGeometry(supraspinatusCurve, 16, 0.045, 12, false), Materials.muscle);
-      
-      // Infraspinatus (Cơ dưới gai) & Teres minor (Tròn bé)
-      const infraCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.24, 1.62, -0.14),
-        new THREE.Vector3(-0.35, 1.68, -0.08),
-        new THREE.Vector3(-0.45, 1.74, -0.03)
-      ]);
-      const infraMesh = new THREE.Mesh(new THREE.TubeGeometry(infraCurve, 16, 0.052, 12, false), Materials.muscle);
+      // Bó giữa (Acromial - dày nhất, tạo dáng tròn vai)
+      const deltoidMiddle = createMuscleBellyMesh([
+        new THREE.Vector3(-0.45, 1.89, 0.02),
+        new THREE.Vector3(-0.56, 1.74, 0.03),
+        new THREE.Vector3(-0.50, 1.58, 0.02),
+        new THREE.Vector3(-0.42, 1.48, 0.01)
+      ], 0.098, 0.032, Materials.muscleSuperficial, "deltoid", "muscular", false);
 
-      // Subscapularis (Cơ dưới vai - mặt trước)
-      const subscapCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.26, 1.64, -0.08),
-        new THREE.Vector3(-0.34, 1.70, 0.02),
-        new THREE.Vector3(-0.38, 1.72, 0.07) // Bám củ bé
-      ]);
-      const subscapMesh = new THREE.Mesh(new THREE.TubeGeometry(subscapCurve, 16, 0.055, 12, false), Materials.muscle);
+      // Bó trước (Clavicular - từ 1/3 ngoài xương đòn)
+      const deltoidAnterior = createMuscleBellyMesh([
+        new THREE.Vector3(-0.38, 1.88, 0.08),
+        new THREE.Vector3(-0.48, 1.72, 0.09),
+        new THREE.Vector3(-0.45, 1.56, 0.06),
+        new THREE.Vector3(-0.42, 1.48, 0.01)
+      ], 0.078, 0.028, Materials.muscleSuperficial, "deltoid", "muscular", false);
 
-      registerInteractiveMesh(supraMesh, "rotator_cuff_sits", "muscular", true);
-      registerInteractiveMesh(infraMesh, "rotator_cuff_sits", "muscular", true);
-      registerInteractiveMesh(subscapMesh, "rotator_cuff_sits", "muscular", true);
-      musGrp.add(supraMesh, infraMesh, subscapMesh);
+      // Bó sau (Spinal - từ gai vai)
+      const deltoidPosterior = createMuscleBellyMesh([
+        new THREE.Vector3(-0.38, 1.86, -0.08),
+        new THREE.Vector3(-0.50, 1.72, -0.06),
+        new THREE.Vector3(-0.46, 1.56, -0.03),
+        new THREE.Vector3(-0.42, 1.48, 0.01)
+      ], 0.082, 0.028, Materials.muscleSuperficial, "deltoid", "muscular", false);
 
-      // --- 3.3 Cơ nhị đầu cánh tay (Biceps Brachii - Nông) ---
-      // Gân đầu dài (Long head tendon)
-      const bicepsLongTendon = new THREE.Mesh(
+      deltoidGroup.add(deltoidMiddle, deltoidAnterior, deltoidPosterior);
+      musGrp.add(deltoidGroup);
+
+      // --- 3.2 Nhóm cơ Chóp Xoay (Rotator Cuff - SITS: Sâu) ---
+      // Supraspinatus (Cơ trên gai - luồn dưới acromion bám củ lớn)
+      const supraMesh = createMuscleBellyMesh([
+        new THREE.Vector3(-0.24, 1.82, -0.12),
+        new THREE.Vector3(-0.34, 1.84, -0.06),
+        new THREE.Vector3(-0.44, 1.78, 0.00)
+      ], 0.052, 0.024, Materials.muscleDeep, "rotator_cuff_sits", "muscular", true);
+
+      // Gân cơ trên gai bám vào củ lớn
+      const supraTendon = new THREE.Mesh(
         new THREE.TubeGeometry(new THREE.LineCurve3(
-          new THREE.Vector3(-0.38, 1.78, -0.01),
-          new THREE.Vector3(-0.39, 1.65, 0.06)
-        ), 10, 0.018, 8, false),
+          new THREE.Vector3(-0.44, 1.78, 0.00),
+          new THREE.Vector3(-0.46, 1.76, 0.01)
+        ), 8, 0.022, 8, false),
         Materials.tendon
       );
+
+      // Infraspinatus (Cơ dưới gai) & Teres minor (Tròn bé)
+      const infraMesh = createMuscleBellyMesh([
+        new THREE.Vector3(-0.23, 1.62, -0.14),
+        new THREE.Vector3(-0.35, 1.68, -0.08),
+        new THREE.Vector3(-0.45, 1.74, -0.02)
+      ], 0.062, 0.026, Materials.muscleDeep, "rotator_cuff_sits", "muscular", true);
+
+      // Subscapularis (Cơ dưới vai - mặt trước xương vai bám củ bé)
+      const subscapMesh = createMuscleBellyMesh([
+        new THREE.Vector3(-0.25, 1.65, -0.08),
+        new THREE.Vector3(-0.33, 1.70, 0.02),
+        new THREE.Vector3(-0.37, 1.72, 0.08)
+      ], 0.064, 0.028, Materials.muscleDeep, "rotator_cuff_sits", "muscular", true);
+
+      musGrp.add(supraMesh, supraTendon, infraMesh, subscapMesh);
+
+      // --- 3.3 Cơ Nhị Đầu Cánh Tay (Biceps Brachii - Nông, 2 đầu cơ, Trướng cân nhị đầu) ---
+      const bicepsGroup = new THREE.Group();
+
+      // Gân đầu dài (Long head tendon trong rãnh gian củ)
+      const bicepsLongTendon = new THREE.Mesh(
+        new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
+          new THREE.Vector3(-0.36, 1.78, -0.01),
+          new THREE.Vector3(-0.38, 1.75, 0.04),
+          new THREE.Vector3(-0.39, 1.64, 0.07)
+        ]), 12, 0.019, 8, false),
+        Materials.tendon
+      );
+
       // Gân đầu ngắn (Short head tendon từ mỏm quạ)
       const bicepsShortTendon = new THREE.Mesh(
-        new THREE.LineCurve3(
-          new THREE.Vector3(-0.31, 1.81, 0.12),
-          new THREE.Vector3(-0.36, 1.65, 0.08)
-        ) ? new THREE.TubeGeometry(new THREE.LineCurve3(
-          new THREE.Vector3(-0.31, 1.81, 0.12),
-          new THREE.Vector3(-0.36, 1.65, 0.08)
-        ), 10, 0.018, 8, false) : null,
+        new THREE.TubeGeometry(new THREE.LineCurve3(
+          new THREE.Vector3(-0.30, 1.80, 0.13),
+          new THREE.Vector3(-0.36, 1.64, 0.08)
+        ), 10, 0.019, 8, false),
         Materials.tendon
       );
 
-      // Bụng cơ nhị đầu (Biceps belly)
-      const bicepsBellyCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.38, 1.65, 0.07),
-        new THREE.Vector3(-0.37, 1.45, 0.12),
-        new THREE.Vector3(-0.36, 1.25, 0.10),
-        new THREE.Vector3(-0.36, 1.08, 0.06)
-      ]);
-      const bicepsBellyGeo = new THREE.TubeGeometry(bicepsBellyCurve, 24, 0.088, 16, false);
-      const bicepsMesh = new THREE.Mesh(bicepsBellyGeo, Materials.muscle);
+      // Bụng cơ nhị đầu (Swelling fusiform belly)
+      const bicepsBelly = createMuscleBellyMesh([
+        new THREE.Vector3(-0.38, 1.64, 0.07),
+        new THREE.Vector3(-0.37, 1.48, 0.12), // Điểm phồng to nhất bắp tay trước
+        new THREE.Vector3(-0.36, 1.28, 0.11),
+        new THREE.Vector3(-0.36, 1.10, 0.06)
+      ], 0.096, 0.034, Materials.muscleSuperficial, "biceps_brachii", "muscular", false);
 
-      // Gân bám tận củ quay & Trướng cân nhị đầu
+      // Gân bám tận củ quay (Distal tendon)
       const bicepsDistalTendon = new THREE.Mesh(
         new THREE.TubeGeometry(new THREE.LineCurve3(
-          new THREE.Vector3(-0.36, 1.08, 0.06),
-          new THREE.Vector3(-0.38, 0.94, 0.03)
+          new THREE.Vector3(-0.36, 1.10, 0.06),
+          new THREE.Vector3(-0.375, 0.92, 0.035)
         ), 10, 0.024, 8, false),
         Materials.tendon
       );
 
-      registerInteractiveMesh(bicepsMesh, "biceps_brachii", "muscular", false);
-      registerInteractiveMesh(bicepsDistalTendon, "biceps_brachii", "muscular", false);
-      musGrp.add(bicepsLongTendon, bicepsShortTendon, bicepsMesh, bicepsDistalTendon);
+      // Trướng cân nhị đầu (Lacertus Fibrosus / Bicipital Aponeurosis - Cân mạc hình quạt bảo vệ ĐM cánh tay)
+      const lacertusShape = new THREE.Shape();
+      lacertusShape.moveTo(-0.36, 1.08);
+      lacertusShape.lineTo(-0.30, 1.02);
+      lacertusShape.lineTo(-0.32, 0.96);
+      const lacertusGeo = new THREE.ShapeGeometry(lacertusShape);
+      const lacertusMesh = new THREE.Mesh(lacertusGeo, Materials.fascia);
+      lacertusMesh.position.z = 0.055;
 
-      // --- 3.4 Cơ cánh tay (Brachialis - Sâu) ---
-      const brachialisCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.37, 1.38, 0.03),
-        new THREE.Vector3(-0.36, 1.20, 0.05),
-        new THREE.Vector3(-0.33, 1.04, 0.04),
-        new THREE.Vector3(-0.31, 0.98, 0.02) // Mỏm vẹt xương trụ
-      ]);
-      const brachialisGeo = new THREE.TubeGeometry(brachialisCurve, 20, 0.072, 14, false);
-      const brachialisMesh = new THREE.Mesh(brachialisGeo, Materials.muscle);
-      registerInteractiveMesh(brachialisMesh, "brachialis", "muscular", true);
+      bicepsGroup.add(bicepsLongTendon, bicepsShortTendon, bicepsBelly, bicepsDistalTendon, lacertusMesh);
+      registerInteractiveMesh(bicepsBelly, "biceps_brachii", "muscular", false);
+      musGrp.add(bicepsGroup);
+
+      // --- 3.4 Cơ Cánh Tay (Brachialis - Sâu, nằm áp sát xương cánh tay dưới nhị đầu) ---
+      const brachialisMesh = createMuscleBellyMesh([
+        new THREE.Vector3(-0.38, 1.40, 0.02),
+        new THREE.Vector3(-0.37, 1.22, 0.05),
+        new THREE.Vector3(-0.34, 1.05, 0.04),
+        new THREE.Vector3(-0.31, 0.98, 0.025) // Mỏm vẹt xương trụ
+      ], 0.082, 0.032, Materials.muscleDeep, "brachialis", "muscular", true);
       musGrp.add(brachialisMesh);
 
-      // --- 3.5 Cơ tam đầu cánh tay (Triceps Brachii - Nông & Sau) ---
-      const tricepsCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.35, 1.68, -0.08), // Đầu dài
-        new THREE.Vector3(-0.36, 1.48, -0.11), // Bụng cơ phồng sau
-        new THREE.Vector3(-0.34, 1.25, -0.09),
-        new THREE.Vector3(-0.31, 1.06, -0.05)  // Gân bám mỏm khuỷu
-      ]);
-      const tricepsGeo = new THREE.TubeGeometry(tricepsCurve, 24, 0.092, 16, false);
-      const tricepsMesh = new THREE.Mesh(tricepsGeo, Materials.muscle);
-      registerInteractiveMesh(tricepsMesh, "triceps_brachii", "muscular", false);
-      musGrp.add(tricepsMesh);
+      // --- 3.5 Cơ Tam Đầu Cánh Tay (Triceps Brachii - Nông mặt sau, 3 đầu cơ & Tấm gân lớn) ---
+      const tricepsGroup = new THREE.Group();
 
-      // --- 3.6 Cơ cánh tay - quay (Brachioradialis - Nông) ---
-      const brachioradialisCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.43, 1.15, 0.01),
-        new THREE.Vector3(-0.46, 0.95, 0.05),
-        new THREE.Vector3(-0.47, 0.72, 0.06),
-        new THREE.Vector3(-0.46, 0.45, 0.05),
-        new THREE.Vector3(-0.47, 0.22, 0.03) // Mỏm trâm quay
-      ]);
-      const brMesh = new THREE.Mesh(new THREE.TubeGeometry(brachioradialisCurve, 24, 0.058, 14, false), Materials.muscle);
-      registerInteractiveMesh(brMesh, "brachioradialis", "muscular", false);
+      // Bụng cơ tam đầu (Long & Lateral heads)
+      const tricepsBelly = createMuscleBellyMesh([
+        new THREE.Vector3(-0.35, 1.70, -0.07), // Đầu dài từ củ dưới ổ chảo
+        new THREE.Vector3(-0.36, 1.50, -0.12), // Bụng cơ phồng to mặt sau
+        new THREE.Vector3(-0.34, 1.30, -0.10),
+        new THREE.Vector3(-0.32, 1.15, -0.06)
+      ], 0.102, 0.036, Materials.muscleSuperficial, "triceps_brachii", "muscular", false);
+
+      // Tấm gân cơ tam đầu bản rộng bám vào Mỏm khuỷu (Glistening silvery tendon plate)
+      const tricepsTendon = new THREE.Mesh(
+        new THREE.TubeGeometry(new THREE.LineCurve3(
+          new THREE.Vector3(-0.32, 1.15, -0.06),
+          new THREE.Vector3(-0.31, 1.05, -0.045)
+        ), 8, 0.038, 10, false),
+        Materials.tendon
+      );
+
+      tricepsGroup.add(tricepsBelly, tricepsTendon);
+      registerInteractiveMesh(tricepsBelly, "triceps_brachii", "muscular", false);
+      musGrp.add(tricepsGroup);
+
+      // --- 3.6 Cơ Cánh Tay - Quay (Brachioradialis - Gờ cơ ngoài dũng mãnh của cẳng tay) ---
+      const brMesh = createMuscleBellyMesh([
+        new THREE.Vector3(-0.43, 1.18, 0.01),  // Gờ trên lồi cầu ngoài xương cánh tay
+        new THREE.Vector3(-0.46, 0.98, 0.05),  // Phồng to ở 1/3 trên cẳng tay
+        new THREE.Vector3(-0.47, 0.74, 0.06),
+        new THREE.Vector3(-0.46, 0.48, 0.05),
+        new THREE.Vector3(-0.47, 0.22, 0.03)   // Gân bám đáy mỏm trâm quay
+      ], 0.072, 0.024, Materials.muscleSuperficial, "brachioradialis", "muscular", false);
       musGrp.add(brMesh);
 
       // --- 3.7 Nhóm cơ gấp cẳng tay nông (Forearm Flexors Superficial) ---
-      const flexSupCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.26, 1.04, -0.01), // Mỏm trên lồi cầu trong
-        new THREE.Vector3(-0.32, 0.82, 0.07),  // Pronator teres & FCR
-        new THREE.Vector3(-0.36, 0.58, 0.08),
-        new THREE.Vector3(-0.38, 0.26, 0.07)   // Đi vào cổ tay
-      ]);
-      const flexSupMesh = new THREE.Mesh(new THREE.TubeGeometry(flexSupCurve, 24, 0.068, 14, false), Materials.muscle);
-      registerInteractiveMesh(flexSupMesh, "forearm_flexors_superficial", "muscular", false);
-      musGrp.add(flexSupMesh);
+      // Cơ sấp tròn (Pronator teres) & Cơ gấp cổ tay quay (FCR)
+      const flexSupMesh = createMuscleBellyMesh([
+        new THREE.Vector3(-0.25, 1.05, -0.01), // Mỏm trên lồi cầu trong
+        new THREE.Vector3(-0.32, 0.84, 0.07),  // Đi chéo qua cẳng tay trước
+        new THREE.Vector3(-0.36, 0.60, 0.075),
+        new THREE.Vector3(-0.38, 0.28, 0.065)  // Gân chạy vào cổ tay
+      ], 0.074, 0.026, Materials.muscleSuperficial, "forearm_flexors_superficial", "muscular", false);
+
+      // Gân cơ gan tay dài (Palmaris longus) mảnh dẻ chạy vào cân gan tay
+      const palmarisTendon = new THREE.Mesh(
+        new THREE.TubeGeometry(new THREE.LineCurve3(
+          new THREE.Vector3(-0.34, 0.60, 0.075),
+          new THREE.Vector3(-0.365, 0.16, 0.065)
+        ), 10, 0.012, 8, false),
+        Materials.tendon
+      );
+
+      musGrp.add(flexSupMesh, palmarisTendon);
 
       // --- 3.8 Cơ gấp các ngón nông (Flexor Digitorum Superficialis - FDS) ---
-      const fdsCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.32, 0.88, 0.04),
-        new THREE.Vector3(-0.35, 0.65, 0.06),
-        new THREE.Vector3(-0.37, 0.40, 0.06),
-        new THREE.Vector3(-0.37, 0.18, 0.05) // Qua ống cổ tay
-      ]);
-      const fdsMesh = new THREE.Mesh(new THREE.TubeGeometry(fdsCurve, 20, 0.062, 12, false), Materials.muscle);
-      registerInteractiveMesh(fdsMesh, "flexor_digitorum_superficialis", "muscular", false);
-      musGrp.add(fdsMesh);
+      const fdsMesh = createMuscleBellyMesh([
+        new THREE.Vector3(-0.32, 0.90, 0.04),
+        new THREE.Vector3(-0.35, 0.68, 0.06),
+        new THREE.Vector3(-0.37, 0.42, 0.06),
+        new THREE.Vector3(-0.37, 0.20, 0.055) // Tách 4 gân qua ống cổ tay
+      ], 0.068, 0.026, Materials.muscleSuperficial, "flexor_digitorum_superficialis", "muscular", false);
 
-      // --- 3.9 Nhóm cơ gấp cẳng tay sâu (Forearm Flexors Deep - Sâu) ---
-      const flexDeepCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.33, 0.80, 0.01),
-        new THREE.Vector3(-0.34, 0.60, 0.03),
-        new THREE.Vector3(-0.35, 0.38, 0.03),
-        new THREE.Vector3(-0.36, 0.20, 0.03)
-      ]);
-      const flexDeepMesh = new THREE.Mesh(new THREE.TubeGeometry(flexDeepCurve, 20, 0.058, 12, false), Materials.muscle);
-      registerInteractiveMesh(flexDeepMesh, "forearm_flexors_deep", "muscular", true);
-      musGrp.add(flexDeepMesh);
+      // 4 Gân cơ gấp nông chạy vào các ngón II - V
+      const fdsTendons = new THREE.Group();
+      [-0.41, -0.36, -0.315, -0.275].forEach(xEnd => {
+        const tCurve = new THREE.LineCurve3(
+          new THREE.Vector3(-0.37, 0.20, 0.055),
+          new THREE.Vector3(xEnd, 0.02, 0.035)
+        );
+        fdsTendons.add(new THREE.Mesh(new THREE.TubeGeometry(tCurve, 8, 0.012, 8, false), Materials.tendon));
+      });
+
+      musGrp.add(fdsMesh, fdsTendons);
+
+      // --- 3.9 Nhóm cơ gấp cẳng tay sâu (Forearm Flexors Deep: FDP, FPL, PQ - Sâu) ---
+      const flexDeepMesh = createMuscleBellyMesh([
+        new THREE.Vector3(-0.33, 0.82, 0.015),
+        new THREE.Vector3(-0.34, 0.62, 0.030),
+        new THREE.Vector3(-0.35, 0.40, 0.032),
+        new THREE.Vector3(-0.36, 0.22, 0.035)
+      ], 0.064, 0.024, Materials.muscleDeep, "forearm_flexors_deep", "muscular", true);
+
+      // Cơ sấp vuông (Pronator quadratus - tấm cơ sâu nằm ngang sát cổ tay)
+      const pqMesh = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.05, 0.015), Materials.muscleDeep);
+      pqMesh.position.set(-0.38, 0.28, 0.022);
+      registerInteractiveMesh(pqMesh, "forearm_flexors_deep", "muscular", true);
+
+      musGrp.add(flexDeepMesh, pqMesh);
 
       // --- 3.10 Nhóm cơ duỗi cẳng tay nông (Forearm Extensors Superficial) ---
-      const extSupCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.44, 1.05, -0.01), // Mỏm trên lồi cầu ngoài
-        new THREE.Vector3(-0.43, 0.82, -0.06), // ECRL, ECRB, ED
-        new THREE.Vector3(-0.40, 0.58, -0.06),
-        new THREE.Vector3(-0.38, 0.26, -0.04)  // Mu cổ tay
-      ]);
-      const extSupMesh = new THREE.Mesh(new THREE.TubeGeometry(extSupCurve, 24, 0.066, 14, false), Materials.muscle);
-      registerInteractiveMesh(extSupMesh, "forearm_extensors_superficial", "muscular", false);
-      musGrp.add(extSupMesh);
+      const extSupMesh = createMuscleBellyMesh([
+        new THREE.Vector3(-0.45, 1.05, -0.01), // Mỏm trên lồi cầu ngoài
+        new THREE.Vector3(-0.44, 0.84, -0.06), // Khối cơ duỗi phồng mặt sau
+        new THREE.Vector3(-0.41, 0.60, -0.06),
+        new THREE.Vector3(-0.38, 0.28, -0.04)  // Chạy về mu cổ tay
+      ], 0.072, 0.026, Materials.muscleSuperficial, "forearm_extensors_superficial", "muscular", false);
+
+      // Dải gân duỗi các ngón tỏa ra mu tay
+      const extTendons = new THREE.Group();
+      [-0.41, -0.36, -0.315, -0.275].forEach(xEnd => {
+        const tCurve = new THREE.LineCurve3(
+          new THREE.Vector3(-0.38, 0.28, -0.04),
+          new THREE.Vector3(xEnd, 0.02, -0.01)
+        );
+        extTendons.add(new THREE.Mesh(new THREE.TubeGeometry(tCurve, 8, 0.011, 8, false), Materials.tendon));
+      });
+
+      musGrp.add(extSupMesh, extTendons);
 
       // --- 3.11 Nhóm cơ duỗi sâu & Hõm lào giải phẫu (Deep Extensors & Snuffbox - Sâu) ---
-      const extDeepCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.34, 0.70, -0.03),
-        new THREE.Vector3(-0.38, 0.52, -0.02),
-        new THREE.Vector3(-0.42, 0.34, 0.01),
-        new THREE.Vector3(-0.45, 0.18, 0.04)  // Gốc ngón cái (APL, EPB, EPL)
-      ]);
-      const extDeepMesh = new THREE.Mesh(new THREE.TubeGeometry(extDeepCurve, 20, 0.048, 12, false), Materials.muscle);
-      registerInteractiveMesh(extDeepMesh, "forearm_extensors_deep", "muscular", true);
-      musGrp.add(extDeepMesh);
+      const extDeepMesh = createMuscleBellyMesh([
+        new THREE.Vector3(-0.34, 0.72, -0.03),
+        new THREE.Vector3(-0.38, 0.54, -0.02),
+        new THREE.Vector3(-0.42, 0.36, 0.01),
+        new THREE.Vector3(-0.45, 0.19, 0.04)  // Gân bám gốc ngón cái (APL, EPB, EPL)
+      ], 0.054, 0.020, Materials.muscleDeep, "forearm_extensors_deep", "muscular", true);
 
-      // --- 3.12 Cơ nội tại bàn tay: Mô cái & Mô út (Intrinsic Hand Muscles) ---
-      // Mô cái (Thenar eminence)
-      const thenarMesh = new THREE.Mesh(new THREE.SphereGeometry(0.048, 16, 16), Materials.muscle);
-      thenarMesh.position.set(-0.43, 0.06, 0.06);
-      thenarMesh.scale.set(1.1, 1.4, 0.85);
+      // Hai gờ gân tạo nên HÕM LÀO GIẢI PHẪU (Anatomical Snuffbox)
+      // Gân APL & EPB (bờ ngoài)
+      const snuffboxLateralTendon = new THREE.Mesh(
+        new THREE.TubeGeometry(new THREE.LineCurve3(
+          new THREE.Vector3(-0.43, 0.26, 0.03),
+          new THREE.Vector3(-0.46, 0.14, 0.05)
+        ), 8, 0.012, 8, false),
+        Materials.tendon
+      );
+      // Gân EPL (bờ trong vòng qua củ Lister)
+      const snuffboxMedialTendon = new THREE.Mesh(
+        new THREE.TubeGeometry(new THREE.LineCurve3(
+          new THREE.Vector3(-0.40, 0.26, 0.01),
+          new THREE.Vector3(-0.45, 0.12, 0.03)
+        ), 8, 0.012, 8, false),
+        Materials.tendon
+      );
 
-      // Mô út (Hypothenar eminence)
-      const hypothenarMesh = new THREE.Mesh(new THREE.SphereGeometry(0.042, 14, 14), Materials.muscle);
-      hypothenarMesh.position.set(-0.30, 0.06, 0.04);
-      hypothenarMesh.scale.set(0.9, 1.4, 0.8);
+      musGrp.add(extDeepMesh, snuffboxLateralTendon, snuffboxMedialTendon);
+
+      // --- 3.12 Cơ nội tại bàn tay: Gò Mô Cái & Gò Mô Út (Intrinsic Hand Muscles) ---
+      // Mô cái (Thenar eminence - khối cơ tròn đầy ở gốc ngón cái do TK giữa chi phối)
+      const thenarMesh = new THREE.Mesh(new THREE.SphereGeometry(0.048, 18, 18), Materials.muscleSuperficial);
+      thenarMesh.position.set(-0.43, 0.06, 0.065);
+      thenarMesh.scale.set(1.15, 1.45, 0.90);
+
+      // Mô út (Hypothenar eminence - khối cơ ở gốc ngón út do TK trụ chi phối)
+      const hypothenarMesh = new THREE.Mesh(new THREE.SphereGeometry(0.042, 16, 16), Materials.muscleSuperficial);
+      hypothenarMesh.position.set(-0.295, 0.06, 0.042);
+      hypothenarMesh.scale.set(0.92, 1.40, 0.85);
 
       registerInteractiveMesh(thenarMesh, "hand_intrinsic_muscles", "muscular", false);
       registerInteractiveMesh(hypothenarMesh, "hand_intrinsic_muscles", "muscular", false);
@@ -3850,39 +4001,39 @@ const ANATOMY_DATABASE = {
       const brachialCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.30, 1.76, 0.04), // ĐM nách
         new THREE.Vector3(-0.32, 1.55, 0.05),
-        new THREE.Vector3(-0.32, 1.35, 0.05), // Bờ trong cơ nhị đầu
+        new THREE.Vector3(-0.32, 1.35, 0.05), // Chạy trong ống cánh tay dọc bờ trong cơ nhị đầu
         new THREE.Vector3(-0.31, 1.15, 0.04),
-        new THREE.Vector3(-0.33, 1.02, 0.04)  // Hố khuỷu (bắt mạch / đo HA)
+        new THREE.Vector3(-0.33, 1.02, 0.04)  // Hố khuỷu (vị trí đo huyết áp bằng ống nghe)
       ]);
       const brachialGeo = new THREE.TubeGeometry(brachialCurve, 28, 0.024, 12, false);
       const brachialMesh = new THREE.Mesh(brachialGeo, Materials.artery);
       registerInteractiveMesh(brachialMesh, "brachial_artery", "cardiovascular");
       vasGrp.add(brachialMesh);
 
-      // --- 4.2 Động mạch quay, Động mạch trụ & Cung gan tay ---
-      // Động mạch quay (Radial Artery - rãnh mạch quay & hõm lào)
+      // --- 4.2 Động mạch quay, Động mạch trụ & Các cung gan tay ---
+      // Động mạch quay (Radial Artery - bắt mạch ở rãnh mạch quay & đi qua đáy hõm lào)
       const radialArtCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.33, 1.00, 0.04),
         new THREE.Vector3(-0.38, 0.80, 0.05),
         new THREE.Vector3(-0.42, 0.55, 0.05),
-        new THREE.Vector3(-0.43, 0.28, 0.05), // Rãnh mạch quay
-        new THREE.Vector3(-0.45, 0.16, 0.03), // Đáy hõm lào
+        new THREE.Vector3(-0.43, 0.28, 0.05), // RÃNH MẠCH QUAY (BẮT MẠCH)
+        new THREE.Vector3(-0.45, 0.16, 0.03), // ĐÁY HÕM LÀO GIẢI PHẪU
         new THREE.Vector3(-0.40, 0.08, 0.03)  // Cung gan tay sâu
       ]);
-      const radialArtMesh = new THREE.Mesh(new THREE.TubeGeometry(radialArtCurve, 24, 0.018, 10, false), Materials.artery);
+      const radialArtMesh = new THREE.Mesh(new THREE.TubeGeometry(radialArtCurve, 26, 0.018, 10, false), Materials.artery);
 
-      // Động mạch trụ (Ulnar Artery - kênh Guyon & cung gan tay nông)
+      // Động mạch trụ (Ulnar Artery - qua kênh Guyon vào gan tay)
       const ulnarArtCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.33, 1.00, 0.04),
         new THREE.Vector3(-0.30, 0.80, 0.02),
         new THREE.Vector3(-0.29, 0.55, 0.02),
         new THREE.Vector3(-0.30, 0.28, 0.03),
-        new THREE.Vector3(-0.32, 0.16, 0.05), // Kênh Guyon
+        new THREE.Vector3(-0.32, 0.16, 0.05), // KÊNH GUYON
         new THREE.Vector3(-0.35, 0.07, 0.05)  // Cung gan tay nông
       ]);
-      const ulnarArtMesh = new THREE.Mesh(new THREE.TubeGeometry(ulnarArtCurve, 24, 0.018, 10, false), Materials.artery);
+      const ulnarArtMesh = new THREE.Mesh(new THREE.TubeGeometry(ulnarArtCurve, 26, 0.018, 10, false), Materials.artery);
 
-      // Cung động mạch gan tay (Palmar Arches)
+      // Cung động mạch gan tay (Palmar Arch)
       const archCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.40, 0.08, 0.04),
         new THREE.Vector3(-0.36, 0.05, 0.05),
@@ -3894,32 +4045,32 @@ const ANATOMY_DATABASE = {
       registerInteractiveMesh(ulnarArtMesh, "radial_ulnar_arteries", "cardiovascular");
       vasGrp.add(radialArtMesh, ulnarArtMesh, archMesh);
 
-      // --- 4.3 Tĩnh mạch nông (Đầu, Nền, Giữa khuỷu) ---
-      // Tĩnh mạch đầu (Cephalic vein)
+      // --- 4.3 Mạng tĩnh mạch nông: Đầu, Nền & Tĩnh mạch giữa khuỷu ---
+      // Tĩnh mạch đầu (Cephalic vein) chạy ở phía ngoài
       const cephalicCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.45, 0.25, 0.06),
         new THREE.Vector3(-0.46, 0.60, 0.07),
-        new THREE.Vector3(-0.44, 0.98, 0.07), // Phía ngoài hố khuỷu
+        new THREE.Vector3(-0.44, 0.98, 0.07),
         new THREE.Vector3(-0.44, 1.35, 0.10), // Rãnh delta ngực
         new THREE.Vector3(-0.38, 1.72, 0.12)
       ]);
       const cephalicMesh = new THREE.Mesh(new THREE.TubeGeometry(cephalicCurve, 24, 0.019, 10, false), Materials.vein);
 
-      // Tĩnh mạch nền (Basilic vein)
+      // Tĩnh mạch nền (Basilic vein) chạy ở phía trong
       const basilicCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.28, 0.25, 0.05),
         new THREE.Vector3(-0.27, 0.60, 0.05),
-        new THREE.Vector3(-0.28, 0.98, 0.06), // Phía trong hố khuỷu
+        new THREE.Vector3(-0.28, 0.98, 0.06),
         new THREE.Vector3(-0.29, 1.35, 0.06)
       ]);
       const basilicMesh = new THREE.Mesh(new THREE.TubeGeometry(basilicCurve, 20, 0.019, 10, false), Materials.vein);
 
-      // Tĩnh mạch giữa khuỷu (Median cubital vein - lấy máu xét nghiệm)
+      // TĨNH MẠCH GIỮA KHUỶU (Median Cubital Vein - Vị trí số 1 lấy máu xét nghiệm & tiêm truyền)
       const medianCubitalCurve = new THREE.LineCurve3(
-        new THREE.Vector3(-0.42, 0.96, 0.07), // Từ TM đầu
-        new THREE.Vector3(-0.29, 1.02, 0.06)  // Đến TM nền
+        new THREE.Vector3(-0.42, 0.96, 0.075), // Nối từ TM đầu
+        new THREE.Vector3(-0.29, 1.02, 0.065)  // Đến TM nền
       );
-      const medianCubitalMesh = new THREE.Mesh(new THREE.TubeGeometry(medianCubitalCurve, 10, 0.021, 10, false), Materials.vein);
+      const medianCubitalMesh = new THREE.Mesh(new THREE.TubeGeometry(medianCubitalCurve, 10, 0.022, 10, false), Materials.vein);
 
       registerInteractiveMesh(medianCubitalMesh, "arm_superficial_veins", "cardiovascular");
       registerInteractiveMesh(cephalicMesh, "arm_superficial_veins", "cardiovascular");
@@ -3927,67 +4078,68 @@ const ANATOMY_DATABASE = {
 
       // =======================================================================
       // 5. HỆ THẦN KINH CHI TRÊN (NERVOUS SYSTEM)
+      // Dây thần kinh màu vàng y khoa (Materials.nerve)
       // =======================================================================
       const nerGrp = armGroups.nervous;
 
       // --- 5.1 Thần kinh quay (Radial Nerve - Rãnh xoắn xương cánh tay -> Bàn tay rủ cổ cò) ---
       const radialNrvCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.32, 1.72, -0.04), // Bó sau
-        new THREE.Vector3(-0.36, 1.48, -0.08), // Vòng vào rãnh xoắn mặt sau
-        new THREE.Vector3(-0.41, 1.25, -0.04), // Chui qua vách gian cơ ngoài
+        new THREE.Vector3(-0.32, 1.72, -0.04), // Bó sau đám rối cánh tay
+        new THREE.Vector3(-0.36, 1.48, -0.08), // Vòng xoắn trong rãnh TK quay ở mặt sau xương cánh tay
+        new THREE.Vector3(-0.41, 1.25, -0.04), // Chọc qua vách gian cơ ngoài ra trước
         new THREE.Vector3(-0.43, 1.06, 0.03),  // Trước mỏm trên lồi cầu ngoài
         new THREE.Vector3(-0.44, 0.80, 0.04),
         new THREE.Vector3(-0.45, 0.50, 0.04),
-        new THREE.Vector3(-0.46, 0.25, 0.04)   // Nhánh nông tới mu hõm lào
+        new THREE.Vector3(-0.46, 0.25, 0.04)   // Nhánh nông phân nhánh cảm giác hõm lào
       ]);
-      const radialNrvGeo = new THREE.TubeGeometry(radialNrvCurve, 32, 0.018, 10, false);
+      const radialNrvGeo = new THREE.TubeGeometry(radialNrvCurve, 32, 0.019, 10, false);
       const radialNrvMesh = new THREE.Mesh(radialNrvGeo, Materials.nerve);
       registerInteractiveMesh(radialNrvMesh, "radial_nerve", "nervous");
       nerGrp.add(radialNrvMesh);
 
-      // --- 5.2 Thần kinh giữa (Median Nerve - Đi cùng ĐM cánh tay -> Ống cổ tay -> Bàn tay khỉ) ---
+      // --- 5.2 Thần kinh giữa (Median Nerve - Đi cùng ĐM cánh tay -> CHUI QUA ỐNG CỔ TAY -> Bàn tay khỉ) ---
       const medianNrvCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.31, 1.72, 0.03), // Hợp bởi bó ngoài & trong
+        new THREE.Vector3(-0.31, 1.72, 0.03), // Hợp bởi bó ngoài và bó trong
         new THREE.Vector3(-0.32, 1.42, 0.04),
         new THREE.Vector3(-0.32, 1.15, 0.04),
         new THREE.Vector3(-0.33, 1.02, 0.04), // Hố khuỷu
-        new THREE.Vector3(-0.34, 0.78, 0.05), // Giữa cẳng tay
+        new THREE.Vector3(-0.34, 0.78, 0.05), // Chui giữa 2 đầu cơ sấp tròn
         new THREE.Vector3(-0.35, 0.45, 0.05),
-        new THREE.Vector3(-0.36, 0.18, 0.05), // CHUI QUA ỐNG CỔ TAY
-        new THREE.Vector3(-0.38, 0.05, 0.06)  // Nhánh vận động mô cái
+        new THREE.Vector3(-0.365, 0.16, 0.055), // CHUI QUA ỐNG CỔ TAY (CARPAL TUNNEL)
+        new THREE.Vector3(-0.38, 0.05, 0.065)   // Nhánh vận động mô cái (ngón cái)
       ]);
-      const medianNrvGeo = new THREE.TubeGeometry(medianNrvCurve, 32, 0.018, 10, false);
+      const medianNrvGeo = new THREE.TubeGeometry(medianNrvCurve, 32, 0.019, 10, false);
       const medianNrvMesh = new THREE.Mesh(medianNrvGeo, Materials.nerve);
       registerInteractiveMesh(medianNrvMesh, "median_nerve", "nervous");
       nerGrp.add(medianNrvMesh);
 
-      // --- 5.3 Thần kinh trụ (Ulnar Nerve - Sau mỏm trên lồi cầu trong -> Funny bone -> Vuốt trụ) ---
+      // --- 5.3 Thần kinh trụ (Ulnar Nerve - Sau mỏm trên lồi cầu trong FUNNY BONE -> Vuốt trụ) ---
       const ulnarNrvCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.29, 1.72, 0.01), // Bó trong
-        new THREE.Vector3(-0.28, 1.40, 0.0),
+        new THREE.Vector3(-0.28, 1.40, 0.00),
         new THREE.Vector3(-0.26, 1.15, -0.02),
-        new THREE.Vector3(-0.25, 1.04, -0.03), // RÃNH TK TRỤ (FUNNY BONE)
+        new THREE.Vector3(-0.24, 1.04, -0.03), // RÃNH TK TRỤ (FUNNY BONE - DỄ VA CHẠM TÊ GIẬT ĐIỆN)
         new THREE.Vector3(-0.27, 0.80, -0.01),
         new THREE.Vector3(-0.28, 0.50, 0.01),
         new THREE.Vector3(-0.30, 0.22, 0.02),
-        new THREE.Vector3(-0.31, 0.14, 0.04),  // Kênh Guyon
-        new THREE.Vector3(-0.30, 0.02, 0.04)   // Nhánh ngón IV & V
+        new THREE.Vector3(-0.31, 0.14, 0.045), // KÊNH GUYON CỔ TAY
+        new THREE.Vector3(-0.30, 0.02, 0.040)  // Chi phối mô út và cơ gian cốt ngón IV, V
       ]);
-      const ulnarNrvGeo = new THREE.TubeGeometry(ulnarNrvCurve, 32, 0.018, 10, false);
+      const ulnarNrvGeo = new THREE.TubeGeometry(ulnarNrvCurve, 32, 0.019, 10, false);
       const ulnarNrvMesh = new THREE.Mesh(ulnarNrvGeo, Materials.nerve);
       registerInteractiveMesh(ulnarNrvMesh, "ulnar_nerve", "nervous");
       nerGrp.add(ulnarNrvMesh);
 
       // --- 5.4 Thần kinh nách & Thần kinh cơ bì (Axillary & Musculocutaneous) ---
-      // TK nách (vòng qua cổ phẫu thuật)
+      // TK nách (Vòng quanh cổ phẫu thuật xương cánh tay chi phối cơ delta)
       const axillaryNrvCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.34, 1.70, -0.02),
         new THREE.Vector3(-0.42, 1.68, -0.06),
-        new THREE.Vector3(-0.48, 1.66, 0.0) // Vòng quanh cổ phẫu thuật tới cơ delta
+        new THREE.Vector3(-0.48, 1.66, 0.00) // Vòng quanh cổ phẫu thuật ra trước
       ]);
       const axillaryMesh = new THREE.Mesh(new THREE.TubeGeometry(axillaryNrvCurve, 16, 0.018, 8, false), Materials.nerve);
 
-      // TK cơ bì (xuyên qua cơ quạ cánh tay)
+      // TK cơ bì (Xuyên qua cơ quạ cánh tay chi phối khu cơ cánh tay trước)
       const musculoNrvCurve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-0.33, 1.72, 0.06),
         new THREE.Vector3(-0.35, 1.55, 0.08),
