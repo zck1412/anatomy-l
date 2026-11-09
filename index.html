@@ -2300,7 +2300,9 @@ const ANATOMY_DATABASE = {
     };
 
     function createVariableTubeGeometry(curvePoints, radiusFunc, tubularSegments = 32, radialSegments = 16) {
-      const curve = new THREE.CatmullRomCurve3(curvePoints);
+      const curve = (curvePoints && typeof curvePoints.getPointAt === 'function')
+        ? curvePoints
+        : new THREE.CatmullRomCurve3(curvePoints);
       const frames = curve.computeFrenetFrames(tubularSegments, false);
       const geometry = new THREE.BufferGeometry();
       
