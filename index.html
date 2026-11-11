@@ -168,10 +168,10 @@
     <!-- Center 1: Bộ Chọn Phân Vùng Giải Phẫu (Body Region Switcher) -->
     <div class="pointer-events-auto flex items-center bg-slate-900/90 p-1 rounded-xl border border-sky-500/40 shadow-2xl backdrop-blur-md">
       <button id="region-btn-leg" onclick="switchBodyRegion('leg')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-sky-600 text-white shadow-md">
-        <span>🦿 Chi Dưới (Leg & Foot)</span>
+        <span id="txt-region-leg">🦿 Chi Dưới (Leg & Foot)</span>
       </button>
       <button id="region-btn-arm" onclick="switchBodyRegion('arm')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition flex items-center gap-1.5">
-        <span>🦾 Chi Trên (Arm & Hand)</span>
+        <span id="txt-region-arm">🦾 Chi Trên (Arm & Hand)</span>
       </button>
       <button onclick="alert('Module Giải phẫu Thân Mình & Lồng Ngực đang được xây dựng hoàn thiện!')" class="hidden sm:flex px-2 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-400 transition items-center gap-1">
         <span>🫀 Thân Mình</span>
@@ -187,24 +187,30 @@
     <div class="pointer-events-auto flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-700/60 shadow-xl">
       <button id="mode-explore" onclick="switchMode('explore')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-sky-600 shadow-md transition flex items-center gap-1.5">
         <i data-lucide="compass" class="w-3.5 h-3.5"></i>
-        <span>Khám phá 3D</span>
+        <span id="txt-mode-explore">Khám phá 3D</span>
       </button>
       <button id="mode-dissection" onclick="switchMode('dissection')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5">
         <i data-lucide="scissors" class="w-3.5 h-3.5"></i>
-        <span>Bóc tách tầng</span>
+        <span id="txt-mode-dissection">Bóc tách tầng</span>
       </button>
       <button id="mode-crosssection" onclick="switchMode('crosssection')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5">
         <i data-lucide="scan-line" class="w-3.5 h-3.5 text-amber-400"></i>
-        <span>Cắt lát CT/MRI</span>
+        <span id="txt-mode-crosssection">Cắt lát CT/MRI</span>
       </button>
       <button id="mode-quiz" onclick="switchMode('quiz')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5">
         <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i>
-        <span>Ôn thi Y khoa</span>
+        <span id="txt-mode-quiz">Ôn thi Y khoa</span>
       </button>
     </div>
 
     <!-- Quick Tools -->
     <div class="flex items-center space-x-2 pointer-events-auto">
+      <!-- Language Switcher Toggle -->
+      <button id="lang-btn" onclick="toggleLanguage()" title="Chuyển đổi ngôn ngữ / Switch Language" class="glass-panel text-sky-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-sky-500/40 bg-slate-900/90 transition shadow-lg hover:border-sky-400">
+        <i data-lucide="globe" class="w-4 h-4 text-sky-400"></i>
+        <span id="lang-btn-text" class="font-bold font-mono"><span class="text-white underline decoration-sky-400 decoration-2 font-bold">VI</span> | <span class="text-slate-400">EN</span></span>
+      </button>
+
       <!-- Search Input -->
       <div class="relative hidden lg:block w-48">
         <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
@@ -214,14 +220,14 @@
       <!-- Upload GLB -->
       <button onclick="document.getElementById('glb-file-input').click()" title="Nạp file mô hình 3D (.glb, .gltf)" class="glass-panel text-emerald-400 hover:bg-emerald-500/20 px-2.5 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition">
         <i data-lucide="upload-cloud" class="w-4 h-4"></i>
-        <span class="hidden xl:inline">Nạp .GLB</span>
+        <span id="txt-btn-upload-glb" class="hidden xl:inline">Nạp .GLB</span>
       </button>
       <input type="file" id="glb-file-input" accept=".glb,.gltf" style="display:none" onchange="handleGLBUpload(event)">
 
       <!-- Toggle 3D Pins -->
       <button id="btn-toggle-pins" onclick="togglePins()" title="Bật/Tắt Ghim 3D" class="glass-panel text-sky-400 hover:bg-sky-500/20 px-2.5 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition">
         <i data-lucide="map-pin" class="w-4 h-4"></i>
-        <span class="hidden sm:inline">Ghim 3D</span>
+        <span id="txt-btn-pins" class="hidden sm:inline">Ghim 3D</span>
       </button>
 
       <!-- Reset View -->
@@ -240,7 +246,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-white flex items-center gap-2">
-            <span>KIỂM TRA GIẢI PHẪU Y KHOA</span>
+            <span id="quiz-title-text">KIỂM TRA GIẢI PHẪU Y KHOA</span>
             <span id="quiz-region-badge" class="text-[9px] px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 font-mono">Chi Dưới</span>
           </h3>
           <span id="quiz-counter" class="text-[10px] text-sky-400 font-mono">Câu 1/10</span>
@@ -264,7 +270,7 @@
     <!-- User Instruction -->
     <p id="quiz-instruction" class="text-[11px] text-slate-400 mt-2 flex items-center gap-1">
       <i data-lucide="mouse-pointer" class="w-3.5 h-3.5"></i>
-      Hãy nhấp trực tiếp vào bộ phận đó trên mô hình 3D!
+      <span id="txt-quiz-instruction">Hãy nhấp trực tiếp vào bộ phận đó trên mô hình 3D!</span>
     </p>
 
     <!-- Quiz Feedback Box -->
@@ -272,10 +278,10 @@
 
     <div class="mt-3 flex items-center justify-between">
       <button onclick="quizShowHint()" class="text-xs text-amber-400/90 hover:text-amber-300 flex items-center gap-1 transition">
-        <i data-lucide="help-circle" class="w-3.5 h-3.5"></i> Gợi ý vị trí
+        <i data-lucide="help-circle" class="w-3.5 h-3.5"></i> <span id="txt-quiz-hint">Gợi ý vị trí</span>
       </button>
       <button id="btn-next-question" onclick="nextQuizQuestion()" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow-md transition flex items-center gap-1 hidden">
-        <span>Câu tiếp theo</span>
+        <span id="txt-btn-next-question">Câu tiếp theo</span>
         <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
       </button>
     </div>
@@ -289,14 +295,14 @@
       <div class="flex items-center justify-between mb-1.5">
         <div class="flex items-center space-x-2">
           <i data-lucide="scan-line" class="w-4 h-4 text-amber-400"></i>
-          <h2 class="text-xs font-bold tracking-wider text-amber-300 uppercase">Mặt Cắt Ngang (CT/MRI)</h2>
+          <h2 id="crosssection-title" class="text-xs font-bold tracking-wider text-amber-300 uppercase">Mặt Cắt Ngang (CT/MRI)</h2>
         </div>
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" id="toggle-clipping" class="sr-only peer" onchange="toggleClippingPlane(this.checked)">
           <div class="w-8 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-500"></div>
         </label>
       </div>
-      <p class="text-[10px] text-slate-300 mb-2">Kéo thanh trượt để cắt ngang qua bất kỳ cao độ nào:</p>
+      <p id="crosssection-desc" class="text-[10px] text-slate-300 mb-2">Kéo thanh trượt để cắt ngang qua bất kỳ cao độ nào:</p>
       <input type="range" id="clip-height-slider" min="-2.2" max="2.6" step="0.05" value="2.6" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-400" oninput="setClipPlaneHeight(this.value)">
       <div id="quick-slices-container" class="grid grid-cols-4 gap-1 text-[9px] font-semibold text-center mt-2">
         <!-- Populated dynamically -->
@@ -308,12 +314,12 @@
       <div class="flex items-center justify-between mb-1.5">
         <div class="flex items-center space-x-2">
           <i data-lucide="layers" class="w-4 h-4 text-sky-400"></i>
-          <h2 class="text-xs font-bold tracking-wider text-white uppercase">Mức Bóc Tách (Dissection)</h2>
+          <h2 id="dissection-title" class="text-xs font-bold tracking-wider text-white uppercase">Mức Bóc Tách (Dissection)</h2>
         </div>
         <span id="dissection-level-label" class="text-[11px] font-mono px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-400/30">Lớp 0: Đầy đủ</span>
       </div>
       <input type="range" id="dissection-slider" min="0" max="6" step="1" value="0" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-400" oninput="setDissectionDepth(this.value)">
-      <div class="flex justify-between text-[9px] text-slate-400 font-mono mt-1 px-1">
+      <div id="dissection-ticks" class="flex justify-between text-[9px] text-slate-400 font-mono mt-1 px-1">
         <span>Toàn bộ</span>
         <span>Cơ nông</span>
         <span>Cơ sâu</span>
@@ -324,14 +330,14 @@
 
     <!-- SECTION 3: GÓC NHÌN GIẢI PHẪU -->
     <div class="mb-3.5">
-      <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block flex items-center gap-1">
-        <i data-lucide="video" class="w-3 h-3 text-sky-400"></i> Góc nhìn giải phẫu
+      <label id="camera-views-title" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block flex items-center gap-1">
+        <i data-lucide="video" class="w-3 h-3 text-sky-400"></i> <span>Góc nhìn giải phẫu</span>
       </label>
       <div class="grid grid-cols-3 gap-1 text-[11px] font-medium">
-        <button onclick="setCameraAngle('anterior')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Trước</button>
-        <button onclick="setCameraAngle('posterior')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Sau</button>
-        <button onclick="setCameraAngle('medial')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Trong</button>
-        <button onclick="setCameraAngle('lateral')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Ngoài</button>
+        <button id="cam-btn-anterior" onclick="setCameraAngle('anterior')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Trước</button>
+        <button id="cam-btn-posterior" onclick="setCameraAngle('posterior')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Sau</button>
+        <button id="cam-btn-medial" onclick="setCameraAngle('medial')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Trong</button>
+        <button id="cam-btn-lateral" onclick="setCameraAngle('lateral')" class="bg-slate-900/80 hover:bg-sky-600/30 text-slate-300 hover:text-sky-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60">Ngoài</button>
         <button id="camera-btn-joint" onclick="setCameraAngle('joint')" class="bg-teal-900/40 hover:bg-teal-600/40 text-teal-300 py-1.5 px-2 rounded-lg transition border border-teal-500/40 font-bold">Khớp gối</button>
         <button id="camera-btn-distal" onclick="setCameraAngle('distal')" class="bg-indigo-900/40 hover:bg-indigo-600/40 text-indigo-300 py-1.5 px-2 rounded-lg transition border border-indigo-500/40 font-bold">Bàn chân</button>
       </div>
@@ -340,7 +346,7 @@
     <!-- SECTION 4: BẬT/TẮT TỪNG HỆ CƠ QUAN -->
     <div class="space-y-2" id="layers-container">
       <div class="flex items-center justify-between pb-1">
-        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hệ cơ quan</span>
+        <span id="layers-header-title" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hệ cơ quan</span>
         <span id="active-layers-count" class="text-[10px] px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 font-mono">7/7</span>
       </div>
 
@@ -348,7 +354,7 @@
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
           <input type="checkbox" id="layer-skeletal" checked class="w-4 h-4 accent-sky-400 rounded cursor-pointer" onchange="toggleLayer('skeletal', this.checked)">
-          <span class="text-xs font-semibold text-slate-200">1. Hệ Xương (Skeletal System)</span>
+          <span id="layer-txt-skeletal" class="text-xs font-semibold text-slate-200">1. Hệ Xương (Skeletal System)</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-slate-200 shadow-[0_0_8px_rgba(241,245,249,0.5)]"></span>
       </div>
@@ -357,7 +363,7 @@
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
           <input type="checkbox" id="layer-ligaments" checked class="w-4 h-4 accent-teal-400 rounded cursor-pointer" onchange="toggleLayer('ligaments', this.checked)">
-          <span class="text-xs font-semibold text-teal-300">2. Dây chằng, Sụn khớp & Cân mạc</span>
+          <span id="layer-txt-ligaments" class="text-xs font-semibold text-teal-300">2. Dây chằng, Sụn khớp & Cân mạc</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.5)]"></span>
       </div>
@@ -366,7 +372,7 @@
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
           <input type="checkbox" id="layer-muscular" checked class="w-4 h-4 accent-rose-400 rounded cursor-pointer" onchange="toggleLayer('muscular', this.checked)">
-          <span class="text-xs font-semibold text-rose-300">3. Hệ Thống Cơ (Superficial & Deep)</span>
+          <span id="layer-txt-muscular" class="text-xs font-semibold text-rose-300">3. Hệ Thống Cơ (Superficial & Deep)</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]"></span>
       </div>
@@ -375,7 +381,7 @@
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
           <input type="checkbox" id="layer-cardiovascular" checked class="w-4 h-4 accent-red-400 rounded cursor-pointer" onchange="toggleLayer('cardiovascular', this.checked)">
-          <span class="text-xs font-semibold text-red-300">4. Mạch Máu (Động mạch & Tĩnh mạch)</span>
+          <span id="layer-txt-cardiovascular" class="text-xs font-semibold text-red-300">4. Mạch Máu (Động mạch & Tĩnh mạch)</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></span>
       </div>
@@ -384,7 +390,7 @@
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
           <input type="checkbox" id="layer-nervous" checked class="w-4 h-4 accent-amber-400 rounded cursor-pointer" onchange="toggleLayer('nervous', this.checked)">
-          <span class="text-xs font-semibold text-amber-300">5. Hệ Thần Kinh Ngoại Biên</span>
+          <span id="layer-txt-nervous" class="text-xs font-semibold text-amber-300">5. Hệ Thần Kinh Ngoại Biên</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]"></span>
       </div>
@@ -393,7 +399,7 @@
       <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex items-center justify-between">
         <label class="flex items-center space-x-2.5 cursor-pointer">
           <input type="checkbox" id="layer-lymphatic" checked class="w-4 h-4 accent-emerald-400 rounded cursor-pointer" onchange="toggleLayer('lymphatic', this.checked)">
-          <span class="text-xs font-semibold text-emerald-300">6. Hệ Bạch Huyết (Lymph Nodes)</span>
+          <span id="layer-txt-lymphatic" class="text-xs font-semibold text-emerald-300">6. Hệ Bạch Huyết (Lymph Nodes)</span>
         </label>
         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]"></span>
       </div>
@@ -403,12 +409,12 @@
         <div class="flex items-center justify-between">
           <label class="flex items-center space-x-2.5 cursor-pointer">
             <input type="checkbox" id="layer-integumentary" checked class="w-4 h-4 accent-indigo-400 rounded cursor-pointer" onchange="toggleLayer('integumentary', this.checked)">
-            <span class="text-xs font-semibold text-indigo-300">7. Lớp Da & Mô Dưới Da (X-Ray)</span>
+            <span id="layer-txt-integumentary" class="text-xs font-semibold text-indigo-300">7. Lớp Da & Mô Dưới Da (X-Ray)</span>
           </label>
           <span class="w-2.5 h-2.5 rounded-full bg-indigo-400 shadow-[0_0_8px_rgba(129,140,248,0.5)]"></span>
         </div>
         <div class="flex items-center space-x-2 pl-6 pt-1">
-          <span class="text-[9px] text-slate-400">Độ trong suốt X-Ray:</span>
+          <span id="skin-opacity-txt" class="text-[9px] text-slate-400">Độ trong suốt X-Ray:</span>
           <input type="range" id="skin-opacity" min="0.05" max="0.75" step="0.05" value="0.22" class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-sky-400" oninput="setSkinOpacity(this.value)">
         </div>
       </div>
@@ -416,8 +422,8 @@
 
     <!-- SECTION 5: LỌC NHÓM CƠ THEO CHỨC NĂNG -->
     <div class="mt-3.5 pt-3 border-t border-slate-700/60">
-      <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block flex items-center gap-1">
-        <i data-lucide="zap" class="w-3 h-3 text-amber-400"></i> Lọc nhóm vận động (Kinesiology)
+      <label id="kinesiology-filter-title" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block flex items-center gap-1">
+        <i data-lucide="zap" class="w-3 h-3 text-amber-400"></i> <span>Lọc nhóm vận động (Kinesiology)</span>
       </label>
       <select id="functional-group-select" onchange="filterFunctionalGroup(this.value)" class="w-full bg-slate-900/90 border border-slate-700 rounded-lg py-1.5 px-2.5 text-xs text-sky-200 focus:outline-none focus:border-sky-400">
         <!-- Populated dynamically -->
@@ -426,8 +432,8 @@
 
     <!-- SECTION 6: MÔ PHỎNG ĐỘNG TÁC -->
     <div class="mt-3.5 pt-3 border-t border-slate-700/60">
-      <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block flex items-center gap-1">
-        <i data-lucide="play-circle" class="w-3 h-3 text-emerald-400"></i> Mô phỏng chuyển động khớp
+      <label id="kinesiology-motion-title" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block flex items-center gap-1">
+        <i data-lucide="play-circle" class="w-3 h-3 text-emerald-400"></i> <span>Mô phỏng chuyển động khớp</span>
       </label>
       <div id="kinesiology-buttons-container" class="grid grid-cols-2 gap-1.5 text-[11px] font-medium">
         <!-- Populated dynamically -->
@@ -465,15 +471,15 @@
     <!-- Tab 1: Vị trí & Nguyên ủy - Bám tận -->
     <div id="tab-content-origin" class="space-y-2 text-xs leading-relaxed max-h-48 overflow-y-auto pr-1">
       <div>
-        <span class="text-slate-400 font-semibold block text-[10px] uppercase tracking-wider">Vị trí giải phẫu:</span>
+        <span id="lbl-location" class="text-slate-400 font-semibold block text-[10px] uppercase tracking-wider">Vị trí giải phẫu:</span>
         <p id="info-location" class="text-slate-200 text-[11px]"></p>
       </div>
       <div>
-        <span class="text-emerald-400 font-semibold block text-[10px] uppercase tracking-wider">Nguyên ủy (Origin):</span>
+        <span id="lbl-origin" class="text-emerald-400 font-semibold block text-[10px] uppercase tracking-wider">Nguyên ủy (Origin):</span>
         <p id="info-origin" class="text-slate-200 text-[11px]"></p>
       </div>
       <div>
-        <span class="text-amber-400 font-semibold block text-[10px] uppercase tracking-wider">Bám tận (Insertion):</span>
+        <span id="lbl-insertion" class="text-amber-400 font-semibold block text-[10px] uppercase tracking-wider">Bám tận (Insertion):</span>
         <p id="info-insertion" class="text-slate-200 text-[11px]"></p>
       </div>
     </div>
@@ -481,11 +487,11 @@
     <!-- Tab 2: Chức năng & Thần kinh -->
     <div id="tab-content-action" class="space-y-2 text-xs leading-relaxed max-h-48 overflow-y-auto pr-1 hidden">
       <div>
-        <span class="text-sky-400 font-semibold block text-[10px] uppercase tracking-wider">Thần kinh chi phối:</span>
+        <span id="lbl-innervation" class="text-sky-400 font-semibold block text-[10px] uppercase tracking-wider">Thần kinh chi phối:</span>
         <p id="info-innervation" class="text-slate-200 text-[11px]"></p>
       </div>
       <div>
-        <span class="text-indigo-400 font-semibold block text-[10px] uppercase tracking-wider">Động tác chính (Action):</span>
+        <span id="lbl-action" class="text-indigo-400 font-semibold block text-[10px] uppercase tracking-wider">Động tác chính (Action):</span>
         <p id="info-action" class="text-slate-200 text-[11px]"></p>
       </div>
     </div>
@@ -493,8 +499,8 @@
     <!-- Tab 3: Ý nghĩa lâm sàng & Bệnh học -->
     <div id="tab-content-clinical" class="space-y-2 text-xs leading-relaxed max-h-48 overflow-y-auto pr-1 hidden">
       <div class="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-200">
-        <span class="text-rose-400 font-bold block text-[10px] uppercase tracking-wider mb-1 flex items-center gap-1">
-          <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Điểm chốt lâm sàng Y khoa:
+        <span id="lbl-clinical" class="text-rose-400 font-bold block text-[10px] uppercase tracking-wider mb-1 flex items-center gap-1">
+          <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> <span>Điểm chốt lâm sàng Y khoa:</span>
         </span>
         <p id="info-clinical" class="text-[11px] leading-relaxed"></p>
       </div>
@@ -504,7 +510,7 @@
     <div class="mt-4 pt-3 border-t border-slate-700/80 flex items-center justify-between text-xs">
       <button onclick="pronouncePartName()" class="text-sky-400 hover:text-sky-300 font-medium flex items-center gap-1.5 transition">
         <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
-        <span>Phát âm Latin</span>
+        <span id="txt-pronounce">Phát âm Latin</span>
       </button>
       <div class="flex items-center space-x-1.5">
         <button id="btn-isolate-part" onclick="isolateSelectedPart()" class="bg-sky-600/30 hover:bg-sky-600/50 text-sky-200 border border-sky-500/40 px-2.5 py-1 rounded-lg font-medium transition flex items-center gap-1">
@@ -2366,13 +2372,28 @@ const ANATOMY_DATABASE = {
       return mesh;
     }
 
-    function registerInteractiveMesh(mesh, partId, layerName, isDeep = false) {
+        function registerInteractiveMesh(mesh, partId, layerName, isDeep = false) {
+      if (!mesh) return;
+      if (interactiveObjects.includes(mesh)) {
+        mesh.userData.partId = partId;
+        mesh.userData.layer = layerName;
+        mesh.userData.isDeep = isDeep;
+        return;
+      }
+      if (mesh.material) {
+        mesh.material = mesh.material.clone();
+      }
+      const origEmissive = (mesh.material && mesh.material.emissive)
+        ? mesh.material.emissive.clone()
+        : new THREE.Color(0, 0, 0);
+
       mesh.userData = {
         isInteractive: true,
         partId: partId,
         layer: layerName,
         isDeep: isDeep,
-        originalMaterial: mesh.material
+        originalMaterial: mesh.material,
+        defaultEmissive: origEmissive
       };
       mesh.castShadow = true;
       mesh.receiveShadow = true;
@@ -4166,7 +4187,7 @@ const ANATOMY_DATABASE = {
     const pinElements = [];
     let pinsVisible = true;
 
-    function init3DPins() {
+        function init3DPins() {
       pinsContainer.innerHTML = '';
       pinElements.length = 0;
 
@@ -4177,7 +4198,9 @@ const ANATOMY_DATABASE = {
 
         const pinDiv = document.createElement('div');
         pinDiv.className = 'pin-marker';
-        const shortName = item.nameVi.split('(')[0].trim();
+        const shortName = currentLang === 'en'
+          ? (item.nameEn ? item.nameEn.split('(')[0].trim() : (item.nameLatin || item.id))
+          : item.nameVi.split('(')[0].trim();
         pinDiv.innerHTML = `
           <div class="pin-dot"></div>
           <div class="pin-label">${shortName}</div>
@@ -4235,21 +4258,14 @@ const ANATOMY_DATABASE = {
     /* =========================================================================
      * BÓC TÁCH ĐA TẦNG (DISSECTION DEPTH SLIDER - NÔNG & SÂU RÕ RỆT)
      * ========================================================================= */
-    const DISSECTION_LABELS = [
-      "Lớp 0: Toàn bộ (Khung hoàn chỉnh)",
-      "Lớp 1: Cân mạc & Dải liên kết",
-      "Lớp 2: Chỉ nhóm cơ nông (Ẩn cơ sâu)",
-      "Lớp 3: Bóc cơ nông lộ cơ sâu",
-      "Lớp 4: Mạch máu & Thần kinh",
-      "Lớp 5: Dây chằng, Khớp & Sụn",
-      "Lớp 6: Khung xương trọn vẹn"
-    ];
-
-    function setDissectionDepth(val) {
+        function setDissectionDepth(val) {
       const level = parseInt(val);
-      document.getElementById('dissection-level-label').textContent = DISSECTION_LABELS[level];
+      const labels = (typeof I18N !== 'undefined' && I18N[currentLang]) ? I18N[currentLang].dissectionLabels : [
+        "Lớp 0: Toàn bộ", "Lớp 1: Cân mạc", "Lớp 2: Cơ nông", "Lớp 3: Cơ sâu", "Lớp 4: Mạch-TK", "Lớp 5: Dây chằng", "Lớp 6: Khung xương"
+      ];
+      const lblEl = document.getElementById('dissection-level-label');
+      if (lblEl) lblEl.textContent = labels[level] || `Level ${level}`;
 
-      // Đặt lại các cơ về mặc định
       interactiveObjects.forEach(obj => {
         if (obj.userData.layer === 'muscular') {
           obj.visible = true;
@@ -4265,7 +4281,6 @@ const ANATOMY_DATABASE = {
           syncAllLayers(true, true, true, true, true, true, false);
           break;
         case 2:
-          // Hiện cơ nông, ẩn hoàn toàn cơ sâu
           syncAllLayers(true, true, true, false, false, false, false);
           interactiveObjects.forEach(obj => {
             if (obj.userData.layer === 'muscular' && obj.userData.isDeep) {
@@ -4274,7 +4289,6 @@ const ANATOMY_DATABASE = {
           });
           break;
         case 3:
-          // Ẩn cơ nông để lộ trọn vẹn các cơ sâu
           syncAllLayers(true, true, true, false, false, false, false);
           interactiveObjects.forEach(obj => {
             if (obj.userData.layer === 'muscular' && !obj.userData.isDeep) {
@@ -4443,11 +4457,984 @@ const ANATOMY_DATABASE = {
       }
     ];
 
+    const ANATOMY_EN_DATA = {
+  "clavicle": {
+    "badge": "Shoulder Girdle",
+    "location": "Subcutaneous S-shaped strut bone connecting sternum to scapula (acromion).",
+    "origin": "Pectoralis major (clavicular head), sternocleidomastoid, anterior deltoid.",
+    "insertion": "Trapezius muscle along posterior border of lateral third.",
+    "innervation": "Supraclavicular nerves (C3-C4).",
+    "action": "Acts as a mechanical strut keeping the upper limb away from the thorax for maximal range of motion.",
+    "clinical": "Most frequently fractured bone in the human body, classically at junction of middle and lateral thirds from a fall onto the shoulder."
+  },
+  "scapula": {
+    "badge": "Shoulder Girdle",
+    "location": "Flat triangular bone overlying ribs 2-7 on the posterolateral thoracic wall.",
+    "origin": "Supraspinatus, infraspinatus, subscapularis, teres major/minor, biceps short head, triceps long head.",
+    "insertion": "Trapezius, serratus anterior, levator scapulae, rhomboid major and minor.",
+    "innervation": "Suprascapular, dorsal scapular, and long thoracic nerves.",
+    "action": "Forms glenoid socket; undergoes protraction, retraction, elevation, depression, and upward/downward rotation.",
+    "clinical": "Winging of scapula indicates long thoracic nerve injury causing serratus anterior muscle paralysis."
+  },
+  "humerus": {
+    "badge": "Upper Arm",
+    "location": "Long bone of the arm articulating proximally with glenoid cavity and distally with radius and ulna.",
+    "origin": "Brachialis, brachioradialis, triceps lateral & medial heads, common flexor and extensor origins.",
+    "insertion": "Pectoralis major, latissimus dorsi, teres major, rotator cuff tendons, deltoid muscle.",
+    "innervation": "Sensory periosteal branches from axillary, radial, and suprascapular nerves.",
+    "action": "Primary structural support and lever arm for motions of shoulder and elbow joints.",
+    "clinical": "Surgical neck fracture risks axillary nerve injury; mid-shaft spiral fracture damages radial nerve in radial groove causing wrist drop; supracondylar fracture risks brachial artery and median nerve injury."
+  },
+  "radius": {
+    "badge": "Forearm",
+    "location": "Lateral bone of the forearm; pivots around the ulna to produce pronation and supination.",
+    "origin": "Flexor digitorum superficialis, flexor pollicis longus, abductor pollicis longus.",
+    "insertion": "Biceps brachii (radial tuberosity), pronator teres, brachioradialis (styloid process), pronator quadratus.",
+    "innervation": "Posterior interosseous nerve (radial) and anterior interosseous nerve (median).",
+    "action": "Pivotal bone for forearm pronation/supination; carries the carpus and hand through radiocarpal joint.",
+    "clinical": "Colles fracture is distal radius fracture with dorsal displacement ('dinner fork' deformity) after FOOSH. Radial styloid forms lateral floor of anatomical snuffbox."
+  },
+  "ulna": {
+    "badge": "Forearm",
+    "location": "Medial stabilizing bone of forearm, tapering from massive proximal olecranon to distal styloid.",
+    "origin": "Triceps, anconeus, flexor carpi ulnaris, flexor digitorum profundus, pronator quadratus.",
+    "insertion": "Brachialis into coronoid process; triceps into olecranon process.",
+    "innervation": "Ulnar nerve and anterior interosseous nerve (median).",
+    "action": "Main stabilizing bone of elbow hinge joint; acts as fixed axis around which radius rotates.",
+    "clinical": "Olecranon fracture disrupts elbow extension; Monteggia fracture is proximal ulnar fracture with anterior radial head dislocation."
+  },
+  "interosseous_membrane_arm": {
+    "badge": "Ligaments & Joints",
+    "location": "Dense fibrous sheet connecting interosseous crests of radius and ulna.",
+    "origin": "Originates from radius and runs obliquely downward and medially.",
+    "insertion": "Inserts into interosseous border of ulna.",
+    "innervation": "Anterior and posterior interosseous nerves.",
+    "action": "Transfers compressive force from radius to ulna; provides extensive attachment for deep forearm muscles.",
+    "clinical": "Essex-Lopresti fracture-dislocation: radial head fracture with disruption of interosseous membrane and distal radioulnar joint (DRUJ)."
+  },
+  "carpal_bones": {
+    "badge": "Wrist",
+    "location": "Eight small bones arranged in proximal (scaphoid, lunate, triquetrum, pisiform) and distal rows (trapezium, trapezoid, capitate, hamate).",
+    "origin": "Carpal groove serves as origin for thenar and hypothenar intrinsic hand muscles.",
+    "insertion": "Flexor and extensor carpi tendons insert into adjacent carpal and metacarpal bases.",
+    "innervation": "Palmar and dorsal cutaneous branches of median, ulnar, and radial nerves.",
+    "action": "Provides multi-axial flexibility, carpal arch formation, and shock absorption for the hand.",
+    "clinical": "Scaphoid fracture (>70% of carpal fractures) carries high risk of avascular necrosis due to retrograde blood supply. Lunate dislocation is most common carpal dislocation."
+  },
+  "metacarpals_arm": {
+    "badge": "Hand",
+    "location": "Five miniature long bones connecting carpal bones to proximal phalanges (I to V).",
+    "origin": "Dorsal and palmar interossei, adductor pollicis.",
+    "insertion": "Flexor and extensor carpi radialis and ulnaris tendons insert into bases.",
+    "innervation": "Deep branch of ulnar nerve and median nerve.",
+    "action": "Forms framework of palm, metacarpal arch, and enables knuckle articulation (MCP joints).",
+    "clinical": "Boxer's fracture: fracture of neck of 5th metacarpal from direct punch impact; Bennett fracture: intra-articular fracture-dislocation at base of 1st metacarpal."
+  },
+  "phalanges_arm": {
+    "badge": "Fingers",
+    "location": "14 miniature bones: 2 in thumb (proximal, distal) and 3 in fingers II-V (proximal, middle, distal).",
+    "origin": "Lumbricals and interossei insert into extensor expansion over phalanges.",
+    "insertion": "FDS inserts into middle phalanges; FDP inserts into distal phalanges.",
+    "innervation": "Palmar digital nerves of median and ulnar nerves.",
+    "action": "Enables precise gripping, pinching, typing, and fine motor manipulation.",
+    "clinical": "Mallet finger: avulsion of extensor terminal slip from base of distal phalanx causing dropped fingertip."
+  },
+  "glenohumeral_joint": {
+    "badge": "Shoulder Joint",
+    "location": "Ball-and-socket synovial joint between humeral head and glenoid cavity of scapula.",
+    "origin": "Capsular ligaments and fibrous glenoid labrum rimming the osseous glenoid margin.",
+    "insertion": "Anatomical neck of humerus and superior margin of glenoid.",
+    "innervation": "Suprascapular, axillary, and lateral pectoral nerves (Hilton's law).",
+    "action": "Most mobile joint in the human body: flexion, extension, abduction, adduction, internal & external rotation, circumduction.",
+    "clinical": "Anterior shoulder dislocation is the most common joint dislocation in the body (>95%). Bankart lesion is tear of anterior-inferior glenoid labrum."
+  },
+  "coracoacromial_arch": {
+    "badge": "Shoulder Joint",
+    "location": "Protective osteofibrous roof formed by coracoid process, acromion, and coracoacromial ligament.",
+    "origin": "Coracoid process of scapula.",
+    "insertion": "Acromion process and inferior surface of clavicle (conoid and trapezoid ligaments).",
+    "innervation": "Suprascapular and lateral pectoral nerves.",
+    "action": "Prevents superior dislocation of humeral head; supports weight of upper limb.",
+    "clinical": "Subacromial impingement syndrome: compression of supraspinatus tendon and subacromial bursa under this arch during overhead arm elevation."
+  },
+  "elbow_ligaments": {
+    "badge": "Elbow Joint",
+    "location": "Ligamentous complex stabilizing elbow hinge joint (UCL, RCL) and proximal radioulnar joint (annular ligament).",
+    "origin": "Medial and lateral epicondyles of humerus; radial notch of ulna.",
+    "insertion": "Olecranon, coronoid process, and encircled around radial head.",
+    "innervation": "Musculocutaneous, median, radial, and ulnar nerves.",
+    "action": "Prevents varus/valgus stress and holds radial head firmly in radial notch during rotation.",
+    "clinical": "Ulnar collateral ligament (UCL) tear is common in baseball pitchers (Tommy John surgery). Nursemaid's elbow is subluxation of radial head out of annular ligament in young children."
+  },
+  "carpal_tunnel_retinaculum": {
+    "badge": "Carpal Tunnel",
+    "location": "Dense fibrous band bridging hook of hamate, pisiform, scaphoid tubercle, and trapezium ridge.",
+    "origin": "Scaphoid tubercle and ridge of trapezium.",
+    "insertion": "Pisiform bone and hook of hamate.",
+    "innervation": "Local tissue sensation from palmar cutaneous branches.",
+    "action": "Forms roof of carpal tunnel, preventing bowstringing of long flexor tendons and protecting median nerve.",
+    "clinical": "Carpal Tunnel Syndrome: compression of median nerve inside tunnel leading to numbness in digits I-III and thenar muscle atrophy (ape-hand deformity)."
+  },
+  "palmar_aponeurosis": {
+    "badge": "Hand",
+    "location": "Thick, triangular fibrous layer covering the central compartment of the palm.",
+    "origin": "Continuous proximally with palmaris longus tendon and flexor retinaculum.",
+    "insertion": "Distally divides into 4 digital slips attaching to fibrous digital sheaths and bases of proximal phalanges.",
+    "innervation": "Palmar cutaneous branch of median nerve.",
+    "action": "Protects deep palmar neurovascular structures and provides firm grip skin anchoring.",
+    "clinical": "Dupuytren contracture: progressive benign fibromatosis of palmar aponeurosis causing flexion contractures of 4th and 5th fingers."
+  },
+  "deltoid": {
+    "badge": "Shoulder Muscle",
+    "location": "Thick triangular muscle capping the shoulder joint.",
+    "origin": "Lateral 1/3 of clavicle (anterior), acromion (middle), and spine of scapula (posterior).",
+    "insertion": "Deltoid tuberosity on lateral mid-shaft of humerus.",
+    "innervation": "Axillary nerve (C5, C6).",
+    "action": "Primary shoulder abductor from 15° to 90°; anterior fibers flex/internally rotate, posterior fibers extend/externally rotate.",
+    "clinical": "Site for IM vaccinations. Atrophy occurs in axillary nerve palsy from surgical neck fractures or shoulder dislocations."
+  },
+  "rotator_cuff_sits": {
+    "badge": "Rotator Cuff (Deep)",
+    "location": "Group of four deep scapular muscles: Supraspinatus, Infraspinatus, Teres minor, and Subscapularis.",
+    "origin": "Supraspinous fossa, infraspinous fossa, lateral scapular border, and subscapular fossa.",
+    "insertion": "Greater tubercle (supraspinatus, infraspinatus, teres minor) and lesser tubercle (subscapularis) of humerus.",
+    "innervation": "Suprascapular nerve, axillary nerve, and upper/lower subscapular nerves.",
+    "action": "Dynamic stabilization of humeral head inside shallow glenoid cavity; external and internal rotation.",
+    "clinical": "Supraspinatus tendon tear is the most common rotator cuff pathology, tested by Empty Can test (Jobe's test)."
+  },
+  "biceps_brachii": {
+    "badge": "Anterior Arm",
+    "location": "Two-headed fusiform muscle prominent on the front of the upper arm.",
+    "origin": "Long head: supraglenoid tubercle of scapula; Short head: coracoid process.",
+    "insertion": "Radial tuberosity and bicipital aponeurosis into deep fascia of forearm.",
+    "innervation": "Musculocutaneous nerve (C5, C6, C7).",
+    "action": "Powerful forearm supinator (especially when flexed); strong elbow flexor.",
+    "clinical": "Long head tendon rupture produces a distal 'Popeye muscle' deformity. Biceps reflex evaluates C5-C6 spinal roots."
+  },
+  "brachialis": {
+    "badge": "Anterior Arm (Deep)",
+    "location": "Broad, flat muscle lying directly beneath biceps brachii on lower anterior humerus.",
+    "origin": "Distal half of anterior shaft of humerus.",
+    "insertion": "Coronoid process and tuberosity of ulna.",
+    "innervation": "Musculocutaneous nerve (C5, C6); lateral aspect receives radial nerve fibers (C7).",
+    "action": "The primary 'workhorse' flexor of the elbow in all positions (pronation and supination).",
+    "clinical": "Unlike biceps, its action is unaffected by forearm rotation because it inserts into the ulna."
+  },
+  "triceps_brachii": {
+    "badge": "Posterior Arm",
+    "location": "Large three-headed muscle occupying the entire posterior compartment of the arm.",
+    "origin": "Long head: infraglenoid tubercle; Lateral head: posterior humerus above radial groove; Medial head: posterior humerus below radial groove.",
+    "insertion": "Olecranon process of ulna and fascia of forearm.",
+    "innervation": "Radial nerve (C6, C7, C8).",
+    "action": "Primary elbow extensor; long head aids shoulder extension and adduction.",
+    "clinical": "Triceps reflex tests C7 root integrity. Tested clinically during crutch-walking or pushing tasks."
+  },
+  "forearm_flexors_superficial": {
+    "badge": "Anterior Forearm",
+    "location": "Muscles originating from medial epicondyle: Pronator teres, Flexor carpi radialis, Palmaris longus, Flexor carpi ulnaris.",
+    "origin": "Common flexor tendon from medial epicondyle of humerus.",
+    "insertion": "Radius shaft, base of 2nd metacarpal, palmar aponeurosis, pisiform and 5th metacarpal.",
+    "innervation": "Median nerve (except FCU innervated by ulnar nerve).",
+    "action": "Forearm pronation, wrist flexion, radial and ulnar wrist deviation.",
+    "clinical": "Medial epicondylitis (Golfer's elbow): chronic overuse inflammation of common flexor tendon."
+  },
+  "flexor_digitorum_superficialis": {
+    "badge": "Anterior Forearm",
+    "location": "Intermediate flexor muscle lying between superficial and deep forearm layers.",
+    "origin": "Medial epicondyle of humerus, coronoid process of ulna, and anterior oblique line of radius.",
+    "insertion": "Four tendons divide to insert into sides of middle phalanges of digits II-V.",
+    "innervation": "Median nerve (C7, C8, T1).",
+    "action": "Flexes proximal interphalangeal (PIP) joints, MCP joints, and wrist joint.",
+    "clinical": "Tested individually by holding adjacent fingers in full extension while patient flexes target finger PIP joint."
+  },
+  "forearm_flexors_deep": {
+    "badge": "Anterior Forearm (Deep)",
+    "location": "Deep muscular layer: Flexor digitorum profundus (FDP), Flexor pollicis longus (FPL), Pronator quadratus (PQ).",
+    "origin": "Anterior ulna, interosseous membrane, and anterior radius shaft.",
+    "insertion": "Distal phalanges of digits II-V (FDP), distal phalanx of thumb (FPL), distal anterior ulna/radius (PQ).",
+    "innervation": "Anterior interosseous nerve (median nerve); medial half of FDP by ulnar nerve.",
+    "action": "Flexes distal interphalangeal (DIP) joints of digits II-V; flexes IP joint of thumb; pronates forearm.",
+    "clinical": "Anterior interosseous nerve syndrome (Kiloh-Nevin syndrome): inability to make an 'OK' sign due to FPL and index FDP weakness."
+  },
+  "brachioradialis": {
+    "badge": "Lateral Forearm",
+    "location": "Prominent superficial muscle along lateral border of forearm.",
+    "origin": "Upper 2/3 of lateral supracondylar ridge of humerus.",
+    "insertion": "Lateral surface of distal radius just proximal to styloid process.",
+    "innervation": "Radial nerve (C5, C6) before dividing into superficial and deep branches.",
+    "action": "Flexes elbow most effectively in mid-pronation (thumb-up position); assists in returning forearm to neutral.",
+    "clinical": "Brachioradialis reflex tests C5-C6 spinal reflex arc via radial nerve."
+  },
+  "forearm_extensors_superficial": {
+    "badge": "Posterior Forearm",
+    "location": "Extensor carpi radialis longus/brevis, Extensor digitorum, Extensor digiti minimi, Extensor carpi ulnaris.",
+    "origin": "Common extensor tendon from lateral epicondyle of humerus.",
+    "insertion": "Bases of 2nd/3rd metacarpals, extensor expansions of digits II-V, base of 5th metacarpal.",
+    "innervation": "Radial nerve and posterior interosseous nerve (C7, C8).",
+    "action": "Extends wrist and fingers at MCP and IP joints; radial and ulnar wrist deviation.",
+    "clinical": "Lateral epicondylitis (Tennis elbow): repetitive microtrauma to extensor carpi radialis brevis tendon origin."
+  },
+  "forearm_extensors_deep": {
+    "badge": "Posterior Forearm (Deep)",
+    "location": "Supinator, Abductor pollicis longus (APL), Extensor pollicis brevis (EPB), Extensor pollicis longus (EPL), Extensor indicis.",
+    "origin": "Posterior surfaces of radius, ulna, and interosseous membrane.",
+    "insertion": "Base of 1st metacarpal (APL), proximal phalanx of thumb (EPB), distal phalanx of thumb (EPL), index extensor hood.",
+    "innervation": "Posterior interosseous nerve (C7, C8).",
+    "action": "Thumb abduction and extension; index finger extension; forearm supination.",
+    "clinical": "De Quervain's tenosynovitis: stenosing inflammation of 1st extensor compartment (APL + EPB), positive Finkelstein's test."
+  },
+  "hand_intrinsic_muscles": {
+    "badge": "Hand",
+    "location": "Thenar group (thumb base), Hypothenar group (little finger base), Lumbricals, and Interossei.",
+    "origin": "Flexor retinaculum, carpal bones, metacarpal shafts, and FDP tendons.",
+    "insertion": "Proximal phalanges, extensor expansions, and sesamoid bones.",
+    "innervation": "Median nerve (LOAF: Lumbricals 1 & 2, Opponens pollicis, Abductor pollicis brevis, Flexor pollicis brevis superficial head); all others by deep branch of ulnar nerve.",
+    "action": "Opposition of thumb and little finger, finger abduction (DAB) and adduction (PAD), fine motor dexterity.",
+    "clinical": "Thenar wasting indicates chronic median nerve compression; intrinsic muscle atrophy with clawing indicates ulnar nerve neuropathy."
+  },
+  "brachial_artery": {
+    "badge": "Cardiovascular",
+    "location": "Main arterial trunk of upper arm, continuation of axillary artery from lower border of teres major to cubital fossa.",
+    "origin": "Continuation of axillary artery at inferior margin of teres major.",
+    "insertion": "Bifurcates opposite radial neck into radial and ulnar arteries.",
+    "innervation": "Sympathetic plexus from cervical sympathetic chain.",
+    "action": "Supplies oxygenated blood to arm, elbow joint, and entirety of forearm and hand.",
+    "clinical": "Primary clinical site for arterial blood pressure measurement (sphygmomanometer) and stethoscope auscultation medial to biceps tendon."
+  },
+  "radial_ulnar_arteries": {
+    "badge": "Cardiovascular",
+    "location": "Terminal branches of brachial artery running along lateral (radial) and medial (ulnar) borders of forearm into hand.",
+    "origin": "Bifurcation of brachial artery in cubital fossa.",
+    "insertion": "Anastomose in palm to form Deep Palmar Arch (mainly radial) and Superficial Palmar Arch (mainly ulnar).",
+    "innervation": "Perivascular sympathetic plexus.",
+    "action": "Supplies anterior/posterior compartments of forearm, wrist joint, and digital arteries to fingers.",
+    "clinical": "Radial pulse is standard peripheral pulse palpated at radial groove. Allen's test confirms dual collateral arches prior to radial artery cannulation."
+  },
+  "arm_superficial_veins": {
+    "badge": "Cardiovascular",
+    "location": "Subcutaneous venous network: Cephalic (lateral), Basilic (medial), and Median cubital vein in cubital fossa.",
+    "origin": "Dorsal venous network of hand.",
+    "insertion": "Cephalic vein pierces clavipectoral fascia to drain into axillary vein; Basilic joins venae comitantes to form axillary vein.",
+    "innervation": "Cutaneous somatic nerves.",
+    "action": "Drains deoxygenated blood from superficial tissues, skin, and fascia of upper extremity.",
+    "clinical": "Median cubital vein is primary site worldwide for routine venipuncture, IV line placement, and blood donation due to superficial position and stability."
+  },
+  "radial_nerve": {
+    "badge": "Nervous System",
+    "location": "Largest terminal branch of posterior cord of brachial plexus (C5-T1), traveling through spiral groove of humerus into forearm.",
+    "origin": "Posterior cord of brachial plexus (C5, C6, C7, C8, T1).",
+    "insertion": "Divides at elbow into Superficial sensory branch and Deep motor branch (Posterior Interosseous Nerve).",
+    "innervation": "Motor to triceps, anconeus, brachioradialis, ECRL, and all posterior compartment forearm extensors; sensory to dorsum of hand.",
+    "action": "Controls all elbow, wrist, and finger extension, as well as forearm supination.",
+    "clinical": "Compression or fracture at humeral mid-shaft produces 'Wrist Drop' (loss of wrist/finger extension) and sensory loss over first web space (Saturday Night Palsy)."
+  },
+  "median_nerve": {
+    "badge": "Nervous System",
+    "location": "Formed by medial and lateral cords of brachial plexus (C5-T1), descending through anterior arm, cubital fossa, and carpal tunnel.",
+    "origin": "Medial and lateral cords of brachial plexus (C5, C6, C7, C8, T1).",
+    "insertion": "Passes deep to flexor retinaculum into carpal tunnel, terminating in recurrent motor branch and common palmar digital nerves.",
+    "innervation": "Motor to all anterior forearm flexors (except FCU and medial 1/2 of FDP) and thenar muscles; sensory to palmar skin of digits I-III and lateral half of IV.",
+    "action": "Controls pronation, wrist flexion, thumb opposition, and precision pinch.",
+    "clinical": "Carpal tunnel syndrome causes paresthesias in thumb, index, middle fingers and thenar atrophy. Supracondylar humeral fracture causes 'Hand of Benediction' when attempting to make a fist."
+  },
+  "ulnar_nerve": {
+    "badge": "Nervous System",
+    "location": "Terminal branch of medial cord (C8-T1), passes behind medial epicondyle ('funny bone') into medial forearm and hand.",
+    "origin": "Medial cord of brachial plexus (C8, T1).",
+    "insertion": "Enters palm superficial to flexor retinaculum through Guyon's canal, dividing into superficial sensory and deep motor branches.",
+    "innervation": "Motor to FCU, medial half of FDP, hypothenar muscles, all interossei, 3rd/4th lumbricals, and adductor pollicis; sensory to 5th digit and medial half of 4th digit.",
+    "action": "Governs fine motor control of fingers (abduction/adduction), power grip, and key pinch.",
+    "clinical": "Cubital tunnel compression at medial epicondyle produces 'Claw Hand' deformity (hyperextension at MCP, flexion at IP of 4th/5th digits) and positive Froment's sign."
+  },
+  "axillary_musculocutaneous_nerves": {
+    "badge": "Nervous System",
+    "location": "Axillary nerve winds around humeral surgical neck; Musculocutaneous pierces coracobrachialis to run between biceps and brachialis.",
+    "origin": "Posterior cord (axillary, C5-C6); Lateral cord (musculocutaneous, C5-C7).",
+    "insertion": "Axillary ends in deltoid/teres minor; Musculocutaneous continues as Lateral Antebrachial Cutaneous Nerve.",
+    "innervation": "Motor to deltoid, teres minor, coracobrachialis, biceps, brachialis; sensory to 'regimental badge' shoulder patch and lateral forearm.",
+    "action": "Shoulder abduction and anterior arm elbow flexion and supination.",
+    "clinical": "Axillary nerve damage from shoulder dislocation eliminates arm abduction from 15°-90°. Musculocutaneous injury causes severe weakness in elbow flexion with supinated forearm."
+  },
+  "pelvis": {
+    "badge": "Pelvic Girdle",
+    "location": "Pelvic bone connecting sacrum posteriorly and femur at acetabulum laterally.",
+    "origin": "Origin of gluteus maximus/medius/minimus, sartorius, rectus femoris, TFL, adductor group, hamstrings.",
+    "insertion": "Receives external/internal abdominal obliques and transversus abdominis along iliac crest.",
+    "innervation": "Lumbar and sacral plexuses.",
+    "action": "Supports and transmits entire upper body weight to lower extremities; protects pelvic viscera.",
+    "clinical": "Iliac crest and anterior superior iliac spine (ASIS) are critical clinical landmarks for bone marrow aspiration and measuring true limb length (ASIS to medial malleolus)."
+  },
+  "femur": {
+    "badge": "Skeletal System",
+    "location": "Longest, heaviest, and strongest bone in the body, connecting hip to knee with slight anterior bow.",
+    "origin": "Linea aspera gives origin to 3 vastus muscles and short head of biceps femoris.",
+    "insertion": "Head articulates with acetabulum; greater trochanter receives gluteus medius/minimus; lesser trochanter receives iliopsoas.",
+    "innervation": "Sensory periosteal branches of femoral and obturator nerves.",
+    "action": "Primary weight-bearing strut of lower limb; lever arm for walking, running, and jumping.",
+    "clinical": "Femoral neck fractures in elderly pose high risk of avascular necrosis (AVN) due to disruption of medial circumflex femoral artery."
+  },
+  "patella": {
+    "badge": "Skeletal System",
+    "location": "Largest sesamoid bone in body, embedded within quadriceps femoris tendon anterior to knee joint.",
+    "origin": "Base receives quadriceps tendon; apex gives rise to patellar ligament.",
+    "insertion": "Posterior articular facets articulate with femoral patellar surface.",
+    "innervation": "Anterior cutaneous branches of femoral nerve.",
+    "action": "Increases mechanical moment arm of quadriceps femoris by ~30%; shields anterior knee joint.",
+    "clinical": "Patellar tap test detects knee joint effusion. Lateral patellar subluxation/dislocation is predisposed by an elevated Q-angle."
+  },
+  "tibia": {
+    "badge": "Skeletal System",
+    "location": "Large weight-bearing bone on medial side of leg, parallel to fibula.",
+    "origin": "Soleal line on posterior surface gives origin to soleus; lateral condyle gives origin to tibialis anterior.",
+    "insertion": "Tibial tuberosity receives patellar ligament; pes anserinus receives sartorius, gracilis, semitendinosus; Gerdy's tubercle receives IT band.",
+    "innervation": "Tibial nerve and deep fibular nerve.",
+    "action": "Bears 85-90% of body weight transmitted from femur to ankle joint.",
+    "clinical": "Anterior border ('shin') is subcutaneous and lacks muscle padding, making it the most frequent site of open fractures in the body. Osgood-Schlatter disease is traction apophysitis of tibial tuberosity."
+  },
+  "fibula": {
+    "badge": "Skeletal System",
+    "location": "Slender stabilizing bone on lateral side of leg, parallel to tibia.",
+    "origin": "Fibularis longus and brevis, extensor digitorum longus, flexor hallucis longus.",
+    "insertion": "Fibular head receives tendon of biceps femoris and fibular collateral ligament (LCL).",
+    "innervation": "Common fibular (peroneal) nerve.",
+    "action": "Stabilizes ankle mortise with lateral malleolus; acts as pulley for peroneal tendons.",
+    "clinical": "Common fibular nerve winds directly around neck of fibula. Direct trauma or tight casting causes common fibular nerve palsy and Foot Drop."
+  },
+  "talus": {
+    "badge": "Ankle & Foot",
+    "location": "Central tarsal bone resting on calcaneus, articulating with tibial and fibular malleoli above.",
+    "origin": "No muscles attach to talus; 60% of surface is covered with articular cartilage.",
+    "insertion": "Articulates superiorly with tibiofibular mortise (talocrural joint), inferiorly with calcaneus, and anteriorly with navicular.",
+    "innervation": "Tibial and deep fibular nerves.",
+    "action": "Transfers entire body weight from tibia to calcaneus and longitudinal arches; permits dorsiflexion and plantarflexion.",
+    "clinical": "Talus neck fracture (Aviator's fracture) has high risk of avascular necrosis due to retrograde blood supply. Hawkins sign on X-ray indicates bone viability."
+  },
+  "calcaneus": {
+    "badge": "Ankle & Foot",
+    "location": "Largest and strongest tarsal bone, forming the prominence of the heel.",
+    "origin": "Plantar aponeurosis, abductor hallucis, flexor digitorum brevis, abductor digiti minimi, quadratus plantae.",
+    "insertion": "Achilles tendon (calcaneal tendon) into posterior tuberosity.",
+    "innervation": "Medial and lateral calcaneal branches of tibial nerve.",
+    "action": "Primary posterior weight-bearing pillar of foot; acts as lever for triceps surae in propulsion.",
+    "clinical": "Calcaneal fracture ('Lover's fracture') often results from high fall; evaluate Bohler's angle on lateral X-ray."
+  },
+  "navicular_cuboid_cuneiforms": {
+    "badge": "Midfoot",
+    "location": "Midfoot tarsal bones (Navicular, Cuboid, Medial/Intermediate/Lateral Cuneiforms) forming transverse foot arch.",
+    "origin": "Tibialis posterior inserts into navicular tuberosity and cuneiforms; peroneus longus passes under cuboid.",
+    "insertion": "Articulate anteriorly with bases of 5 metatarsal bones at tarsometatarsal (Lisfranc) joint.",
+    "innervation": "Deep fibular and tibial nerve branches.",
+    "action": "Maintains medial and transverse plantar arches; provides dynamic spring elasticity during walking.",
+    "clinical": "Lisfranc injury: fracture-dislocation at tarsometatarsal joints, commonly missed in athletic twisting or crush injuries."
+  },
+  "metatarsals_phalanges": {
+    "badge": "Forefoot",
+    "location": "Five metatarsal bones and 14 phalanges constituting the forefoot skeleton.",
+    "origin": "Interossei and lumbricals originate from metatarsal shafts and flexor tendons.",
+    "insertion": "Long and short extensor and flexor tendons insert into bases and phalanges.",
+    "innervation": "Medial and lateral plantar nerves, digital nerves.",
+    "action": "Provides push-off lever arm during toe-off phase of gait; distributes forefoot pressure.",
+    "clinical": "March fracture: stress fracture of 2nd or 3rd metatarsal shaft. Morton's neuroma occurs between 3rd and 4th metatarsal heads."
+  },
+  "acl": {
+    "badge": "Knee Ligament",
+    "location": "Cruciate ligament inside knee intercondylar notch, running superiorly, posteriorly, and laterally.",
+    "origin": "Anterior intercondylar area of tibial plateau.",
+    "insertion": "Posterolateral aspect of femoral intercondylar notch (medial surface of lateral femoral condyle).",
+    "innervation": "Tibial nerve articular branches.",
+    "action": "Primary restraint against anterior tibial translation (85%) and internal tibial rotation.",
+    "clinical": "Lachman test and Anterior Drawer test diagnose ACL tear. Classic 'popping' sound during non-contact deceleration and pivoting."
+  },
+  "pcl": {
+    "badge": "Knee Ligament",
+    "location": "Stronger cruciate ligament in knee joint, running superiorly, anteriorly, and medially.",
+    "origin": "Posterior intercondylar area of tibial plateau.",
+    "insertion": "Anteromedial aspect of femoral intercondylar notch.",
+    "innervation": "Tibial nerve articular branches.",
+    "action": "Primary restraint against posterior tibial displacement relative to femur.",
+    "clinical": "Posterior sag sign and Posterior Drawer test diagnose PCL rupture. Common in 'dashboard injury' (knee hits car dashboard in motor accident)."
+  },
+  "mcl": {
+    "badge": "Knee Ligament",
+    "location": "Broad, flat band on medial aspect of knee joint extending from medial femoral epicondyle to proximal tibia.",
+    "origin": "Medial femoral epicondyle.",
+    "insertion": "Medial condyle and superior medial shaft of tibia; deep fibers attach to medial meniscus.",
+    "innervation": "Articular branches of femoral and obturator nerves.",
+    "action": "Resists valgus stress (abduction of leg) and external tibial rotation.",
+    "clinical": "Tested with valgus stress test at 30° flexion. Part of O'Donoghue's 'Unhappy Triad' (ACL, MCL, medial meniscus tear)."
+  },
+  "lcl": {
+    "badge": "Knee Ligament",
+    "location": "Cord-like extracapsular ligament on lateral side of knee extending from lateral epicondyle to fibular head.",
+    "origin": "Lateral femoral epicondyle.",
+    "insertion": "Lateral surface of fibular head.",
+    "innervation": "Common fibular and tibial nerve articular branches.",
+    "action": "Resists varus stress (adduction of leg) and lateral joint opening.",
+    "clinical": "Tested with varus stress test. Does not attach to lateral meniscus, allowing greater lateral mobility."
+  },
+  "meniscus": {
+    "badge": "Knee Cartilage",
+    "location": "Crescent-shaped fibrocartilaginous pads (Medial C-shaped, Lateral O-shaped) resting on tibial plateaus.",
+    "origin": "Anterior and posterior horns attach to tibial intercondylar eminences.",
+    "insertion": "Coronary ligaments anchor margins to tibial plateau edge.",
+    "innervation": "Peripheral vascular zone receives sensory nerve endings.",
+    "action": "Distributes compressive load across joint (50-70%), absorbs shock, improves congruency, and lubricates joint.",
+    "clinical": "Bucket-handle meniscus tear causes joint locking. McMurray test and Apley grind test elicit pain or joint clicks."
+  },
+  "patellar_ligament": {
+    "badge": "Extensor Mechanism",
+    "location": "Strong fibrous band connecting patellar apex to tibial tuberosity.",
+    "origin": "Apex and adjacent margins of patella (continuation of quadriceps tendon).",
+    "insertion": "Tibial tuberosity.",
+    "innervation": "Femoral nerve (L2-L4).",
+    "action": "Transmits explosive pull of quadriceps femoris to tibia for knee extension.",
+    "clinical": "Tapped with reflex hammer to elicit Patellar Tendon Reflex (Knee Jerk, testing L3-L4 spinal nerve roots)."
+  },
+  "atfl_ankle_ligaments": {
+    "badge": "Ankle Ligament",
+    "location": "Lateral ankle ligament complex: Anterior Talofibular (ATFL), Calcaneofibular (CFL), Posterior Talofibular (PTFL).",
+    "origin": "Lateral malleolus of fibula.",
+    "insertion": "Neck of talus (ATFL) and lateral surface of calcaneus (CFL).",
+    "innervation": "Superficial and deep fibular nerves.",
+    "action": "Prevents excessive ankle inversion and anterior subluxation of talus in ankle mortise.",
+    "clinical": "ATFL is the single most frequently injured ligament in human body (inversion ankle sprain). Tested via Anterior Drawer test of ankle."
+  },
+  "plantar_fascia": {
+    "badge": "Foot",
+    "location": "Dense central band of deep fascia supporting longitudinal arch of the sole.",
+    "origin": "Medial process of calcaneal tuberosity.",
+    "insertion": "Divides into 5 slips inserting into plantar plates and proximal phalanges.",
+    "innervation": "Medial plantar nerve.",
+    "action": "Maintains medial longitudinal arch through Windlass mechanism during toe dorsiflexion.",
+    "clinical": "Plantar fasciitis: sharp heel pain on first steps in morning, tenderness at medial calcaneal tubercle."
+  },
+  "sartorius": {
+    "badge": "Anterior Thigh",
+    "location": "Longest muscle in human body, ribbon-like muscle coursing obliquely across anterior thigh.",
+    "origin": "Anterior Superior Iliac Spine (ASIS).",
+    "insertion": "Medial proximal tibia as part of Pes Anserinus (with gracilis and semitendinosus).",
+    "innervation": "Femoral nerve (L2, L3).",
+    "action": "Flexes, abducts, and laterally rotates hip; flexes knee (tailor's sitting posture).",
+    "clinical": "Forms lateral border of femoral triangle. Pes anserine bursitis causes localized medial knee pain below joint line."
+  },
+  "rectus_femoris": {
+    "badge": "Quadriceps",
+    "location": "Central, superficial bipennate head of quadriceps femoris on front of thigh.",
+    "origin": "Straight head: Anterior Inferior Iliac Spine (AIIS); Reflected head: groove above acetabulum.",
+    "insertion": "Base of patella, continuing via patellar ligament to tibial tuberosity.",
+    "innervation": "Femoral nerve (L2, L3, L4).",
+    "action": "Extends knee joint and flexes hip joint (only quadriceps muscle crossing both joints).",
+    "clinical": "Prone to avulsion injury from AIIS in adolescent kicking athletes (soccer players)."
+  },
+  "vastus_lateralis": {
+    "badge": "Quadriceps",
+    "location": "Largest and strongest head of quadriceps femoris on lateral thigh.",
+    "origin": "Greater trochanter, intertrochanteric line, and lateral lip of linea aspera.",
+    "insertion": "Lateral border of patella and patellar tendon.",
+    "innervation": "Femoral nerve (L2, L3, L4).",
+    "action": "Extends knee joint.",
+    "clinical": "Safe and preferred site for intramuscular injections in infants and toddlers (vastus lateralis site)."
+  },
+  "vastus_medialis": {
+    "badge": "Quadriceps",
+    "location": "Teardrop-shaped muscle on distal medial thigh above knee.",
+    "origin": "Intertrochanteric line, pectineal line, and medial lip of linea aspera.",
+    "insertion": "Medial border of patella; lowest fibers (VMO) insert into medial patellar margin.",
+    "innervation": "Femoral nerve (L2, L3, L4).",
+    "action": "Extends knee; oblique fibers (VMO) stabilize patella against lateral subluxation.",
+    "clinical": "VMO weakness or atrophy causes patellofemoral pain syndrome (runner's knee) due to lateral patellar tracking."
+  },
+  "vastus_intermedius": {
+    "badge": "Quadriceps (Deep)",
+    "location": "Deep muscle lying directly beneath rectus femoris on anterior and lateral femur.",
+    "origin": "Anterior and lateral surfaces of upper two-thirds of femoral shaft.",
+    "insertion": "Deep surface of quadriceps tendon and patellar base.",
+    "innervation": "Femoral nerve (L2, L3, L4).",
+    "action": "Extends knee joint.",
+    "clinical": "Deepest quadriceps component; gives rise to articularis genus muscle which prevents synovial pouch entrapment."
+  },
+  "tensor_fasciae_latae": {
+    "badge": "Lateral Thigh",
+    "location": "Short muscle on anterolateral aspect of hip enclosed within fascia lata.",
+    "origin": "Anterior superior iliac spine (ASIS) and anterior iliac crest.",
+    "insertion": "Iliotibial (IT) tract, which inserts onto Gerdy's tubercle of anterolateral tibia.",
+    "innervation": "Superior gluteal nerve (L4, L5, S1).",
+    "action": "Tenses fascia lata, abducts, flexes, and medially rotates hip; stabilizes knee in extension.",
+    "clinical": "IT band friction syndrome: repetitive friction of distal IT band over lateral femoral epicondyle in runners and cyclists (Ober's test)."
+  },
+  "gracilis": {
+    "badge": "Medial Thigh",
+    "location": "Most superficial and medial muscle of the adductor compartment of thigh.",
+    "origin": "Inferior pubic ramus and pubic symphysis.",
+    "insertion": "Medial proximal tibia (Pes Anserinus).",
+    "innervation": "Obturator nerve (anterior division, L2, L3).",
+    "action": "Adducts hip, flexes knee, and assists medial rotation of leg.",
+    "clinical": "Commonly harvested for autologous free muscle or tendon graft reconstruction (e.g., facial reanimation or ACL reconstruction)."
+  },
+  "adductor_longus": {
+    "badge": "Adductors",
+    "location": "Triangular fan-shaped muscle on anteromedial aspect of thigh.",
+    "origin": "Pubic body just below pubic crest and lateral to symphysis.",
+    "insertion": "Middle third of medial lip of linea aspera on femur.",
+    "innervation": "Obturator nerve (anterior branch, L2, L3, L4).",
+    "action": "Adducts and flexes hip joint.",
+    "clinical": "Forms medial floor and border of femoral triangle. Groin pull/strain in soccer and hockey athletes commonly involves adductor longus origin."
+  },
+  "adductor_magnus": {
+    "badge": "Adductors (Deep)",
+    "location": "Massive triangular muscle occupying entire medial and posterior thigh.",
+    "origin": "Inferior pubic ramus, ischial ramus (adductor part), and ischial tuberosity (hamstring part).",
+    "insertion": "Gluteal tuberosity, linea aspera, medial supracondylar line, and adductor tubercle.",
+    "innervation": "Dual innervation: Obturator nerve (adductor part) and Tibial nerve (hamstring part).",
+    "action": "Powerful hip adductor; adductor part flexes hip, hamstring part extends hip.",
+    "clinical": "Adductor hiatus is opening between aponeurotic insertions transmitting femoral vessels into popliteal fossa."
+  },
+  "gluteus_maximus": {
+    "badge": "Gluteal Region",
+    "location": "Largest, heaviest, and most superficial muscle of gluteal region, defining buttock contour.",
+    "origin": "Posterior gluteal line of ilium, sacrum, coccyx, and sacrotuberous ligament.",
+    "insertion": "Iliotibial tract (superior 3/4) and gluteal tuberosity of femur (inferior 1/4).",
+    "innervation": "Inferior gluteal nerve (L5, S1, S2).",
+    "action": "Powerful extensor and lateral rotator of hip; vital for rising from sitting, climbing stairs, and running.",
+    "clinical": "Gowers sign or gluteus maximus lurch: patient leans backward at heel strike to compensate for hip extensor weakness."
+  },
+  "biceps_femoris": {
+    "badge": "Hamstrings",
+    "location": "Lateral hamstring muscle on posterior thigh with long and short heads.",
+    "origin": "Long head: ischial tuberosity; Short head: lateral lip of linea aspera.",
+    "insertion": "Head of fibula and lateral tibial condyle.",
+    "innervation": "Long head: Tibial nerve (L5, S1, S2); Short head: Common fibular nerve (L5, S1).",
+    "action": "Flexes knee and laterally rotates flexed leg; long head extends hip.",
+    "clinical": "Most frequently strained hamstring muscle in sprinting athletes. Common fibular nerve passes immediately medial to distal tendon."
+  },
+  "semitendinosus_semimembranosus": {
+    "badge": "Hamstrings",
+    "location": "Medial hamstring muscles on posterior thigh: semitendinosus (long cord-like tendon) and semimembranosus (broad flat membranous belly).",
+    "origin": "Ischial tuberosity.",
+    "insertion": "Semitendinosus: medial proximal tibia (Pes Anserinus); Semimembranosus: posterior surface of medial tibial condyle.",
+    "innervation": "Tibial division of sciatic nerve (L5, S1, S2).",
+    "action": "Extends hip and flexes knee; medially rotates tibia on femur when knee is flexed.",
+    "clinical": "Semitendinosus tendon is widely used for autologous ACL graft reconstruction. Semimembranosus bursa enlargement forms Baker's cyst."
+  },
+  "tibialis_anterior": {
+    "badge": "Anterior Leg",
+    "location": "Prominent muscle adjacent to lateral surface of tibia in anterior compartment of leg.",
+    "origin": "Lateral condyle and proximal half of lateral surface of tibia and interosseous membrane.",
+    "insertion": "Medial and inferior surfaces of medial cuneiform and base of 1st metatarsal.",
+    "innervation": "Deep fibular nerve (L4, L5).",
+    "action": "Primary dorsiflexor and inverter of the foot; supports medial longitudinal arch.",
+    "clinical": "Deep fibular nerve injury causes paralysis of tibialis anterior resulting in 'Foot Drop' and steppage gait."
+  },
+  "gastrocnemius": {
+    "badge": "Calf (Superficial)",
+    "location": "Superficial two-headed muscle creating the rounded bulge of the posterior calf.",
+    "origin": "Medial head: medial condyle of femur; Lateral head: lateral condyle of femur.",
+    "insertion": "Merges with soleus tendon to form Achilles tendon, inserting into calcaneal tuberosity.",
+    "innervation": "Tibial nerve (S1, S2).",
+    "action": "Plantarflexes foot at ankle joint; flexes knee joint.",
+    "clinical": "'Tennis leg': acute tear of medial gastrocnemius belly at musculotendinous junction during sudden push-off."
+  },
+  "soleus_deep_calves": {
+    "badge": "Calf (Deep)",
+    "location": "Broad flat muscle lying deep to gastrocnemius; together with gastrocnemius forms triceps surae.",
+    "origin": "Soleal line of tibia, upper third of posterior fibula, and tendinous arch of soleus.",
+    "insertion": "Achilles tendon into calcaneal tuberosity.",
+    "innervation": "Tibial nerve (S1, S2).",
+    "action": "Plantarflexes foot; vital postural anti-gravity muscle in standing; muscular 'peripheral venous heart'.",
+    "clinical": "Soleal venous sinuses harbor sluggish blood flow in immobilized patients, a frequent initiation site for deep vein thrombosis (DVT)."
+  },
+  "achilles_tendon": {
+    "badge": "Tendon",
+    "location": "Thickest, strongest tendon in human body connecting triceps surae to heel.",
+    "origin": "Formed by aponeuroses of gastrocnemius and soleus muscles.",
+    "insertion": "Middle part of posterior surface of calcaneus.",
+    "innervation": "Tibial nerve (S1, S2).",
+    "action": "Transmits plantarflexion force capable of withstanding loads up to 10 times body weight during jumping.",
+    "clinical": "Thompson test (calf squeeze without plantarflexion) confirms Achilles tendon rupture. Avascular watershed zone 2-6 cm proximal to insertion."
+  },
+  "foot_muscles": {
+    "badge": "Foot",
+    "location": "Intrinsic muscles arranged in four plantar layers and dorsum of foot (EDB, EHB).",
+    "origin": "Calcaneus, plantar fascia, metatarsal bases, and long flexor tendons.",
+    "insertion": "Phalanges and sesamoids of digits I-V.",
+    "innervation": "Medial and lateral plantar nerves (from tibial nerve) and deep fibular nerve.",
+    "action": "Supports dynamic plantar arches, aligns toes, and maintains balance during stance phase of gait.",
+    "clinical": "Intrinsic muscle atrophy leads to claw toes and hammer toes, commonly seen in diabetic peripheral neuropathy."
+  },
+  "femoral_artery": {
+    "badge": "Cardiovascular",
+    "location": "Main arterial trunk of lower limb, continuation of external iliac artery beneath inguinal ligament.",
+    "origin": "External iliac artery at midinguinal point.",
+    "insertion": "Passes through adductor hiatus to continue as popliteal artery behind knee.",
+    "innervation": "Femoral branch of genitofemoral nerve and sympathetic plexus.",
+    "action": "Supplies oxygenated blood to entire lower extremity.",
+    "clinical": "Femoral pulse is palpated midway between ASIS and pubic symphysis. Key site for cardiac catheterization and arterial blood gas sampling."
+  },
+  "popliteal_artery": {
+    "badge": "Cardiovascular",
+    "location": "Deepest neurovascular structure in popliteal fossa behind knee joint.",
+    "origin": "Continuation of femoral artery at adductor hiatus.",
+    "insertion": "Divides at lower border of popliteus into anterior and posterior tibial arteries.",
+    "innervation": "Perivascular sympathetic fibers.",
+    "action": "Supplies knee joint via 5 genicular anastomotic branches, calf muscles, and lower leg.",
+    "clinical": "Popliteal artery aneurysm is second most common peripheral aneurysm. Knee dislocation carries severe risk of popliteal artery transection."
+  },
+  "dorsalis_pedis": {
+    "badge": "Cardiovascular",
+    "location": "Artery on dorsum of foot, continuation of anterior tibial artery beyond ankle joint.",
+    "origin": "Anterior tibial artery midway between malleoli.",
+    "insertion": "Passes between 1st and 2nd metatarsal bases into sole as deep plantar artery.",
+    "innervation": "Perivascular sympathetic plexus.",
+    "action": "Supplies dorsal foot and digits via arcuate and dorsal metatarsal arteries.",
+    "clinical": "Crucial site for peripheral pulse palpation between extensor hallucis longus and extensor digitorum longus tendons in vascular disease."
+  },
+  "great_saphenous_vein": {
+    "badge": "Cardiovascular",
+    "location": "Longest vein in human body, subcutaneous vein ascending medial leg and thigh to saphenous opening.",
+    "origin": "Dorsal venous arch of foot anterior to medial malleolus.",
+    "insertion": "Empties into femoral vein at saphenofemoral junction in femoral triangle.",
+    "innervation": "Saphenous nerve runs alongside vein in leg.",
+    "action": "Drains venous blood from subcutaneous tissues and skin of medial foot, leg, and thigh.",
+    "clinical": "Widely harvested for coronary artery bypass grafting (CABG). Incompetence of saphenofemoral junction causes varicose veins."
+  },
+  "sciatic_nerve": {
+    "badge": "Nervous System",
+    "location": "Largest and thickest nerve in human body (~2 cm wide), originating from sacral plexus (L4-S3).",
+    "origin": "Lumbosacral plexus (ventral rami of L4, L5, S1, S2, S3).",
+    "insertion": "Exits pelvis via greater sciatic foramen below piriformis and bifurcates at popliteal apex into tibial and common fibular nerves.",
+    "innervation": "Motor to hamstrings and adductor magnus; sensory and motor to entirety of leg and foot via terminal branches.",
+    "action": "Controls knee flexion and all movements of ankle, foot, and toes.",
+    "clinical": "Sciatica: radiating pain, numbness, and tingling along posterior thigh and calf from lumbar disc herniation. IM gluteal injections must be given in upper-outer quadrant to avoid it."
+  },
+  "common_fibular_nerve": {
+    "badge": "Nervous System",
+    "location": "Lateral terminal division of sciatic nerve, winding subcutaneously around neck of fibula.",
+    "origin": "Sciatic nerve (posterior division of ventral rami L4-S2).",
+    "insertion": "Divides on lateral neck of fibula into Superficial Fibular Nerve (motor to lateral leg, sensory to foot dorsum) and Deep Fibular Nerve (motor to anterior leg, sensory to 1st web space).",
+    "innervation": "Motor to all ankle dorsiflexors, toe extensors, and foot everters.",
+    "action": "Enables foot dorsiflexion, toe extension, and foot eversion.",
+    "clinical": "Most frequently injured nerve in lower extremity due to vulnerable subcutaneous position at fibular neck. Injury produces complete Foot Drop."
+  },
+  "femoral_nerve": {
+    "badge": "Nervous System",
+    "location": "Largest branch of lumbar plexus (L2-L4), emerging lateral to psoas major and entering thigh lateral to femoral artery.",
+    "origin": "Posterior divisions of anterior rami of L2, L3, L4.",
+    "insertion": "Divides into muscular branches to anterior thigh and terminates as Saphenous Nerve.",
+    "innervation": "Motor to iliacus, pectineus, sartorius, and quadriceps femoris; sensory to anterior thigh and medial leg (saphenous nerve).",
+    "action": "Controls hip flexion and knee extension.",
+    "clinical": "Femoral nerve block provides anesthesia for knee and femur surgeries. Injury abolishes patellar reflex and causes inability to extend knee."
+  },
+  "inguinal_lymph_nodes": {
+    "badge": "Lymphatic System",
+    "location": "Superficial and deep lymph node groups located in femoral triangle below inguinal ligament.",
+    "origin": "Receives afferent lymphatic vessels from lower extremity, perineum, external genitalia, and lower abdominal wall.",
+    "insertion": "Efferent vessels drain into external iliac lymph nodes.",
+    "innervation": "Autonomic vasomotor fibers.",
+    "action": "Filters lymph fluid and mounts immune defense against pathogens originating from lower body.",
+    "clinical": "Inguinal lymphadenopathy (tender enlargement) occurs in lower limb infections, sexually transmitted infections (STIs), and metastatic melanoma."
+  }
+};
+
+const LEG_QUIZ_QUESTIONS_EN = [
+  {
+    "targetId": "femoral_artery",
+    "question": "1. Click on the Femoral Artery - the principal vascular conduit supplying oxygenated blood to the entire lower limb?",
+    "hint": "Large bright red vessel coursing down anteromedial thigh from inguinal ligament toward popliteal fossa.",
+    "explanation": "Correct! The femoral artery continues from external iliac artery; primary site for arterial catheterization and femoral pulse palpation."
+  },
+  {
+    "targetId": "acl",
+    "question": "2. Identify the Anterior Cruciate Ligament (ACL) - the most commonly torn ligament in knee twisting and deceleration sports injuries?",
+    "hint": "Intra-articular ligament crossing from anterior tibial plateau upward, backward, and laterally to lateral femoral condyle.",
+    "explanation": "Correct! ACL tears are evaluated clinically by Lachman and Anterior Drawer tests."
+  },
+  {
+    "targetId": "sciatic_nerve",
+    "question": "3. Identify the Sciatic Nerve - the largest and thickest single nerve in the human body?",
+    "hint": "Thick yellow cord descending from the greater sciatic notch through the gluteal region down the posterior midline of the thigh.",
+    "explanation": "Correct! The sciatic nerve exits below piriformis; intramuscular injections in buttocks must strictly target upper-outer quadrant to avoid nerve injury."
+  },
+  {
+    "targetId": "gluteus_maximus",
+    "question": "4. Identify the Gluteus Maximus - the largest, heaviest muscle of the hip enabling upright posture and stair climbing?",
+    "hint": "Large superficial red muscle mass defining the prominence of the posterior buttock.",
+    "explanation": "Correct! Powerful primary hip extensor innervated by inferior gluteal nerve."
+  },
+  {
+    "targetId": "patella",
+    "question": "5. Click on the Patella (Kneecap) - the largest sesamoid bone in the human body increasing mechanical advantage of quadriceps?",
+    "hint": "Triangular flat bone embedded in quadriceps tendon anterior to knee joint.",
+    "explanation": "Correct! Increases quadriceps moment arm by ~30%; patellar tap test detects joint effusion."
+  },
+  {
+    "targetId": "dorsalis_pedis",
+    "question": "6. Identify the Dorsalis Pedis Artery - crucial peripheral pulse landmark on the dorsum of the foot?",
+    "hint": "Bright red arterial vessel running superficially on the dorsal midfoot between extensor tendons.",
+    "explanation": "Correct! Palpating dorsalis pedis pulse is mandatory in evaluating peripheral artery disease and diabetic limb perfusion."
+  },
+  {
+    "targetId": "achilles_tendon",
+    "question": "7. Click on the Achilles Tendon (Calcaneal Tendon) - the thickest and strongest tendon in the human body?",
+    "hint": "Broad glistening pearly-white cord at lower posterior calf inserting into calcaneus.",
+    "explanation": "Correct! Transmits power of triceps surae; Thompson squeeze test diagnoses complete rupture."
+  },
+  {
+    "targetId": "talus",
+    "question": "8. Identify the Talus (Ankle Bone) - the keystones tarsal bone directly articulating with the tibiofibular ankle mortise?",
+    "hint": "Central bone directly under distal tibia with smooth trochlear articular saddle.",
+    "explanation": "Correct! Distributes body weight into calcaneus and foot arches; 60% articular cartilage with no muscular attachments."
+  },
+  {
+    "targetId": "meniscus",
+    "question": "9. Identify the Meniscus of the Knee - crescentic shock-absorbing fibrocartilage resting on the tibial plateaus?",
+    "hint": "Teal-tinted semilunar cartilage cushions interposed in the knee joint space.",
+    "explanation": "Correct! Medial C-shaped and lateral O-shaped menisci absorb shock and distribute load; bucket-handle tears cause acute knee locking."
+  },
+  {
+    "targetId": "vastus_medialis",
+    "question": "10. Identify the Vastus Medialis - the characteristic teardrop-shaped muscle on the anteromedial distal thigh?",
+    "hint": "Bulging muscle belly on the inner side of the thigh directly above the knee.",
+    "explanation": "Correct! VMO fibers provide essential medial dynamic stabilization preventing lateral patellar dislocation."
+  }
+];
+
+const ARM_QUIZ_QUESTIONS_EN = [
+  {
+    "targetId": "radial_nerve",
+    "question": "1. Click on the Radial Nerve - injury from humeral shaft fracture or crutch compression causes 'Wrist Drop'?",
+    "hint": "Yellow nerve coursing spirally through radial groove on posterior humerus into forearm.",
+    "explanation": "Correct! Radial nerve innervates all arm and forearm extensors; palsy produces wrist drop."
+  },
+  {
+    "targetId": "carpal_bones",
+    "question": "2. Identify the Scaphoid Bone in the anatomical snuffbox - the most frequently fractured carpal bone from FOOSH?",
+    "hint": "Carpal bone located below radial styloid at the base of the thumb in proximal carpal row.",
+    "explanation": "Correct! >70% of carpal fractures; retrograde blood supply puts scaphoid waist fractures at high risk of avascular necrosis."
+  },
+  {
+    "targetId": "carpal_tunnel_retinaculum",
+    "question": "3. Identify the Flexor Retinaculum (Carpal Tunnel) - where median nerve compression causes carpal tunnel syndrome?",
+    "hint": "Dense fibrous transverse band bridging the anterior carpal arch.",
+    "explanation": "Correct! Carpal tunnel syndrome is the most prevalent entrapment neuropathy; diagnosed via Tinel's sign and Phalen's maneuver."
+  },
+  {
+    "targetId": "ulnar_nerve",
+    "question": "4. Identify the Ulnar Nerve - passes posterior to medial epicondyle ('funny bone'); injury leads to 'Claw Hand'?",
+    "hint": "Yellow nerve running behind medial epicondyle into medial forearm and hand.",
+    "explanation": "Correct! Governs intrinsic hand dexterity; neuropathy causes clawing of digits IV and V."
+  },
+  {
+    "targetId": "rotator_cuff_sits",
+    "question": "5. Identify the Rotator Cuff Muscles (SITS) - specifically supraspinatus, most vulnerable to tearing during shoulder abduction?",
+    "hint": "Group of deep muscles surrounding humeral head (supraspinatus, infraspinatus, teres minor, subscapularis).",
+    "explanation": "Correct! Supraspinatus tendon is most often torn under the coracoacromial arch; evaluated via Empty Can test."
+  },
+  {
+    "targetId": "deltoid",
+    "question": "6. Click on the Deltoid Muscle - large triangular shoulder muscle, classic intramuscular injection site?",
+    "hint": "Thick triangular muscle capping the lateral contour of the shoulder.",
+    "explanation": "Correct! Primary arm abductor from 15° to 90° innervated by the axillary nerve."
+  },
+  {
+    "targetId": "biceps_brachii",
+    "question": "7. Identify the Biceps Brachii - powerful forearm supinator with flexed elbow; long head rupture causes 'Popeye' deformity?",
+    "hint": "Prominent anterior arm muscle with long and short heads inserting into radial tuberosity.",
+    "explanation": "Correct! Functions like a corkscrew: powerful forearm supinator and elbow flexor."
+  },
+  {
+    "targetId": "elbow_ligaments",
+    "question": "8. Identify the Annular Ligament & Elbow Joint - structure subluxated in 'Nursemaid's Elbow' in young children?",
+    "hint": "Circular collar ligament wrapping around the head and neck of the radius.",
+    "explanation": "Correct! Traction on an extended, pronated forearm in young children can slip the radial head through the annular ligament."
+  },
+  {
+    "targetId": "radial_ulnar_arteries",
+    "question": "9. Identify the Radial Artery at the radial pulse groove - classic site for pulse palpation and Allen's test?",
+    "hint": "Bright red vessel running down the lateral anterior forearm to radial styloid and snuffbox.",
+    "explanation": "Correct! Standard site for arterial pulse check and blood gas sampling (ABG)."
+  },
+  {
+    "targetId": "arm_superficial_veins",
+    "question": "10. Identify the Median Cubital Vein - the premier site worldwide for venipuncture and intravenous blood draws?",
+    "hint": "Prominent superficial blue vein crossing obliquely across the anterior cubital fossa.",
+    "explanation": "Correct! Tethered by bicipital aponeurosis, making it stable, superficial, and ideal for blood draws."
+  }
+];
+
+const I18N = {
+  "vi": {
+    "appTitle": "3D Human Anatomy Atlas | Atlas Giải Phẫu Y Khoa Toàn Diện (Chi Dưới & Chi Trên)",
+    "appSubtitle": "Giáo trình Giải Phẫu Chi Dưới & Chi Trên Y Khoa",
+    "regionBadge": "Medical Atlas",
+    "regionLeg": "🦿 Chi Dưới (Leg & Foot)",
+    "regionArm": "🦾 Chi Trên (Arm & Hand)",
+    "regionTorso": "🫀 Thân Mình",
+    "regionHead": "🧠 Đầu Mặt Cổ",
+    "comingSoon": "Sắp có",
+    "modeExplore": "Khám phá 3D",
+    "modeDissection": "Bóc tách tầng",
+    "modeCrossSection": "Cắt lát CT/MRI",
+    "modeQuiz": "Ôn thi Y khoa",
+    "searchPlaceholder": "Tìm cơ, xương, TK...",
+    "btnUploadGLB": "Nạp .GLB",
+    "btnUploadGLBTitle": "Nạp file mô hình 3D (.glb, .gltf)",
+    "btnPins": "Ghim 3D",
+    "btnResetCamTitle": "Góc nhìn ban đầu",
+    "crossSectionTitle": "Mặt Cắt Ngang (CT/MRI)",
+    "crossSectionDesc": "Kéo thanh trượt để cắt ngang qua bất kỳ cao độ nào:",
+    "dissectionTitle": "Mức Bóc Tách (Dissection)",
+    "dissectionLabels": [
+      "Lớp 0: Toàn bộ (Khung hoàn chỉnh)",
+      "Lớp 1: Cân mạc & Dải liên kết",
+      "Lớp 2: Chỉ nhóm cơ nông (Ẩn cơ sâu)",
+      "Lớp 3: Bóc cơ nông lộ cơ sâu",
+      "Lớp 4: Mạch máu & Thần kinh",
+      "Lớp 5: Dây chằng, Khớp & Sụn",
+      "Lớp 6: Khung xương trọn vẹn"
+    ],
+    "dissectionMarks": [
+      "Toàn bộ",
+      "Cơ nông",
+      "Cơ sâu",
+      "Mạch-TK",
+      "Xương"
+    ],
+    "cameraViewsTitle": "Góc nhìn giải phẫu",
+    "camAnterior": "Trước",
+    "camPosterior": "Sau",
+    "camMedial": "Trong",
+    "camLateral": "Ngoài",
+    "camJointLeg": "Khớp gối",
+    "camDistalLeg": "Bàn chân",
+    "camJointArm": "Khớp khuỷu",
+    "camDistalArm": "Bàn tay",
+    "layersHeader": "Hệ cơ quan",
+    "layerSkeletal": "1. Hệ Xương (Skeletal System)",
+    "layerLigaments": "2. Dây chằng, Sụn khớp & Cân mạc",
+    "layerMuscular": "3. Hệ Thống Cơ (Superficial & Deep)",
+    "layerCardiovascular": "4. Mạch Máu (Động mạch & Tĩnh mạch)",
+    "layerNervous": "5. Hệ Thần Kinh Ngoại Biên",
+    "layerLymphatic": "6. Hệ Bạch Huyết (Lymph Nodes)",
+    "layerIntegumentary": "7. Lớp Da & Mô Dưới Da (X-Ray)",
+    "skinOpacityLabel": "Độ trong suốt X-Ray:",
+    "kinesiologyFilterLabel": "Lọc nhóm vận động (Kinesiology)",
+    "kinesiologyMotionLabel": "Mô phỏng chuyển động khớp",
+    "tabOrigin": "Nguyên ủy & Bám tận",
+    "tabAction": "Động tác & TK",
+    "tabClinical": "Lâm sàng",
+    "labelLocation": "Vị trí giải phẫu:",
+    "labelOrigin": "Nguyên ủy (Origin):",
+    "labelInsertion": "Bám tận (Insertion):",
+    "labelInnervation": "Thần kinh chi phối:",
+    "labelAction": "Động tác chính (Action):",
+    "labelClinical": "Điểm chốt lâm sàng Y khoa:",
+    "btnPronounce": "Phát âm Latin",
+    "btnIsolate": "Cô lập",
+    "btnUnisolate": "Bỏ cô lập",
+    "quizTitle": "KIỂM TRA GIẢI PHẪU Y KHOA",
+    "quizInstruction": "Hãy nhấp trực tiếp vào bộ phận đó trên mô hình 3D!",
+    "quizHintBtn": "Gợi ý vị trí",
+    "quizNextBtn": "Câu tiếp theo",
+    "quizScorePrefix": "Điểm: ",
+    "quizCompleteTitle": "Hoàn thành!",
+    "quizCompleteMsg": "🎉 <b>Chúc mừng! Bạn đã hoàn thành xuất sắc 10/10 bài kiểm tra giải phẫu {region}!</b><br>Tổng điểm: {score} / {total}",
+    "quizCompleteSub": "Bạn đã nắm vững các mốc giải phẫu then chốt và ứng dụng lâm sàng.",
+    "quizCorrect": "<b>✅ TUYỆT VỜI! CHÍNH XÁC!</b><br>",
+    "quizIncorrect": "<b>❌ Chưa chính xác!</b> Bạn đã bấm vào: <i>{name}</i>. Hãy thử lại hoặc bấm 'Gợi ý vị trí'!",
+    "quizHintPrefix": "<b>💡 Gợi ý:</b> "
+  },
+  "en": {
+    "appTitle": "3D Human Anatomy Atlas | Comprehensive Medical Anatomy (Lower & Upper Limbs)",
+    "appSubtitle": "Comprehensive Medical Anatomy Atlas (Lower & Upper Limbs)",
+    "regionBadge": "Medical Atlas",
+    "regionLeg": "🦿 Lower Limb (Leg & Foot)",
+    "regionArm": "🦾 Upper Limb (Arm & Hand)",
+    "regionTorso": "🫀 Trunk & Torso",
+    "regionHead": "🧠 Head & Neck",
+    "comingSoon": "Coming soon",
+    "modeExplore": "3D Explore",
+    "modeDissection": "Dissection",
+    "modeCrossSection": "CT/MRI Slices",
+    "modeQuiz": "Medical Quiz",
+    "searchPlaceholder": "Search muscles, bones, nerves...",
+    "btnUploadGLB": "Load .GLB",
+    "btnUploadGLBTitle": "Load 3D model file (.glb, .gltf)",
+    "btnPins": "3D Pins",
+    "btnResetCamTitle": "Reset View",
+    "crossSectionTitle": "Cross-Section (CT/MRI)",
+    "crossSectionDesc": "Drag slider to slice through any anatomical level:",
+    "dissectionTitle": "Dissection Depth",
+    "dissectionLabels": [
+      "Level 0: Complete (All systems)",
+      "Level 1: Fascia & Connective bands",
+      "Level 2: Superficial muscles only",
+      "Level 3: Deep muscles exposed",
+      "Level 4: Neurovascular structures",
+      "Level 5: Ligaments, Joints & Cartilage",
+      "Level 6: Skeletal framework only"
+    ],
+    "dissectionMarks": [
+      "All",
+      "Superficial",
+      "Deep",
+      "Vessels-Nerves",
+      "Skeletal"
+    ],
+    "cameraViewsTitle": "Anatomical Views",
+    "camAnterior": "Anterior",
+    "camPosterior": "Posterior",
+    "camMedial": "Medial",
+    "camLateral": "Lateral",
+    "camJointLeg": "Knee Joint",
+    "camDistalLeg": "Foot",
+    "camJointArm": "Elbow Joint",
+    "camDistalArm": "Hand",
+    "layersHeader": "Organ Systems",
+    "layerSkeletal": "1. Skeletal System",
+    "layerLigaments": "2. Ligaments, Cartilage & Fascia",
+    "layerMuscular": "3. Muscular System (Superficial & Deep)",
+    "layerCardiovascular": "4. Cardiovascular (Arteries & Veins)",
+    "layerNervous": "5. Peripheral Nervous System",
+    "layerLymphatic": "6. Lymphatic System (Nodes & Vessels)",
+    "layerIntegumentary": "7. Integumentary (Skin & X-Ray)",
+    "skinOpacityLabel": "X-Ray Opacity:",
+    "kinesiologyFilterLabel": "Filter Movement Group (Kinesiology)",
+    "kinesiologyMotionLabel": "Joint Motion Simulation",
+    "tabOrigin": "Origin & Insertion",
+    "tabAction": "Action & Nerves",
+    "tabClinical": "Clinical",
+    "labelLocation": "Anatomical Location:",
+    "labelOrigin": "Origin:",
+    "labelInsertion": "Insertion:",
+    "labelInnervation": "Innervation:",
+    "labelAction": "Primary Action:",
+    "labelClinical": "Clinical Key Point:",
+    "btnPronounce": "Pronounce Latin",
+    "btnIsolate": "Isolate",
+    "btnUnisolate": "Unisolate",
+    "quizTitle": "MEDICAL ANATOMY QUIZ",
+    "quizInstruction": "Click directly on that anatomical structure on the 3D model!",
+    "quizHintBtn": "Show Hint",
+    "quizNextBtn": "Next Question",
+    "quizScorePrefix": "Score: ",
+    "quizCompleteTitle": "Completed!",
+    "quizCompleteMsg": "🎉 <b>Congratulations! You successfully finished 10/10 questions on {region}!</b><br>Total Score: {score} / {total}",
+    "quizCompleteSub": "You have mastered key clinical anatomical landmarks.",
+    "quizCorrect": "<b>✅ EXCELLENT! CORRECT!</b><br>",
+    "quizIncorrect": "<b>❌ Not quite!</b> You selected: <i>{name}</i>. Try again or click 'Show Hint'!",
+    "quizHintPrefix": "<b>💡 Hint:</b> "
+  }
+};
+
     let currentQuizIndex = 0;
     let quizScore = 0;
     let isQuizActive = false;
+    let currentLang = localStorage.getItem('anatomy_lang') || 'vi';
 
     function getActiveQuizList() {
+      if (currentLang === 'en') {
+        return activeRegion === 'arm' ? ARM_QUIZ_QUESTIONS_EN : LEG_QUIZ_QUESTIONS_EN;
+      }
       return activeRegion === 'arm' ? ARM_QUIZ_QUESTIONS : LEG_QUIZ_QUESTIONS;
     }
 
@@ -4477,8 +5464,10 @@ const ANATOMY_DATABASE = {
       isQuizActive = true;
       currentQuizIndex = 0;
       quizScore = 0;
-      document.getElementById('quiz-score').textContent = `Điểm: 0`;
-      document.getElementById('quiz-region-badge').textContent = activeRegion === 'arm' ? 'Chi Trên' : 'Chi Dưới';
+      document.getElementById('quiz-score').textContent = `${I18N[currentLang].quizScorePrefix}0`;
+      document.getElementById('quiz-region-badge').textContent = currentLang === 'en'
+        ? (activeRegion === 'arm' ? 'Upper Limb' : 'Lower Limb')
+        : (activeRegion === 'arm' ? 'Chi Trên' : 'Chi Dưới');
       document.getElementById('quiz-panel').classList.remove('hidden');
       loadQuizQuestion(currentQuizIndex);
     }
@@ -4490,10 +5479,14 @@ const ANATOMY_DATABASE = {
 
     function loadQuizQuestion(index) {
       const qList = getActiveQuizList();
+      const t = I18N[currentLang];
       if (index >= qList.length) {
-        document.getElementById('quiz-counter').textContent = 'Hoàn thành!';
-        document.getElementById('quiz-question').innerHTML = `🎉 <b>Chúc mừng! Bạn đã hoàn thành xuất sắc 10/10 bài kiểm tra giải phẫu ${activeRegion === 'arm' ? 'Chi Trên' : 'Chi Dưới'}!</b><br>Tổng điểm: ${quizScore} / ${qList.length}`;
-        document.getElementById('quiz-instruction').textContent = 'Bạn đã nắm vững các mốc giải phẫu then chốt và ứng dụng lâm sàng.';
+        document.getElementById('quiz-counter').textContent = t.quizCompleteTitle;
+        const regionStr = currentLang === 'en'
+          ? (activeRegion === 'arm' ? 'Upper Limb' : 'Lower Limb')
+          : (activeRegion === 'arm' ? 'Chi Trên' : 'Chi Dưới');
+        document.getElementById('quiz-question').innerHTML = t.quizCompleteMsg.replace('{region}', regionStr).replace('{score}', quizScore).replace('{total}', qList.length);
+        document.getElementById('quiz-instruction').textContent = t.quizCompleteSub;
         document.getElementById('quiz-feedback').classList.add('hidden');
         document.getElementById('btn-next-question').classList.add('hidden');
         confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
@@ -4501,9 +5494,9 @@ const ANATOMY_DATABASE = {
       }
 
       const q = qList[index];
-      document.getElementById('quiz-counter').textContent = `Câu ${index + 1}/${qList.length}`;
+      document.getElementById('quiz-counter').textContent = `${currentLang === 'en' ? 'Question' : 'Câu'} ${index + 1}/${qList.length}`;
       document.getElementById('quiz-question').textContent = q.question;
-      document.getElementById('quiz-instruction').textContent = 'Hãy nhấp trực tiếp vào bộ phận đó trên mô hình 3D!';
+      document.getElementById('quiz-instruction').textContent = t.quizInstruction;
       document.getElementById('quiz-feedback').classList.add('hidden');
       document.getElementById('btn-next-question').classList.add('hidden');
     }
@@ -4514,18 +5507,22 @@ const ANATOMY_DATABASE = {
       const q = qList[currentQuizIndex];
       const feedbackEl = document.getElementById('quiz-feedback');
       feedbackEl.classList.remove('hidden');
+      const t = I18N[currentLang];
 
       if (clickedPartId === q.targetId) {
         quizScore++;
-        document.getElementById('quiz-score').textContent = `Điểm: ${quizScore}`;
+        document.getElementById('quiz-score').textContent = `${t.quizScorePrefix}${quizScore}`;
         feedbackEl.className = 'mt-3 p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-200 text-xs leading-relaxed';
-        feedbackEl.innerHTML = `<b>✅ TUYỆT VỜI! CHÍNH XÁC!</b><br>${q.explanation}`;
+        feedbackEl.innerHTML = `${t.quizCorrect}${q.explanation}`;
         document.getElementById('btn-next-question').classList.remove('hidden');
         confetti({ particleCount: 60, spread: 60, origin: { y: 0.6 } });
       } else {
         feedbackEl.className = 'mt-3 p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-200 text-xs leading-relaxed';
-        const clickedName = ANATOMY_DATABASE[clickedPartId]?.nameVi || clickedPartId;
-        feedbackEl.innerHTML = `<b>❌ Chưa chính xác!</b> Bạn đã bấm vào: <i>${clickedName}</i>. Hãy thử lại hoặc bấm 'Gợi ý vị trí'!`;
+        const clickedInfo = ANATOMY_DATABASE[clickedPartId];
+        const clickedName = currentLang === 'en'
+          ? (clickedInfo?.nameEn || clickedInfo?.nameLatin || clickedPartId)
+          : (clickedInfo?.nameVi || clickedPartId);
+        feedbackEl.innerHTML = t.quizIncorrect.replace('{name}', clickedName);
       }
     }
 
@@ -4535,7 +5532,7 @@ const ANATOMY_DATABASE = {
       const feedbackEl = document.getElementById('quiz-feedback');
       feedbackEl.classList.remove('hidden');
       feedbackEl.className = 'mt-3 p-3 rounded-xl bg-amber-950/60 border border-amber-500/40 text-amber-200 text-xs leading-relaxed';
-      feedbackEl.innerHTML = `<b>💡 Gợi ý:</b> ${q.hint}`;
+      feedbackEl.innerHTML = `${I18N[currentLang].quizHintPrefix}${q.hint}`;
     }
 
     function nextQuizQuestion() {
@@ -4546,8 +5543,13 @@ const ANATOMY_DATABASE = {
     /* =========================================================================
      * BỘ CHỌN PHÂN VÙNG GIẢI PHẪU (BODY REGION SWITCHER ENGINE)
      * ========================================================================= */
-    function switchBodyRegion(region) {
+        function switchBodyRegion(region) {
       if (region === activeRegion) return;
+      clearSelection();
+      if (currentHoveredPartId) {
+        restorePart(currentHoveredPartId);
+        currentHoveredPartId = null;
+      }
       activeRegion = region;
 
       const btnLeg = document.getElementById('region-btn-leg');
@@ -4558,20 +5560,19 @@ const ANATOMY_DATABASE = {
         btnArm.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition flex items-center gap-1.5';
         legRoot.visible = true;
         armRoot.visible = false;
-        document.getElementById('region-badge-pill').textContent = 'Chi Dưới (Leg & Foot)';
-        document.getElementById('region-sub-label').textContent = 'Giáo trình Giải phẫu Chi Dưới & Bàn Chân Y Khoa';
+        document.getElementById('region-badge-pill').textContent = currentLang === 'en' ? 'Lower Limb (Leg & Foot)' : 'Chi Dưới (Leg & Foot)';
+        document.getElementById('region-sub-label').textContent = currentLang === 'en' ? 'Comprehensive Medical Anatomy Atlas (Lower Limb & Foot)' : 'Giáo trình Giải phẫu Chi Dưới & Bàn Chân Y Khoa';
         setCameraAngle('anterior');
       } else {
         btnArm.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-sky-600 text-white shadow-md';
         btnLeg.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition flex items-center gap-1.5';
         legRoot.visible = false;
         armRoot.visible = true;
-        document.getElementById('region-badge-pill').textContent = 'Chi Trên (Arm & Hand)';
-        document.getElementById('region-sub-label').textContent = 'Giáo trình Giải phẫu Chi Trên, Cánh Tay & Bàn Tay Y Khoa';
+        document.getElementById('region-badge-pill').textContent = currentLang === 'en' ? 'Upper Limb (Arm & Hand)' : 'Chi Trên (Arm & Hand)';
+        document.getElementById('region-sub-label').textContent = currentLang === 'en' ? 'Comprehensive Medical Anatomy Atlas (Upper Limb & Hand)' : 'Giáo trình Giải phẫu Chi Trên, Cánh Tay & Bàn Tay Y Khoa';
         setCameraAngle('anterior');
       }
 
-      // Cập nhật giao diện phụ trợ
       updateCrossSectionUI();
       updateKinesiologyUI();
       updateFunctionalGroupSelect();
@@ -4584,7 +5585,7 @@ const ANATOMY_DATABASE = {
       }
     }
 
-    function updateCrossSectionUI() {
+        function updateCrossSectionUI() {
       const container = document.getElementById('quick-slices-container');
       const slider = document.getElementById('clip-height-slider');
 
@@ -4593,23 +5594,41 @@ const ANATOMY_DATABASE = {
         slider.max = "2.6";
         slider.value = "2.6";
         clipPlane.constant = 2.6;
-        container.innerHTML = `
-          <button onclick="setQuickSlice(1.3)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Đùi giữa</button>
-          <button onclick="setQuickSlice(0.18)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Khớp gối</button>
-          <button onclick="setQuickSlice(-0.7)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cẳng chân</button>
-          <button onclick="setQuickSlice(-1.95)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cổ chân</button>
-        `;
+        if (currentLang === 'en') {
+          container.innerHTML = `
+            <button onclick="setQuickSlice(1.3)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Mid-Thigh</button>
+            <button onclick="setQuickSlice(0.18)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Knee Joint</button>
+            <button onclick="setQuickSlice(-0.7)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Leg (Calf)</button>
+            <button onclick="setQuickSlice(-1.95)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Ankle</button>
+          `;
+        } else {
+          container.innerHTML = `
+            <button onclick="setQuickSlice(1.3)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Đùi giữa</button>
+            <button onclick="setQuickSlice(0.18)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Khớp gối</button>
+            <button onclick="setQuickSlice(-0.7)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cẳng chân</button>
+            <button onclick="setQuickSlice(-1.95)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cổ chân</button>
+          `;
+        }
       } else {
         slider.min = "-0.25";
         slider.max = "2.1";
         slider.value = "2.1";
         clipPlane.constant = 2.1;
-        container.innerHTML = `
-          <button onclick="setQuickSlice(1.40)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cánh tay</button>
-          <button onclick="setQuickSlice(1.02)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Hố khuỷu</button>
-          <button onclick="setQuickSlice(0.65)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cẳng tay</button>
-          <button onclick="setQuickSlice(0.18)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Ống cổ tay</button>
-        `;
+        if (currentLang === 'en') {
+          container.innerHTML = `
+            <button onclick="setQuickSlice(1.40)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Upper Arm</button>
+            <button onclick="setQuickSlice(1.02)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cubital Fossa</button>
+            <button onclick="setQuickSlice(0.65)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Forearm</button>
+            <button onclick="setQuickSlice(0.18)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Carpal Tunnel</button>
+          `;
+        } else {
+          container.innerHTML = `
+            <button onclick="setQuickSlice(1.40)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cánh tay</button>
+            <button onclick="setQuickSlice(1.02)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Hố khuỷu</button>
+            <button onclick="setQuickSlice(0.65)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Cẳng tay</button>
+            <button onclick="setQuickSlice(0.18)" class="bg-slate-800 hover:bg-amber-600/30 p-1 rounded border border-slate-700 text-slate-300">Ống cổ tay</button>
+          `;
+        }
       }
     }
 
@@ -4617,18 +5636,25 @@ const ANATOMY_DATABASE = {
       const btnJoint = document.getElementById('camera-btn-joint');
       const btnDistal = document.getElementById('camera-btn-distal');
       if (activeRegion === 'arm') {
-        btnJoint.textContent = 'Khớp khuỷu';
-        btnDistal.textContent = 'Bàn tay';
+        btnJoint.textContent = currentLang === 'en' ? 'Elbow' : 'Khớp khuỷu';
+        btnDistal.textContent = currentLang === 'en' ? 'Hand' : 'Bàn tay';
       } else {
-        btnJoint.textContent = 'Khớp gối';
-        btnDistal.textContent = 'Bàn chân';
+        btnJoint.textContent = currentLang === 'en' ? 'Knee' : 'Khớp gối';
+        btnDistal.textContent = currentLang === 'en' ? 'Foot' : 'Bàn chân';
       }
     }
 
     function updateKinesiologyUI() {
       const container = document.getElementById('kinesiology-buttons-container');
       if (activeRegion === 'leg') {
-        container.innerHTML = `
+        container.innerHTML = currentLang === 'en' ? `
+          <button onclick="playKinesiologyMotion('knee_flex')" class="bg-slate-900/80 hover:bg-emerald-600/30 text-slate-300 hover:text-emerald-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60 flex items-center justify-center gap-1">
+            <i data-lucide="corner-down-right" class="w-3 h-3"></i> Knee Flex / Ext
+          </button>
+          <button onclick="playKinesiologyMotion('plantarflex')" class="bg-slate-900/80 hover:bg-emerald-600/30 text-slate-300 hover:text-emerald-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60 flex items-center justify-center gap-1">
+            <i data-lucide="arrow-up" class="w-3 h-3"></i> Heel Raise / Plantar
+          </button>
+        ` : `
           <button onclick="playKinesiologyMotion('knee_flex')" class="bg-slate-900/80 hover:bg-emerald-600/30 text-slate-300 hover:text-emerald-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60 flex items-center justify-center gap-1">
             <i data-lucide="corner-down-right" class="w-3 h-3"></i> Gập / Duỗi gối
           </button>
@@ -4637,7 +5663,14 @@ const ANATOMY_DATABASE = {
           </button>
         `;
       } else {
-        container.innerHTML = `
+        container.innerHTML = currentLang === 'en' ? `
+          <button onclick="playKinesiologyMotion('elbow_flex')" class="bg-slate-900/80 hover:bg-emerald-600/30 text-slate-300 hover:text-emerald-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60 flex items-center justify-center gap-1">
+            <i data-lucide="corner-down-right" class="w-3 h-3"></i> Elbow Flex / Ext
+          </button>
+          <button onclick="playKinesiologyMotion('pronation_supination')" class="bg-slate-900/80 hover:bg-emerald-600/30 text-slate-300 hover:text-emerald-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60 flex items-center justify-center gap-1">
+            <i data-lucide="rotate-cw" class="w-3 h-3"></i> Pronate / Supinate
+          </button>
+        ` : `
           <button onclick="playKinesiologyMotion('elbow_flex')" class="bg-slate-900/80 hover:bg-emerald-600/30 text-slate-300 hover:text-emerald-300 py-1.5 px-2 rounded-lg transition border border-slate-700/60 flex items-center justify-center gap-1">
             <i data-lucide="corner-down-right" class="w-3 h-3"></i> Gập / Duỗi khuỷu
           </button>
@@ -4652,7 +5685,15 @@ const ANATOMY_DATABASE = {
     function updateFunctionalGroupSelect() {
       const sel = document.getElementById('functional-group-select');
       if (activeRegion === 'leg') {
-        sel.innerHTML = `
+        sel.innerHTML = currentLang === 'en' ? `
+          <option value="all">-- Show All Muscle Groups --</option>
+          <option value="knee_extensor">Knee Extensors (Quadriceps femoris)</option>
+          <option value="knee_flexor">Knee Flexors (Hamstrings group)</option>
+          <option value="hip_flexor">Hip Flexors (Sartorius, Rectus femoris...)</option>
+          <option value="adductor">Hip Adductors (Adductor group & Gracilis)</option>
+          <option value="plantarflexor">Plantarflexors (Gastrocnemius, Soleus, Achilles)</option>
+          <option value="dorsiflexor">Dorsiflexors (Tibialis anterior & Extensors)</option>
+        ` : `
           <option value="all">-- Hiển thị tất cả nhóm cơ --</option>
           <option value="knee_extensor">Nhóm duỗi gối (Cơ tứ đầu đùi)</option>
           <option value="knee_flexor">Nhóm gập gối (Nhóm Hamstrings)</option>
@@ -4662,7 +5703,15 @@ const ANATOMY_DATABASE = {
           <option value="dorsiflexor">Nhóm gập mu bàn chân (Cơ chày trước & duỗi ngón)</option>
         `;
       } else {
-        sel.innerHTML = `
+        sel.innerHTML = currentLang === 'en' ? `
+          <option value="all">-- Show All Muscle Groups --</option>
+          <option value="shoulder_rotator">Shoulder & Rotator Cuff (Deltoid & SITS)</option>
+          <option value="arm_flexors">Anterior Arm Flexors (Biceps & Brachialis)</option>
+          <option value="arm_extensors">Posterior Arm Extensors (Triceps brachii)</option>
+          <option value="forearm_flexors">Forearm Flexors & Pronators</option>
+          <option value="forearm_extensors">Forearm Extensors & Supinators</option>
+          <option value="hand_muscles">Intrinsic Hand Muscles (Thenar & Hypothenar)</option>
+        ` : `
           <option value="all">-- Hiển thị tất cả nhóm cơ --</option>
           <option value="shoulder_rotator">Nhóm cơ vai & Chóp xoay (Delta & SITS)</option>
           <option value="arm_flexors">Nhóm gập cánh tay trước (Nhị đầu & Cánh tay)</option>
@@ -4677,14 +5726,53 @@ const ANATOMY_DATABASE = {
     /* =========================================================================
      * TƯƠNG TÁC CHUỘT / RAYCASTING (HOVER & CLICK TRÊN 3D)
      * ========================================================================= */
+    /* =========================================================================
+     * TƯƠNG TÁC CHUỘT / RAYCASTING (HOVER & CLICK TRÊN 3D)
+     * ========================================================================= */
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
-    let hoveredObject = null;
+    let currentHoveredPartId = null;
+    let currentSelectedPartId = null;
     let selectedObject = null;
-    let originalEmissiveColor = new THREE.Color(0, 0, 0);
+
+    function getPartMeshes(partId) {
+      if (!partId) return [];
+      return interactiveObjects.filter(obj => obj.userData && obj.userData.partId === partId);
+    }
+
+    function highlightPart(partId, colorHex = 0x0ea5e9) {
+      const meshes = getPartMeshes(partId);
+      meshes.forEach(mesh => {
+        if (mesh.material && mesh.material.emissive) {
+          mesh.material.emissive.setHex(colorHex);
+        }
+      });
+    }
+
+    function restorePart(partId) {
+      const meshes = getPartMeshes(partId);
+      meshes.forEach(mesh => {
+        if (mesh.material && mesh.material.emissive && mesh.userData && mesh.userData.defaultEmissive) {
+          mesh.material.emissive.copy(mesh.userData.defaultEmissive);
+        }
+      });
+    }
+
+    function clearSelection() {
+      if (currentSelectedPartId) {
+        restorePart(currentSelectedPartId);
+        currentSelectedPartId = null;
+      }
+      selectedObject = null;
+    }
 
     const tooltipEl = document.getElementById('hover-tooltip');
     const tooltipTextEl = document.getElementById('tooltip-text');
+
+    let pointerDownPos = { x: 0, y: 0 };
+    window.addEventListener('pointerdown', (e) => {
+      pointerDownPos = { x: e.clientX, y: e.clientY };
+    });
 
     window.addEventListener('pointermove', onPointerMove);
     window.addEventListener('click', onPointerClick);
@@ -4714,42 +5802,43 @@ const ANATOMY_DATABASE = {
         }
 
         document.body.style.cursor = 'pointer';
+        const partId = topMesh.userData ? topMesh.userData.partId : null;
 
-        if (hoveredObject !== topMesh) {
-          unhoverCurrentObject();
-          hoveredObject = topMesh;
-          if (hoveredObject.material && hoveredObject.material.emissive) {
-            originalEmissiveColor.copy(hoveredObject.material.emissive);
-            hoveredObject.material.emissive.setHex(0x0284c7);
+        if (partId && currentHoveredPartId !== partId) {
+          if (currentHoveredPartId && currentHoveredPartId !== currentSelectedPartId) {
+            restorePart(currentHoveredPartId);
+          }
+          currentHoveredPartId = partId;
+          if (currentHoveredPartId !== currentSelectedPartId) {
+            highlightPart(currentHoveredPartId, 0x0284c7); // Cyan hover glow
           }
 
-          const partId = hoveredObject.userData.partId;
           const info = ANATOMY_DATABASE[partId];
           if (info) {
-            tooltipTextEl.textContent = info.nameVi.split('(')[0].trim();
+            const displayName = currentLang === 'en'
+              ? (info.nameEn ? info.nameEn.split('(')[0].trim() : (info.nameLatin || info.nameVi))
+              : info.nameVi.split('(')[0].trim();
+            tooltipTextEl.textContent = displayName;
             tooltipEl.style.opacity = '1';
           }
         }
       } else {
         document.body.style.cursor = 'default';
-        unhoverCurrentObject();
+        if (currentHoveredPartId && currentHoveredPartId !== currentSelectedPartId) {
+          restorePart(currentHoveredPartId);
+        }
+        currentHoveredPartId = null;
         tooltipEl.style.opacity = '0';
       }
     }
 
-    function unhoverCurrentObject() {
-      if (hoveredObject) {
-        if (hoveredObject !== selectedObject && hoveredObject.material && hoveredObject.material.emissive) {
-          hoveredObject.material.emissive.copy(originalEmissiveColor);
-        }
-        hoveredObject = null;
-      }
-    }
-
     function onPointerClick(e) {
-      if (e.target.closest('header') || e.target.closest('aside') || e.target.closest('#info-card') || e.target.closest('#quiz-panel')) {
+      if (e.target.closest('header') || e.target.closest('aside') || e.target.closest('#info-card') || e.target.closest('#quiz-panel') || e.target.closest('.pin-marker')) {
         return;
       }
+
+      const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
+      if (dist > 6) return;
 
       mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -4771,13 +5860,16 @@ const ANATOMY_DATABASE = {
           if (inner.length > 0) clickedMesh = inner[0].object;
         }
 
-        const partId = clickedMesh.userData.partId;
+        const partId = clickedMesh.userData ? clickedMesh.userData.partId : null;
         if (partId && ANATOMY_DATABASE[partId]) {
           if (isQuizActive) {
             verifyQuizAnswer(partId);
           }
           selectAnatomicalPart(partId, clickedMesh);
         }
+      } else {
+        clearSelection();
+        closeInfoCard();
       }
     }
 
@@ -4788,25 +5880,21 @@ const ANATOMY_DATABASE = {
       const data = ANATOMY_DATABASE[partId];
       if (!data) return;
 
-      // Tự động chuyển vùng giải phẫu nếu bộ phận thuộc vùng khác
       const itemRegion = data.region || 'leg';
       if (itemRegion !== activeRegion) {
         switchBodyRegion(itemRegion);
       }
 
-      selectedObject = targetMesh || interactiveObjects.find(obj => obj.userData.partId === partId);
+      if (currentSelectedPartId && currentSelectedPartId !== partId) {
+        restorePart(currentSelectedPartId);
+      }
 
-      document.getElementById('info-name-vi').textContent = data.nameVi;
-      document.getElementById('info-name-latin').textContent = data.nameLatin || data.nameEn;
-      document.getElementById('info-name-en').textContent = data.nameEn;
-      document.getElementById('info-badge').textContent = data.badge;
-      document.getElementById('info-badge').className = `inline-block text-[10px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full border mb-1 ${data.badgeColor}`;
-      document.getElementById('info-location').textContent = data.location;
-      document.getElementById('info-origin').textContent = data.origin;
-      document.getElementById('info-insertion').textContent = data.insertion;
-      document.getElementById('info-innervation').textContent = data.innervation;
-      document.getElementById('info-action').textContent = data.action;
-      document.getElementById('info-clinical').textContent = data.clinical;
+      currentSelectedPartId = partId;
+      highlightPart(partId, 0x0ea5e9); // Vivid cyan selection highlight
+
+      selectedObject = targetMesh || interactiveObjects.find(obj => obj.userData && obj.userData.partId === partId);
+
+      renderInfoCardData(data);
 
       const infoCard = document.getElementById('info-card');
       infoCard.classList.remove('translate-y-8', 'opacity-0', 'pointer-events-none');
@@ -4843,6 +5931,36 @@ const ANATOMY_DATABASE = {
       });
     }
 
+    function renderInfoCardData(data) {
+      if (!data) return;
+      const enData = (typeof ANATOMY_EN_DATA !== 'undefined' && ANATOMY_EN_DATA[data.id]) ? ANATOMY_EN_DATA[data.id] : null;
+
+      if (currentLang === 'en') {
+        document.getElementById('info-name-vi').textContent = data.nameEn || data.nameLatin || data.nameVi;
+        document.getElementById('info-name-latin').textContent = data.nameLatin || '';
+        document.getElementById('info-name-en').textContent = data.nameVi || '';
+        document.getElementById('info-badge').textContent = (enData && enData.badge) ? enData.badge : (data.badge || 'Anatomy');
+        document.getElementById('info-location').textContent = (enData && enData.location) ? enData.location : data.location;
+        document.getElementById('info-origin').textContent = (enData && enData.origin) ? enData.origin : data.origin;
+        document.getElementById('info-insertion').textContent = (enData && enData.insertion) ? enData.insertion : data.insertion;
+        document.getElementById('info-innervation').textContent = (enData && enData.innervation) ? enData.innervation : data.innervation;
+        document.getElementById('info-action').textContent = (enData && enData.action) ? enData.action : data.action;
+        document.getElementById('info-clinical').textContent = (enData && enData.clinical) ? enData.clinical : data.clinical;
+      } else {
+        document.getElementById('info-name-vi').textContent = data.nameVi;
+        document.getElementById('info-name-latin').textContent = data.nameLatin || data.nameEn;
+        document.getElementById('info-name-en').textContent = data.nameEn || '';
+        document.getElementById('info-badge').textContent = data.badge;
+        document.getElementById('info-location').textContent = data.location;
+        document.getElementById('info-origin').textContent = data.origin;
+        document.getElementById('info-insertion').textContent = data.insertion;
+        document.getElementById('info-innervation').textContent = data.innervation;
+        document.getElementById('info-action').textContent = data.action;
+        document.getElementById('info-clinical').textContent = data.clinical;
+      }
+      document.getElementById('info-badge').className = `inline-block text-[10px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full border mb-1 ${data.badgeColor}`;
+    }
+
     function switchMedicalTab(tab) {
       ['origin', 'action', 'clinical'].forEach(t => {
         const btn = document.getElementById(`tab-btn-${t}`);
@@ -4860,6 +5978,7 @@ const ANATOMY_DATABASE = {
     function closeInfoCard() {
       const infoCard = document.getElementById('info-card');
       infoCard.classList.add('translate-y-8', 'opacity-0', 'pointer-events-none');
+      clearSelection();
       restoreAllFromIsolation();
     }
 
@@ -4894,8 +6013,8 @@ const ANATOMY_DATABASE = {
           posterior: { x: 0, y: 0.1, z: -4.2 },
           medial: { x: -4.0, y: 0.1, z: 0.2 },
           lateral: { x: 4.0, y: 0.1, z: 0.2 },
-          joint: { x: 0.2, y: 0.25, z: 1.4 },  // Khớp gối
-          distal: { x: 0.1, y: -2.0, z: 1.2 }  // Bàn chân
+          joint: { x: 0.2, y: 0.25, z: 1.4 },
+          distal: { x: 0.1, y: -2.0, z: 1.2 }
         };
         const targetMap = {
           anterior: { x: 0, y: 0.1, z: 0 },
@@ -4913,8 +6032,8 @@ const ANATOMY_DATABASE = {
           posterior: { x: -0.35, y: 0.9, z: -2.8 },
           medial: { x: 2.2, y: 0.9, z: 0.1 },
           lateral: { x: -2.8, y: 0.9, z: 0.1 },
-          joint: { x: -0.34, y: 1.0, z: 1.3 },   // Khớp khuỷu
-          distal: { x: -0.38, y: 0.05, z: 0.9 }  // Bàn tay
+          joint: { x: -0.34, y: 1.0, z: 1.3 },
+          distal: { x: -0.38, y: 0.05, z: 0.9 }
         };
         const targetMap = {
           anterior: { x: -0.35, y: 0.9, z: 0 },
@@ -4946,14 +6065,15 @@ const ANATOMY_DATABASE = {
 
     let isIsolated = false;
     function isolateSelectedPart() {
-      if (!selectedObject) return;
+      if (!currentSelectedPartId) return;
       isIsolated = true;
+      const partMeshes = getPartMeshes(currentSelectedPartId);
       interactiveObjects.forEach(obj => {
-        if (obj !== selectedObject && !selectedObject.children.includes(obj)) {
+        if (!partMeshes.includes(obj)) {
           obj.visible = false;
         }
       });
-      document.getElementById('btn-isolate-part').innerHTML = `<i data-lucide="eye-off" class="w-3 h-3"></i><span>Bỏ cô lập</span>`;
+      document.getElementById('btn-isolate-part').innerHTML = `<i data-lucide="eye-off" class="w-3 h-3"></i><span>${currentLang === 'en' ? 'Unisolate' : 'Bỏ cô lập'}</span>`;
       document.getElementById('btn-isolate-part').onclick = restoreAllFromIsolation;
       lucide.createIcons();
     }
@@ -4964,14 +6084,14 @@ const ANATOMY_DATABASE = {
       interactiveObjects.forEach(obj => {
         obj.visible = isLayerVisible(obj.userData.layer);
       });
-      document.getElementById('btn-isolate-part').innerHTML = `<i data-lucide="eye" class="w-3 h-3"></i><span>Cô lập</span>`;
+      document.getElementById('btn-isolate-part').innerHTML = `<i data-lucide="eye" class="w-3 h-3"></i><span>${currentLang === 'en' ? 'Isolate' : 'Cô lập'}</span>`;
       document.getElementById('btn-isolate-part').onclick = isolateSelectedPart;
       lucide.createIcons();
     }
 
     function pronouncePartName() {
       if (!('speechSynthesis' in window)) {
-        alert('Trình duyệt của bạn không hỗ trợ tính năng phát âm Web Speech API.');
+        alert(currentLang === 'en' ? 'Your browser does not support the Web Speech API.' : 'Trình duyệt của bạn không hỗ trợ tính năng phát âm Web Speech API.');
         return;
       }
       const latinName = document.getElementById('info-name-latin').textContent;
@@ -4979,6 +6099,174 @@ const ANATOMY_DATABASE = {
       utterance.lang = 'it-IT';
       utterance.rate = 0.85;
       speechSynthesis.speak(utterance);
+    }
+
+    /* =========================================================================
+     * BỘ CHUYỂN ĐỔI NGÔN NGỮ (VIỆT - ANH BILINGUAL ENGINE)
+     * ========================================================================= */
+    function applyTranslations() {
+      const t = I18N[currentLang];
+      document.documentElement.lang = currentLang;
+      document.title = t.appTitle;
+
+      const langBtnText = document.getElementById('lang-btn-text');
+      if (langBtnText) {
+        langBtnText.innerHTML = currentLang === 'en'
+          ? '<span class="text-slate-400">VI</span> | <span class="text-white underline decoration-sky-400 decoration-2 font-bold">EN</span>'
+          : '<span class="text-white underline decoration-sky-400 decoration-2 font-bold">VI</span> | <span class="text-slate-400">EN</span>';
+      }
+
+      const regSub = document.getElementById('region-sub-label');
+      if (regSub) {
+        regSub.textContent = activeRegion === 'arm'
+          ? (currentLang === 'en' ? 'Comprehensive Medical Anatomy Atlas (Upper Limb & Hand)' : 'Giáo trình Giải phẫu Chi Trên, Cánh Tay & Bàn Tay Y Khoa')
+          : (currentLang === 'en' ? 'Comprehensive Medical Anatomy Atlas (Lower Limb & Foot)' : 'Giáo trình Giải phẫu Chi Dưới & Bàn Chân Y Khoa');
+      }
+      const regPill = document.getElementById('region-badge-pill');
+      if (regPill) {
+        regPill.textContent = activeRegion === 'arm'
+          ? (currentLang === 'en' ? 'Upper Limb (Arm & Hand)' : 'Chi Trên (Arm & Hand)')
+          : (currentLang === 'en' ? 'Lower Limb (Leg & Foot)' : 'Chi Dưới (Leg & Foot)');
+      }
+
+      const txtRegLeg = document.getElementById('txt-region-leg');
+      if (txtRegLeg) txtRegLeg.textContent = t.regionLeg;
+      const txtRegArm = document.getElementById('txt-region-arm');
+      if (txtRegArm) txtRegArm.textContent = t.regionArm;
+
+      const txtModeExp = document.getElementById('txt-mode-explore');
+      if (txtModeExp) txtModeExp.textContent = t.modeExplore;
+      const txtModeDiss = document.getElementById('txt-mode-dissection');
+      if (txtModeDiss) txtModeDiss.textContent = t.modeDissection;
+      const txtModeCross = document.getElementById('txt-mode-crosssection');
+      if (txtModeCross) txtModeCross.textContent = t.modeCrossSection;
+      const txtModeQuiz = document.getElementById('txt-mode-quiz');
+      if (txtModeQuiz) txtModeQuiz.textContent = t.modeQuiz;
+
+      const searchInput = document.getElementById('anatomy-search-input');
+      if (searchInput) searchInput.placeholder = t.searchPlaceholder;
+      const txtBtnGLB = document.getElementById('txt-btn-upload-glb');
+      if (txtBtnGLB) txtBtnGLB.textContent = t.btnUploadGLB;
+      const txtBtnPins = document.getElementById('txt-btn-pins');
+      if (txtBtnPins) txtBtnPins.textContent = t.btnPins;
+
+      const csTitle = document.getElementById('crosssection-title');
+      if (csTitle) csTitle.textContent = t.crossSectionTitle;
+      const csDesc = document.getElementById('crosssection-desc');
+      if (csDesc) csDesc.textContent = t.crossSectionDesc;
+
+      const dissTitle = document.getElementById('dissection-title');
+      if (dissTitle) dissTitle.textContent = t.dissectionTitle;
+      const dissSlider = document.getElementById('dissection-slider');
+      if (dissSlider) {
+        document.getElementById('dissection-level-label').textContent = t.dissectionLabels[parseInt(dissSlider.value)] || `Level ${dissSlider.value}`;
+      }
+      const dissTicks = document.getElementById('dissection-ticks');
+      if (dissTicks) {
+        dissTicks.innerHTML = t.dissectionMarks.map(m => `<span>${m}</span>`).join('');
+      }
+
+      const camTitle = document.getElementById('camera-views-title');
+      if (camTitle) camTitle.innerHTML = `<i data-lucide="video" class="w-3 h-3 text-sky-400"></i> ${t.cameraViewsTitle}`;
+      const camAnt = document.getElementById('cam-btn-anterior');
+      if (camAnt) camAnt.textContent = t.camAnterior;
+      const camPost = document.getElementById('cam-btn-posterior');
+      if (camPost) camPost.textContent = t.camPosterior;
+      const camMed = document.getElementById('cam-btn-medial');
+      if (camMed) camMed.textContent = t.camMedial;
+      const camLat = document.getElementById('cam-btn-lateral');
+      if (camLat) camLat.textContent = t.camLateral;
+
+      const layersHdr = document.getElementById('layers-header-title');
+      if (layersHdr) layersHdr.textContent = t.layersHeader;
+      const laySkel = document.getElementById('layer-txt-skeletal');
+      if (laySkel) laySkel.textContent = t.layerSkeletal;
+      const layLig = document.getElementById('layer-txt-ligaments');
+      if (layLig) layLig.textContent = t.layerLigaments;
+      const layMus = document.getElementById('layer-txt-muscular');
+      if (layMus) layMus.textContent = t.layerMuscular;
+      const layCard = document.getElementById('layer-txt-cardiovascular');
+      if (layCard) layCard.textContent = t.layerCardiovascular;
+      const layNerv = document.getElementById('layer-txt-nervous');
+      if (layNerv) layNerv.textContent = t.layerNervous;
+      const layLym = document.getElementById('layer-txt-lymphatic');
+      if (layLym) layLym.textContent = t.layerLymphatic;
+      const layInteg = document.getElementById('layer-txt-integumentary');
+      if (layInteg) layInteg.textContent = t.layerIntegumentary;
+      const skinOpTxt = document.getElementById('skin-opacity-txt');
+      if (skinOpTxt) skinOpTxt.textContent = t.skinOpacityLabel;
+
+      const kineFilt = document.getElementById('kinesiology-filter-title');
+      if (kineFilt) kineFilt.innerHTML = `<i data-lucide="zap" class="w-3 h-3 text-amber-400"></i> ${t.kinesiologyFilterLabel}`;
+      const kineMot = document.getElementById('kinesiology-motion-title');
+      if (kineMot) kineMot.innerHTML = `<i data-lucide="play-circle" class="w-3 h-3 text-emerald-400"></i> ${t.kinesiologyMotionLabel}`;
+
+      const tabOrig = document.getElementById('tab-btn-origin');
+      if (tabOrig) tabOrig.textContent = t.tabOrigin;
+      const tabAct = document.getElementById('tab-btn-action');
+      if (tabAct) tabAct.textContent = t.tabAction;
+      const tabClin = document.getElementById('tab-btn-clinical');
+      if (tabClin) tabClin.innerHTML = `<i data-lucide="stethoscope" class="w-3 h-3 text-rose-400"></i> ${t.tabClinical}`;
+
+      const lblLoc = document.getElementById('lbl-location');
+      if (lblLoc) lblLoc.textContent = t.labelLocation;
+      const lblOrig = document.getElementById('lbl-origin');
+      if (lblOrig) lblOrig.textContent = t.labelOrigin;
+      const lblIns = document.getElementById('lbl-insertion');
+      if (lblIns) lblIns.textContent = t.labelInsertion;
+      const lblInn = document.getElementById('lbl-innervation');
+      if (lblInn) lblInn.textContent = t.labelInnervation;
+      const lblAct = document.getElementById('lbl-action');
+      if (lblAct) lblAct.textContent = t.labelAction;
+      const lblClin = document.getElementById('lbl-clinical');
+      if (lblClin) lblClin.innerHTML = `<i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> ${t.labelClinical}`;
+
+      const txtPron = document.getElementById('txt-pronounce');
+      if (txtPron) txtPron.textContent = t.btnPronounce;
+      const btnIso = document.getElementById('btn-isolate-part');
+      if (btnIso) {
+        btnIso.innerHTML = isIsolated
+          ? `<i data-lucide="eye-off" class="w-3 h-3"></i><span>${t.btnUnisolate}</span>`
+          : `<i data-lucide="eye" class="w-3 h-3"></i><span>${t.btnIsolate}</span>`;
+      }
+
+      const qTitle = document.getElementById('quiz-title-text');
+      if (qTitle) qTitle.textContent = t.quizTitle;
+      const qInst = document.getElementById('txt-quiz-instruction');
+      if (qInst) qInst.textContent = t.quizInstruction;
+      const qHint = document.getElementById('txt-quiz-hint');
+      if (qHint) qHint.textContent = t.quizHintBtn;
+      const qNext = document.getElementById('txt-btn-next-question');
+      if (qNext) qNext.textContent = t.quizNextBtn;
+
+      updateCameraButtonsLabels();
+      updateCrossSectionUI();
+      updateKinesiologyUI();
+      updateFunctionalGroupSelect();
+      init3DPins();
+
+      if (currentSelectedPartId && ANATOMY_DATABASE[currentSelectedPartId]) {
+        renderInfoCardData(ANATOMY_DATABASE[currentSelectedPartId]);
+      }
+
+      if (isQuizActive) {
+        document.getElementById('quiz-region-badge').textContent = currentLang === 'en'
+          ? (activeRegion === 'arm' ? 'Upper Limb' : 'Lower Limb')
+          : (activeRegion === 'arm' ? 'Chi Trên' : 'Chi Dưới');
+        loadQuizQuestion(currentQuizIndex);
+      }
+
+      lucide.createIcons();
+    }
+
+    function toggleLanguage() {
+      setLanguage(currentLang === 'vi' ? 'en' : 'vi');
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('anatomy_lang', lang);
+      applyTranslations();
     }
 
     /* =========================================================================
